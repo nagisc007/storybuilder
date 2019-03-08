@@ -3,7 +3,7 @@
 """
 import unittest
 
-from base import ActType, Act, Title, Description, Person, Stage, Item, DayTime
+from base import ActType, Act, Must, Done, Title, Description, Person, Stage, Item, DayTime
 
 class SampleObj(object):
     def __init__(self, name):

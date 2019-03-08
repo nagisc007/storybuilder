@@ -9,7 +9,9 @@ class ActType(Enum):
     """
     ACT = 'action'
     DESC = 'description'
-    SYMBOL = 'symbol'
+    DONE = 'done' # for result action
+    MUST = 'must' # for purpose action
+    SYMBOL = 'symbol' # for title etc
     TELL = 'dialogue'
     TEST = 'test'
     THINK = 'thinking'
@@ -17,7 +19,7 @@ class ActType(Enum):
 class Act(object):
     """Action object created.
 
-   Attributes:
+    Attributes:
         nothing
     """
     def __init__(self, subject, act_type, action, withS=False):
@@ -32,6 +34,32 @@ class Act(object):
         self.act_type = act_type
         self.subject = subject
         self.withS = withS
+
+
+class Must(Act):
+    """Special action object created.
+    """
+    def __init__(self, subject, action, withS=False):
+        """
+        Args:
+            subject (obj): action subject.
+            action (str): description of this action.
+            withS (bool): if True, description displays with subject.
+        """
+        super().__init__(subject, ActType.MUST, action, withS)
+
+
+class Done(Act):
+    """Special action object created.
+    """
+    def __init__(self, subject, action, withS=False):
+        """
+        Args:
+            subject (obj): action subject.
+            action (str): description of this action.
+            withS (bool): if True, description displays with subject.
+        """
+        super().__init__(subject, ActType.DONE, action, withS)
 
 
 class Title(Act):
@@ -79,6 +107,16 @@ class Person(object):
             obj:`Act`: action object contained a personal action.
         """
         return Act(self, ActType.ACT, behaviour, withS)
+
+    def desc(self, description, withS=False):
+        """
+        Args:
+            description (str): description strings.
+            withS (bool): with subject.
+        Returns:
+            obj:`Act`: action object contained a description.
+        """
+        return Act(self, ActType.DESC, description, withS)
 
     def tell(self, what, withS=False):
         """
