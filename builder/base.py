@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 """Module to build a story.
 """
-from enum import Enum
+from enum import Enum, auto
 
 
 class ActType(Enum):
     """Act type enum.
     """
-    ACT = 'action'
-    DESC = 'description'
-    DONE = 'done' # for result action
-    MUST = 'must' # for purpose action
-    SYMBOL = 'symbol' # for title etc
-    TELL = 'dialogue'
-    TEST = 'test'
-    THINK = 'thinking'
+    ACT = auto()
+    DESC = auto()
+    DONE = auto() # for result action
+    MUST = auto() # for purpose action
+    SYMBOL = auto() # for title etc
+    TELL = auto()
+    TEST = auto()
+    THINK = auto()
 
 class Act(object):
     """Action object created.
