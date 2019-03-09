@@ -26,7 +26,13 @@ see contained example story.
 ## Usage
 
 1. Write a story code by python
-1. Import storybuilder into the code
+1. Import storybuilder into the code and add the library path
+    ```python
+    import sys
+    import os
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+    sys.path.append('storybuilder')
+    ```
 1. Write a test code
 1. Check your story code: ``$ python3 setup.py test``
 1. Output a markdown file in build dir: ``$ python3 your_package/your_story.py``
