@@ -33,7 +33,7 @@ see contained example story.
 
 ## Installation
 
-Recommend not installed!!
+Not recommend to install!!
 
 ## Author
 
