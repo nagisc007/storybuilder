@@ -5,8 +5,8 @@
 import sys
 import os
 
-from builder.base import ActType, Act, Must, Done, Title, Description
-from builder.base import Person, Stage, Item, DayTime
+from .base import ActType, Act, Must, Done, Title, Description
+from .base import Person, Stage, Item, DayTime
 
 
 def build_output_strings(story, is_debug=False):
