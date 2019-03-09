@@ -35,12 +35,16 @@ def checked_has_basic_info(acts, hero, rival):
     ERR_NOT_EXISTS = "{} is not exists!"
     # Who:
     for a in acts:
+        if isinstance(a.subject, Must) or isinstance(a.subject, Done) or isinstance(a.subject, Title) or isinstance(a.subject, Description):
+            continue
         if hero.name is a.subject.name:
             break
     else:
         raise AssertionError(ERR_NOT_EXISTS.format(hero.name))
     # Whom:
     for a in acts:
+        if isinstance(a.subject, Must) or isinstance(a.subject, Done) or isinstance(a.subject, Title) or isinstance(a.subject, Description):
+            continue
         if rival.name is a.subject.name: break
     else:
         raise AssertionError(ERR_NOT_EXISTS.format(rival.name))
