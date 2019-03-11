@@ -1,91 +1,94 @@
 # -*- coding: utf-8 -*-
 """Module to build a story.
 """
-from enum import Enum, auto
+from .acttypes import ActType, Behavior
 
 
-class ActType(Enum):
-    """Act type enum.
+class Subject(object):
+    """Subject of action.
+
+    Attributes:
+        name (str): name or title.
+        info (str, optional): short description.
     """
-    ACT = auto()
-    DESC = auto()
-    DONE = auto() # for result action
-    MUST = auto() # for purpose action
-    SYMBOL = auto() # for title etc
-    TELL = auto()
-    TEST = auto()
-    THINK = auto()
+    def __init__(self, name, info="nothing"):
+        """
+        Args:
+            name (str): name or title.
+            info (str, optional): short description.
+        """
+        self.info = info
+        self.name = name
+
+    def look(self, how, withS=False):
+        """
+        Args:
+            how (str): the subject looking.
+            withS (bool): with subject.
+        """
+        return Act(self, ActType.DESC, Behavior.LOOK, how, withS)
+
 
 class Act(object):
     """Action object created.
 
     Attributes:
-        nothing
+        act_type (:enum:ActType): action major type.
+        action (str): action describes.
+        behavior (:enum:Behavior): action behavior type.
+        description (str): a description of this action.
+        subject (:obj:`Subject`): subject of this action.
+        withS (bool): which has desplayed with subject.
     """
-    def __init__(self, subject, act_type, action, withS=False):
+    def __init__(self, subject, act_type, behavior, action, withS=False):
         """
         Args:
-            subject (obj): action subject.
-            act_type (ActType): action type.
+            subject (:obj:`Subject`): action subject.
+            act_type (:enum:`ActType`): action type.
+            behavior (:enum:`Behavior`): action behavior type.
             action (str): description of this action.
             withS (bool): if True, description displays with subject.
         """
         self.action = action
         self.act_type = act_type
+        self.behavior = behavior
+        self.description = ""
         self.subject = subject
         self.withS = withS
 
-
-class Must(Act):
-    """Special action object created.
-    """
-    def __init__(self, subject, action, withS=False):
+    def desc(self, description):
         """
         Args:
-            subject (obj): action subject.
-            action (str): description of this action.
-            withS (bool): if True, description displays with subject.
+            description (str): sentence for the action.
+        Returns:
+            This action object.
         """
-        super().__init__(subject, ActType.MUST, action, withS)
-
-
-class Done(Act):
-    """Special action object created.
-    """
-    def __init__(self, subject, action, withS=False):
-        """
-        Args:
-            subject (obj): action subject.
-            action (str): description of this action.
-            withS (bool): if True, description displays with subject.
-        """
-        super().__init__(subject, ActType.DONE, action, withS)
+        self.description = description
+        return self
 
 
 class Title(Act):
     """Title action object created.
 
     Attributes:
+        title (str): a title string.
+        info (str, optional): a short description.
     """
-    def __init__(self, title):
-        super().__init__(self, ActType.SYMBOL, title)
+    def __init__(self, title, info="nothing"):
+        """
+        Args:
+            title (str): a title string.
+            info (str, optional): a short description.
+        """
+        super().__init__(Subject(title, info), ActType.SYMBOL, Behavior.DISPLAY, title)
 
 
-class Description(Act):
-    """Description action object created.
-
-    Attributes:
-    """
-    def __init__(self, act):
-        super().__init__(self, ActType.DESC, act)
-
-
-class Person(object):
+class Person(Subject):
     """Character object created.
 
     Attributes:
     """
-    def __init__(self, name, age, sex, job):
+    def __init__(self, name, age, sex, job, info):
         """
         Args:
             name (str): character's name
@@ -93,40 +96,41 @@ class Person(object):
             sex (str): character's sex
             job (str): character's job
         """
+        super().__init__(name, info)
         self.age = age
         self.job = job
-        self.name = name
         self.sex = sex
 
-    def act(self, behaviour, withS=False):
+    def act(self, action, behaviour=Behavior.DO, withS=False):
         """
         Args:
-            behaviour (str): action strings.
+            action (str): action string.
+            behaviour (:enum:`Behavior`): action behavior type.
             withS (bool): with subject.
         Returns:
-            obj:`Act`: action object contained a personal action.
+            Act object contained a personal action.
         """
-        return Act(self, ActType.ACT, behaviour, withS)
+        return Act(self, ActType.ACT, behaviour, action, withS)
 
-    def desc(self, description, withS=False):
+    def reply(self, what, withS=False):
         """
         Args:
-            description (str): description strings.
+            what (str): short description.
             withS (bool): with subject.
         Returns:
-            obj:`Act`: action object contained a description.
+            Act object contained a reply.
         """
-        return Act(self, ActType.DESC, description, withS)
+        return Act(self, ActType.TELL, Behavior.REPLY, "{}と返事".format(what), withS)
 
     def tell(self, what, withS=False):
         """
         Args:
-            what (str): dialogue strings.
+            what (str): short description.
             withS (bool): with subject.
         Returns:
-            obj:`Act`: action object contained a dialogue.
+            Act object contained a dialogue.
         """
-        return Act(self, ActType.TELL, "「{}」".format(what), withS)
+        return Act(self, ActType.TELL, Behavior.TALK, "{}と言う".format(what), withS)
 
     def think(self, what, withS=False):
         """
@@ -134,12 +138,42 @@ class Person(object):
             what (str): thinking strings.
             withS (bool): with subject.
         Returns:
-            obj:`Act`: action object contained a thinking.
+            Act object contained a personal thought.
         """
-        return Act(self, ActType.THINK, what, withS)
+        return Act(self, ActType.THINK, Behavior.FEEL, "{}と思う".format(what), withS)
+
+    def must(self, what, withS=False):
+        """
+        Args:
+            what (str): a subject must do something.
+            withS (bool): with subject.
+        Returns:
+            Act object contained a personal thought.
+        """
+        return Act(self, ActType.THINK, Behavior.MUST_DO, "{}しなければならない".format(what), withS)
+
+    def want(self, what, withS=False):
+        """
+        Args:
+            what (str): a subject want to do something.
+            withS (bool): with subject.
+        Returns:
+            Act object contained a personal thought.
+        """
+        return Act(self, ActType.THINK, Behavior.WANT, "{}したい".format(what), withS)
+
+    def result(self, what, withS=False):
+        """
+        Args:
+            what (str): a subject got any result.
+            withS (bool): with subject.
+        Returns:
+            Act object contained a personal thought.
+        """
+        return Act(self, ActType.ACT, Behavior.RESULT, "{}".format(what), withS)
 
 
-class Stage(object):
+class Stage(Subject):
     """Stage object created.
 
     Attributes:
@@ -150,21 +184,10 @@ class Stage(object):
             name (str): stage's name.
             explain (str): short description.
         """
-        self.explain = explain
-        self.name = name
-
-    def desc(self, description, withS=False):
-        """
-        Args:
-            description (str): description strings.
-            withS (bool): with subject.
-        Returns:
-            obj:`Act`: action object contained a description.
-        """
-        return Act(self, ActType.DESC, description, withS)
+        super().__init__(name, explain)
 
 
-class Item(object):
+class Item(Subject):
     """Item object created.
 
     Attributes.
@@ -175,26 +198,15 @@ class Item(object):
             name (str): item's name.
             explain (str): short description.
         """
-        self.explain = explain
-        self.name = name
-
-    def desc(self, description, withS=False):
-        """
-        Args:
-            description (str): description strings.
-            withS (bool): with subject.
-        Returns:
-            obj:`Act`: action object contained a description.
-        """
-        return Act(self, ActType.DESC, description, withS)
+        super().__init__(name, explain)
 
 
-class DayTime(object):
+class DayTime(Subject):
     """Day and Time object created.
 
     Attributes.
     """
-    def __init__(self, name, mon=0, day=0, year=0, hour=0):
+    def __init__(self, name, mon=0, day=0, year=0, hour=0, explain="nothing"):
         """
         Args:
             name (str): object name.
@@ -203,18 +215,9 @@ class DayTime(object):
             year (int): year number.
             hour (int): hour number.
         """
+        super().__init__(name, explain)
         self.day = day
         self.hour = hour
         self.mon = mon
-        self.name = name
         self.year = year
-
-    def desc(self, description):
-        """
-        Args:
-            description (str): description strings.
-        Returns:
-            obj:`Act`: action object contained a description.
-        """
-        return Act(self, ActType.DESC, description)
 

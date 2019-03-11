@@ -3,109 +3,210 @@
 """
 import unittest
 
-from base import ActType, Act, Must, Done, Title, Description, Person, Stage, Item, DayTime
+from builder.acttypes import ActType, Behavior
+from builder.base import Subject, Act, Title, Person, Stage, Item, DayTime
+
 
 class SampleObj(object):
     def __init__(self, name):
         self.name = name
 
 
-class ClassCheckTest(unittest.TestCase):
-    def test_act_is_not_basic_object(self):
-        act1 = Act(SampleObj("testact"), ActType.TEST, "test is good")
-        sample1 = SampleObj("test1")
+class SubjectTest(unittest.TestCase):
 
-        self.assertNotEqual(act1, sample1) # act object is object?
-        self.assertNotEqual(type(act1), type(sample1)) # act object is not object?
+    def test_feature_look(self):
+        sbj = Subject("test1", "test info")
+        subjected = sbj.look("this is test")
 
-    def test_act_params(self):
-        sample1 = SampleObj("test1")
-        act1 = Act(sample1, ActType.TEST, "test is good")
+        self.assertTrue(isinstance(subjected, Act))
+        self.assertEqual(sbj.name, "test1")
+        self.assertEqual(sbj.info, "test info")
+        self.assertEqual(subjected.subject, sbj)
 
-        self.assertEqual(act1.act_type, ActType.TEST) # act type check
-        self.assertEqual(act1.subject, sample1) # subject check
-        self.assertEqual(act1.action, "test is good") # action check
-        self.assertEqual(act1.withS, False) # with subject check
 
-    def test_title_is_act(self):
-        title1 = Title("test1")
-        act1 = Act(SampleObj("test1"), ActType.SYMBOL, "test1")
+class ActTest(unittest.TestCase):
 
-        self.assertNotEqual(title1, act1) # title object is action?
-        self.assertTrue(isinstance(title1, type(act1))) # title object is action object
+    def setUp(self):
+        self.subject = Subject("test_subject", "this is test")
 
-    def test_title_params(self):
-        title1 = Title("test1")
+    def test_attributes(self):
+        act = Act(self.subject, ActType.TEST, Behavior.DO, "test act")
 
-        self.assertEqual(title1.action, "test1") # check title
-        self.assertEqual(title1.act_type, ActType.SYMBOL) # check type
+        self.assertTrue(isinstance(act, Act))
+        self.assertEqual(act.subject, self.subject)
+        self.assertEqual(act.act_type, ActType.TEST)
+        self.assertEqual(act.behavior, Behavior.DO)
+        self.assertEqual(act.action, "test act")
 
-    def test_description_is_act(self):
-        desc1 = Description("test1")
-        act1 = Act(SampleObj("test1"), ActType.DESC, "test1")
+    def test_desc(self):
+        act = Act(self.subject, ActType.TEST, Behavior.DO, "test act")
 
-        self.assertNotEqual(desc1, act1) # description object is action?
-        self.assertTrue(isinstance(desc1, type(act1))) # description object is action object
+        self.assertEqual(act.description, "")
+        
+        acted = act.desc("this is an action")
 
-    def test_description_params(self):
-        desc1 = Description("test1")
+        self.assertTrue(isinstance(acted, Act))
+        self.assertEqual(acted.description, "this is an action")
 
-        self.assertEqual(desc1.action, "test1") # check description
-        self.assertEqual(desc1.act_type, ActType.DESC) # check type
 
-    def test_person_is_not_action(self):
-        person1 = Person("test1", 10, "male", "test is good")
-        act1 = Act(SampleObj("test1"), ActType.ACT, "test is good")
+class TitleTest(unittest.TestCase):
 
-        self.assertNotEqual(person1, act1) # person object is action?
-        self.assertNotEqual(type(act1), type(person1)) # person object is not action object?
+    def test_attributes(self):
+        ttl = Title("test1", "this is test")
 
-    def test_person_params(self):
-        person1 = Person("test1", 10, "male", "worker")
+        self.assertTrue(isinstance(ttl, Act))
+        self.assertEqual(ttl.act_type, ActType.SYMBOL)
+        self.assertEqual(ttl.behavior, Behavior.DISPLAY)
+        self.assertEqual(ttl.action, "test1")
+        self.assertEqual(ttl.subject.info, "this is test")
 
-        self.assertEqual(person1.name, "test1") # check name
-        self.assertEqual(person1.age, 10) # check age
-        self.assertEqual(person1.sex, "male") # check sex
-        self.assertEqual(person1.job, "worker") # check job
 
-    def test_stage_is_not_action(self):
-        stage1 = Stage("test1", "test is good")
-        act1 = Act(SampleObj("test1"), ActType.ACT, "test is good")
+class PersonTest(unittest.TestCase):
 
-        self.assertNotEqual(stage1, act1) # stage object is action?
-        self.assertNotEqual(type(stage1), type(act1)) # stage object is not action object?
+    def test_attributes(self):
+        psn = Person("Taro", 15, "male", "student", "he is a man")
 
-    def test_stage_params(self):
-        stage1 = Stage("test1", "test is good")
+        self.assertTrue(isinstance(psn, Person))
+        self.assertEqual(psn.name, "Taro")
+        self.assertEqual(psn.age, 15)
+        self.assertEqual(psn.sex, "male")
+        self.assertEqual(psn.job, "student")
+        self.assertEqual(psn.info, "he is a man")
 
-        self.assertEqual(stage1.name, "test1") # check name
-        self.assertEqual(stage1.explain, "test is good") # check explain
+    def test_act(self):
+        psn = Person("Taro", 15, "male", "student", "he is a man")
 
-    def test_item_is_not_action(self):
-        item1 = Item("test1", "test is good")
-        act1 = Act(SampleObj("test1"), ActType.ACT, "test is good")
+        acted = psn.act("he acts with his smile")
 
-        self.assertNotEqual(item1, act1) # item object is action?
-        self.assertNotEqual(type(item1), type(act1)) # item object is not action object?
+        self.assertTrue(isinstance(acted, Act))
+        self.assertEqual(acted.act_type, ActType.ACT)
+        self.assertEqual(acted.behavior, Behavior.DO)
+        self.assertEqual(acted.action, "he acts with his smile")
 
-    def test_item_params(self):
-        item1 = Item("test1", "test is good")
+    def test_act_with_behavior(self):
+        psn = Person("Taro", 15, "male", "student", "he is a man")
 
-        self.assertEqual(item1.name, "test1") # check name
-        self.assertEqual(item1.explain, "test is good") # check explain
+        acted = psn.act("go home", Behavior.GO)
 
-    def test_daytime_is_not_action(self):
-        daytime1 = DayTime("test1", 1, 10, 2019, 12)
-        act1 = Act(SampleObj("test1"), ActType.ACT, "test is good")
+        self.assertTrue(isinstance(acted, Act))
+        self.assertEqual(acted.act_type, ActType.ACT)
+        self.assertEqual(acted.action, "go home")
+        self.assertEqual(acted.behavior, Behavior.GO)
 
-        self.assertNotEqual(daytime1, act1) # daytime object is action?
-        self.assertNotEqual(type(daytime1), type(act1)) # daytime object is not action object?
+    def test_reply(self):
+        psn = Person("Taro", 15, "male", "student", "he is a man")
 
-    def test_daytime_params(self):
-        daytime1 = DayTime("test1", 1, 10, 2019, 12)
+        acted = psn.reply("Yes")
 
-        self.assertEqual(daytime1.name, "test1") # check name
-        self.assertEqual(daytime1.mon, 1) # check mon
-        self.assertEqual(daytime1.day, 10) # check day
-        self.assertEqual(daytime1.year, 2019) # check year
-        self.assertEqual(daytime1.hour, 12) # check hour
+        self.assertTrue(isinstance(acted, Act))
+        self.assertEqual(acted.act_type, ActType.TELL)
+        self.assertEqual(acted.action, "Yesと返事")
+        self.assertEqual(acted.behavior, Behavior.REPLY)
+
+    def test_tell(self):
+        psn = Person("Taro", 15, "male", "student", "he is a man")
+
+        acted = psn.tell("So so")
+
+        self.assertTrue(isinstance(acted, Act))
+        self.assertEqual(acted.act_type, ActType.TELL)
+        self.assertEqual(acted.action, "So soと言う")
+        self.assertEqual(acted.behavior, Behavior.TALK)
+
+    def test_think(self):
+        psn = Person("Taro", 15, "male", "student", "he is a man")
+
+        acted = psn.think("about himself")
+
+        self.assertTrue(isinstance(acted, Act))
+        self.assertEqual(acted.act_type, ActType.THINK)
+        self.assertEqual(acted.action, "about himselfと思う")
+        self.assertEqual(acted.behavior, Behavior.FEEL)
+
+    def test_must(self):
+        psn = Person("Taro", 15, "male", "student", "he is a man")
+
+        acted = psn.must("home work")
+
+        self.assertTrue(isinstance(acted, Act))
+        self.assertEqual(acted.act_type, ActType.THINK)
+        self.assertEqual(acted.action, "home workしなければならない")
+        self.assertEqual(acted.behavior, Behavior.MUST_DO)
+
+    def test_want(self):
+        psn = Person("Taro", 15, "male", "student", "he is a man")
+
+        acted = psn.want("sleep")
+
+        self.assertTrue(isinstance(acted, Act))
+        self.assertEqual(acted.act_type, ActType.THINK)
+        self.assertEqual(acted.action, "sleepしたい")
+        self.assertEqual(acted.behavior, Behavior.WANT)
+
+    def test_result(self):
+        psn = Person("Taro", 15, "male", "student", "he is a man")
+
+        acted = psn.result("forget his home work")
+
+        self.assertTrue(isinstance(acted, Act))
+        self.assertEqual(acted.act_type, ActType.ACT)
+        self.assertEqual(acted.action, "forget his home work")
+        self.assertEqual(acted.behavior, Behavior.RESULT)
+
+
+class StageTest(unittest.TestCase):
+
+    def test_attributes(self):
+        stg = Stage("test1", "here is a test")
+
+        self.assertTrue(isinstance(stg, Stage))
+        self.assertEqual(stg.name, "test1")
+        self.assertEqual(stg.info, "here is a test")
+
+    def test_look(self):
+        stg = Stage("test1", "here is a test")
+
+        staged = stg.look("a black stage")
+
+        self.assertTrue(isinstance(staged, Act))
+        self.assertEqual(staged.action, "a black stage")
+
+
+class ItemTest(unittest.TestCase):
+
+    def test_attributes(self):
+        itm = Item("test1", "this is an item")
+
+        self.assertTrue(isinstance(itm, Item))
+        self.assertEqual(itm.name, "test1")
+        self.assertEqual(itm.info, "this is an item")
+
+    def test_look(self):
+        itm = Item("test1", "this is an item")
+
+        itemed = itm.look("a shiny ball")
+
+        self.assertTrue(isinstance(itemed, Act))
+        self.assertEqual(itemed.action, "a shiny ball")
+
+
+class DayTimeTest(unittest.TestCase):
+
+    def test_attributes(self):
+        dt = DayTime("test1", mon=10, day=5, year=2019, hour=12, explain="this is a test")
+
+        self.assertTrue(isinstance(dt, DayTime))
+        self.assertEqual(dt.name, "test1")
+        self.assertEqual(dt.mon, 10)
+        self.assertEqual(dt.day, 5)
+        self.assertEqual(dt.year, 2019)
+        self.assertEqual(dt.hour, 12)
+        self.assertEqual(dt.info, "this is a test")
+
+    def test_look(self):
+        dt = DayTime("test1", mon=10, day=5, year=2019, hour=12, explain="this is a test")
+
+        dayed = dt.look("a rainy day")
+
+        self.assertTrue(isinstance(dayed, Act))
+        self.assertEqual(dayed.action, "a rainy day")

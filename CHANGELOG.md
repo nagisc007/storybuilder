@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.0.2] - 2019-03-11
+### Added
+- Act class to add a new attr "behavior"
+- Behavior enum types (from major english verbs)
+- Subject class for using act's subject base
+### Changed
+- Person, Stage, Item and DayTime class based Subject
+- Story check test completely 5w1h.
+### Deleted
+- Example story and test.
+- ActType(MUST, DONE)
+- Must and Done act (instead to an act behavior).
+
 ## [0.0.1] - 2019-03-08
 ### Added
 - This CHANGELOG file to hopefully serve as an evolving example of a standardized open source project CHANGELOG.
@@ -15,5 +28,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Example story as usage.
 - Output story as markdown.
 
-[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.0.1...HEAD
+[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/nagisc007/storybuilder/releases/v0.0.2
 [0.0.1]: https://github.com/nagisc007/storybuilder/releases/v0.0.1
