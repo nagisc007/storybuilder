@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Github issue template
+- Github pull request template
+### Changed
+- Act's verb without a particle
+### Fixed
+- Failed to equal sentences in testtools
 
 ## [0.0.2] - 2019-03-11
 ### Added
