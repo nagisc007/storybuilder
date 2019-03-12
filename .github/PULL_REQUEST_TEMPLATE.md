@@ -1,12 +1,3 @@
----
-name: Pull Request template
-about: Basic PR
-title: 'Prefix #issue: title'
-labels: ''
-assignees: ''
-
----
-
 Japanese title
 ===
 
