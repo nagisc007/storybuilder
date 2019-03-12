@@ -32,53 +32,52 @@ def checked_has_basic_info(test_case, acts, hero, rival, why_keyword, how_keywor
     Raise:
         if no contain the target.
     '''
-    ERR_NOT_EXISTS = "{} is not exists!"
+    ERR_NOT_EXISTS = "{} is not exists!i -- {}"
     # Who:
     for a in acts:
-        if hero.name is a.subject.name:
-            break
+        if hero.name == a.subject.name: break
     else:
-        test_case.fail(ERR_NOT_EXISTS.format(hero.name))
+        test_case.fail(ERR_NOT_EXISTS.format(hero.name, "need to set the Person"))
     # Whom:
     for a in acts:
-        if rival.name is a.subject.name: break
+        if rival.name == a.subject.name: break
     else:
-        test_case.fail(ERR_NOT_EXISTS.format(rival.name))
+        test_case.fail(ERR_NOT_EXISTS.format(rival.name, "need to set the Person"))
     # When:
     for a in acts:
         if isinstance(a.subject, DayTime): break
     else:
-        test_case.fail(ERR_NOT_EXISTS.format('DayTime'))
+        test_case.fail(ERR_NOT_EXISTS.format('DayTime', "need to set a DayTime"))
     # Where:
     for a in acts:
         if isinstance(a.subject, Stage): break
     else:
-        test_case.fail(ERR_NOT_EXISTS.format('Stage'))
+        test_case.fail(ERR_NOT_EXISTS.format('Stage', "need to set a Stage"))
     # What:
     for a in acts:
-        if hero.name is a.subject.name:
+        if hero.name == a.subject.name:
             if a.behavior in (Behavior.MUST_DO, Behavior.WANT):
                 break
     else:
-        test_case.fail(ERR_NOT_EXISTS.format('Purpose'))
+        test_case.fail(ERR_NOT_EXISTS.format('Purpose', "need to set an Act with Behavior.MUST_DO or WANT"))
     # Why:
     for a in acts:
         if a.act_type is ActType.THINK:
             if why_keyword in a.action:
                 break
     else:
-        test_case.fail(ERR_NOT_EXISTS.format('Reason'))
+        test_case.fail(ERR_NOT_EXISTS.format('Reason', "need to set an Act with ActType.THINK"))
     # How:
     for a in acts:
         if a.act_type in (ActType.ACT, ActType.DESC, ActType.TELL):
             if how_keyword in a.action:
                 break
     else:
-        test_case.fail(ERR_NOT_EXISTS.format('Process'))
+        test_case.fail(ERR_NOT_EXISTS.format('Process', "need to set an actional Act with the keyword"))
     # Result:
     for a in acts:
         if a.behavior is Behavior.RESULT: break
     else:
-        test_case.fail(ERR_NOT_EXISTS.format('Result'))
+        test_case.fail(ERR_NOT_EXISTS.format('Result', "need to set an Act with Behavior.RESULT"))
 
     return True
