@@ -120,7 +120,7 @@ class Person(Subject):
         Returns:
             Act object contained a reply.
         """
-        return Act(self, ActType.TELL, Behavior.REPLY, "{}と返事".format(what), withS)
+        return Act(self, ActType.TELL, Behavior.REPLY, "{}返事".format(what), withS)
 
     def tell(self, what, withS=False):
         """
@@ -130,7 +130,7 @@ class Person(Subject):
         Returns:
             Act object contained a dialogue.
         """
-        return Act(self, ActType.TELL, Behavior.TALK, "{}と言う".format(what), withS)
+        return Act(self, ActType.TELL, Behavior.TALK, "{}言う".format(what), withS)
 
     def think(self, what, withS=False):
         """
@@ -140,7 +140,7 @@ class Person(Subject):
         Returns:
             Act object contained a personal thought.
         """
-        return Act(self, ActType.THINK, Behavior.FEEL, "{}と思う".format(what), withS)
+        return Act(self, ActType.THINK, Behavior.FEEL, "{}思う".format(what), withS)
 
     def must(self, what, withS=False):
         """
@@ -170,7 +170,7 @@ class Person(Subject):
         Returns:
             Act object contained a personal thought.
         """
-        return Act(self, ActType.ACT, Behavior.RESULT, "{}".format(what), withS)
+        return Act(self, ActType.ACT, Behavior.RESULT, "{}であった".format(what), withS)
 
 
 class Stage(Subject):

@@ -100,7 +100,7 @@ class PersonTest(unittest.TestCase):
 
         self.assertTrue(isinstance(acted, Act))
         self.assertEqual(acted.act_type, ActType.TELL)
-        self.assertEqual(acted.action, "Yesと返事")
+        self.assertEqual(acted.action, "Yes返事")
         self.assertEqual(acted.behavior, Behavior.REPLY)
 
     def test_tell(self):
@@ -110,7 +110,7 @@ class PersonTest(unittest.TestCase):
 
         self.assertTrue(isinstance(acted, Act))
         self.assertEqual(acted.act_type, ActType.TELL)
-        self.assertEqual(acted.action, "So soと言う")
+        self.assertEqual(acted.action, "So so言う")
         self.assertEqual(acted.behavior, Behavior.TALK)
 
     def test_think(self):
@@ -120,7 +120,7 @@ class PersonTest(unittest.TestCase):
 
         self.assertTrue(isinstance(acted, Act))
         self.assertEqual(acted.act_type, ActType.THINK)
-        self.assertEqual(acted.action, "about himselfと思う")
+        self.assertEqual(acted.action, "about himself思う")
         self.assertEqual(acted.behavior, Behavior.FEEL)
 
     def test_must(self):
@@ -150,7 +150,7 @@ class PersonTest(unittest.TestCase):
 
         self.assertTrue(isinstance(acted, Act))
         self.assertEqual(acted.act_type, ActType.ACT)
-        self.assertEqual(acted.action, "forget his home work")
+        self.assertEqual(acted.action, "forget his home workであった")
         self.assertEqual(acted.behavior, Behavior.RESULT)
 
 
