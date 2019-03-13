@@ -62,11 +62,11 @@ def checked_has_basic_info(test_case, acts, hero, rival, why_keyword, how_keywor
         test_case.fail(ERR_NOT_EXISTS.format('Purpose', "need to set an Act with Behavior.MUST_DO or WANT"))
     # Why:
     for a in acts:
-        if a.act_type is ActType.THINK:
+        if a.act_type in (ActType.THINK, ActType.TELL):
             if why_keyword in a.action:
                 break
     else:
-        test_case.fail(ERR_NOT_EXISTS.format('Reason', "need to set an Act with ActType.THINK"))
+        test_case.fail(ERR_NOT_EXISTS.format('Reason', "need to set an Act with ActType.THINK or TELL"))
     # How:
     for a in acts:
         if a.act_type in (ActType.ACT, ActType.DESC, ActType.TELL):

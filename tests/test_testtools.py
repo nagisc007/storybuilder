@@ -36,3 +36,12 @@ class TestCheckTools(unittest.TestCase):
                 checked_has_basic_info(self, self.test_story,
                                         self.taro, self.hanako,
                                         "boring", "transfer"))
+
+    def test_checked_has_basic_info_why_by_tell(self):
+        why_tell_story = self.test_story + (self.taro.tell("bored"),)
+
+        self.assertTrue(
+                checked_has_basic_info(self,
+                    why_tell_story, self.taro, self.hanako,
+                    "bored", "transfer"
+                    ))
