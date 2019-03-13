@@ -130,7 +130,7 @@ class Person(Subject):
         Returns:
             Act object contained a dialogue.
         """
-        return Act(self, ActType.TELL, Behavior.TALK, "{}言う".format(what), withS)
+        return Act(self, ActType.TELL, Behavior.TALK, "{}".format(what), withS)
 
     def think(self, what, withS=False):
         """

@@ -110,7 +110,7 @@ class PersonTest(unittest.TestCase):
 
         self.assertTrue(isinstance(acted, Act))
         self.assertEqual(acted.act_type, ActType.TELL)
-        self.assertEqual(acted.action, "So so言う")
+        self.assertEqual(acted.action, "So so")
         self.assertEqual(acted.behavior, Behavior.TALK)
 
     def test_think(self):
