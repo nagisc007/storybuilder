@@ -20,13 +20,13 @@ class Subject(object):
         self.info = info
         self.name = name
 
-    def look(self, how, withS=False):
+    def look(self, state, withS=False):
         """
         Args:
-            how (str): the subject looking.
+            state (str): the subject looking.
             withS (bool): with subject.
         """
-        return Act(self, ActType.DESC, Behavior.LOOK, how, withS)
+        return Act(self, ActType.DESC, Behavior.LOOK, state, withS)
 
 
 class Act(object):
@@ -83,8 +83,8 @@ class Title(Act):
         super().__init__(Subject(title, info), ActType.SYMBOL, Behavior.DISPLAY, title)
 
 
-class Person(Subject):
-    """Character object created.
+class BasePerson(Subject):
+    """Basic character object created.
 
     Attributes:
     """
@@ -95,6 +95,7 @@ class Person(Subject):
             age (int): character's age
             sex (str): character's sex
             job (str): character's job
+            info (str): a short description.
         """
         super().__init__(name, info)
         self.age = age
@@ -112,65 +113,55 @@ class Person(Subject):
         """
         return Act(self, ActType.ACT, behaviour, action, withS)
 
-    def reply(self, what, withS=False):
+    def tell(self, action, withS=False):
         """
         Args:
-            what (str): short description.
-            withS (bool): with subject.
-        Returns:
-            Act object contained a reply.
-        """
-        return Act(self, ActType.TELL, Behavior.REPLY, "{}返事".format(what), withS)
-
-    def tell(self, what, withS=False):
-        """
-        Args:
-            what (str): short description.
+            action (str): short description.
             withS (bool): with subject.
         Returns:
             Act object contained a dialogue.
         """
-        return Act(self, ActType.TELL, Behavior.TALK, "{}".format(what), withS)
+        return Act(self, ActType.TELL, Behavior.TALK, action, withS)
 
-    def think(self, what, withS=False):
+    def think(self, action, withS=False):
         """
         Args:
-            what (str): thinking strings.
+            action (str): thinking strings.
             withS (bool): with subject.
         Returns:
             Act object contained a personal thought.
         """
-        return Act(self, ActType.THINK, Behavior.FEEL, "{}思う".format(what), withS)
+        return Act(self, ActType.THINK, Behavior.FEEL, action, withS)
 
-    def must(self, what, withS=False):
+    def must(self, action, withS=False):
         """
         Args:
-            what (str): a subject must do something.
+            action (str): a subject must do something.
             withS (bool): with subject.
         Returns:
             Act object contained a personal thought.
         """
-        return Act(self, ActType.THINK, Behavior.MUST_DO, "{}しなければならない".format(what), withS)
+        return Act(self, ActType.THINK, Behavior.MUST_DO, action, withS)
 
-    def want(self, what, withS=False):
+    def want(self, action, withS=False):
         """
         Args:
-            what (str): a subject want to do something.
+            action (str): a subject want to do something.
             withS (bool): with subject.
         Returns:
             Act object contained a personal thought.
         """
-        return Act(self, ActType.THINK, Behavior.WANT, "{}したい".format(what), withS)
+        return Act(self, ActType.THINK, Behavior.WANT, action, withS)
 
-    def result(self, what, withS=False):
+    def result(self, action, withS=False):
         """
         Args:
-            what (str): a subject got any result.
+            action (str): a subject got any result.
             withS (bool): with subject.
         Returns:
             Act object contained a personal thought.
         """
-        return Act(self, ActType.ACT, Behavior.RESULT, "{}であった".format(what), withS)
+        return Act(self, ActType.ACT, Behavior.RESULT, action, withS)
 
 
 class Stage(Subject):
@@ -178,13 +169,13 @@ class Stage(Subject):
 
     Attributes:
     """
-    def __init__(self, name, explain):
+    def __init__(self, name, info="nothing"):
         """
         Args:
             name (str): stage's name.
-            explain (str): short description.
+            info (str, optional): a short description.
         """
-        super().__init__(name, explain)
+        super().__init__(name, info)
 
 
 class Item(Subject):
@@ -192,13 +183,13 @@ class Item(Subject):
 
     Attributes.
     """
-    def __init__(self, name, explain):
+    def __init__(self, name, info="nothing"):
         """
         Args:
             name (str): item's name.
-            explain (str): short description.
+            info (str, optional): a short description.
         """
-        super().__init__(name, explain)
+        super().__init__(name, info)
 
 
 class DayTime(Subject):
@@ -206,7 +197,7 @@ class DayTime(Subject):
 
     Attributes.
     """
-    def __init__(self, name, mon=0, day=0, year=0, hour=0, explain="nothing"):
+    def __init__(self, name, mon=0, day=0, year=0, hour=0, info="nothing"):
         """
         Args:
             name (str): object name.
@@ -214,10 +205,13 @@ class DayTime(Subject):
             day (int): day number.
             year (int): year number.
             hour (int): hour number.
+            info (str, optional): a short description.
         """
-        super().__init__(name, explain)
+        super().__init__(name, info)
         self.day = day
         self.hour = hour
         self.mon = mon
         self.year = year
 
+    def elapse(self, action="過ぎる", withS=False):
+        return Act(self, ActType.DESC, Behavior.PASS, action, withS)

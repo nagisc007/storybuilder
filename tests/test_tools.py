@@ -5,7 +5,8 @@
 import unittest
 
 from builder.acttypes import ActType, Behavior
-from builder.base import Act, Title, Person, Stage, DayTime
+from builder.base import Act, Title, Stage, DayTime
+from builder.person import Person
 from builder.tools import build_action_strings
 from builder.tools import build_description_strings
 from builder.tools import output

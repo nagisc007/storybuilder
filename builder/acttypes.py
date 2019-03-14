@@ -542,6 +542,7 @@ class Behavior(Enum):
     PROVIDE = auto()
     PUBLISH = auto()
     PULL = auto()
+    PUNCH = auto()
     PUNISH = auto()
     PURCHASE = auto()
     PURSUE = auto()

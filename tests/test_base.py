@@ -4,8 +4,8 @@
 import unittest
 
 from builder.acttypes import ActType, Behavior
-from builder.base import Subject, Act, Title, Person, Stage, Item, DayTime
-
+from builder.base import Subject, Act, Title, BasePerson, Stage, Item, DayTime
+from builder.person import Person
 
 class SampleObj(object):
     def __init__(self, name):
@@ -64,13 +64,14 @@ class TitleTest(unittest.TestCase):
 class PersonTest(unittest.TestCase):
 
     def test_attributes(self):
-        psn = Person("Taro", 15, "male", "student", "he is a man")
+        psn = Person("Taro", 15, "male", "student", "I am", "he is a man")
 
         self.assertTrue(isinstance(psn, Person))
         self.assertEqual(psn.name, "Taro")
         self.assertEqual(psn.age, 15)
         self.assertEqual(psn.sex, "male")
         self.assertEqual(psn.job, "student")
+        self.assertEqual(psn.selfcall, "I am")
         self.assertEqual(psn.info, "he is a man")
 
     def test_act(self):
@@ -99,8 +100,8 @@ class PersonTest(unittest.TestCase):
         acted = psn.reply("Yes")
 
         self.assertTrue(isinstance(acted, Act))
-        self.assertEqual(acted.act_type, ActType.TELL)
-        self.assertEqual(acted.action, "Yes返事")
+        self.assertEqual(acted.act_type, ActType.ACT)
+        self.assertEqual(acted.action, "Yes")
         self.assertEqual(acted.behavior, Behavior.REPLY)
 
     def test_tell(self):
@@ -120,7 +121,7 @@ class PersonTest(unittest.TestCase):
 
         self.assertTrue(isinstance(acted, Act))
         self.assertEqual(acted.act_type, ActType.THINK)
-        self.assertEqual(acted.action, "about himself思う")
+        self.assertEqual(acted.action, "about himself")
         self.assertEqual(acted.behavior, Behavior.FEEL)
 
     def test_must(self):
@@ -130,7 +131,7 @@ class PersonTest(unittest.TestCase):
 
         self.assertTrue(isinstance(acted, Act))
         self.assertEqual(acted.act_type, ActType.THINK)
-        self.assertEqual(acted.action, "home workしなければならない")
+        self.assertEqual(acted.action, "home work")
         self.assertEqual(acted.behavior, Behavior.MUST_DO)
 
     def test_want(self):
@@ -140,7 +141,7 @@ class PersonTest(unittest.TestCase):
 
         self.assertTrue(isinstance(acted, Act))
         self.assertEqual(acted.act_type, ActType.THINK)
-        self.assertEqual(acted.action, "sleepしたい")
+        self.assertEqual(acted.action, "sleep")
         self.assertEqual(acted.behavior, Behavior.WANT)
 
     def test_result(self):
@@ -150,7 +151,7 @@ class PersonTest(unittest.TestCase):
 
         self.assertTrue(isinstance(acted, Act))
         self.assertEqual(acted.act_type, ActType.ACT)
-        self.assertEqual(acted.action, "forget his home workであった")
+        self.assertEqual(acted.action, "forget his home work")
         self.assertEqual(acted.behavior, Behavior.RESULT)
 
 
@@ -193,7 +194,7 @@ class ItemTest(unittest.TestCase):
 class DayTimeTest(unittest.TestCase):
 
     def test_attributes(self):
-        dt = DayTime("test1", mon=10, day=5, year=2019, hour=12, explain="this is a test")
+        dt = DayTime("test1", mon=10, day=5, year=2019, hour=12, info="this is a test")
 
         self.assertTrue(isinstance(dt, DayTime))
         self.assertEqual(dt.name, "test1")
@@ -204,7 +205,7 @@ class DayTimeTest(unittest.TestCase):
         self.assertEqual(dt.info, "this is a test")
 
     def test_look(self):
-        dt = DayTime("test1", mon=10, day=5, year=2019, hour=12, explain="this is a test")
+        dt = DayTime("test1", mon=10, day=5, year=2019, hour=12, info="this is a test")
 
         dayed = dt.look("a rainy day")
 

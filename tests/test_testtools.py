@@ -4,7 +4,8 @@
 import unittest
 
 from builder.acttypes import Behavior
-from builder.base import Title, Person, Stage, DayTime
+from builder.base import Title, Stage, DayTime
+from builder.person import Person
 from builder.testtools import checked_if_all_actions
 from builder.testtools import checked_has_basic_info
 
