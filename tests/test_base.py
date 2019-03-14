@@ -63,6 +63,9 @@ class TitleTest(unittest.TestCase):
 
 class PersonTest(unittest.TestCase):
 
+    def setUp(self):
+        self.psn = Person("Taro", 15, "male", "student", "I am", "he is a man")
+
     def test_attributes(self):
         psn = Person("Taro", 15, "male", "student", "I am", "he is a man")
 
@@ -153,6 +156,14 @@ class PersonTest(unittest.TestCase):
         self.assertEqual(acted.act_type, ActType.ACT)
         self.assertEqual(acted.action, "forget his home work")
         self.assertEqual(acted.behavior, Behavior.RESULT)
+
+    def test_sub_act_check(self):
+        acted = self.psn.check("note")
+
+        self.assertTrue(isinstance(acted, Act))
+        self.assertEqual(acted.act_type, ActType.ACT)
+        self.assertEqual(acted.action, "note")
+        self.assertEqual(acted.behavior, Behavior.HEAR)
 
 
 class StageTest(unittest.TestCase):
