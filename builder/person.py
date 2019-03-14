@@ -10,13 +10,13 @@ class Person(BasePerson):
 
     Attributes:
     (inherited)
-        act (action, behavior, withS): basic action attr.
-        look (action, withS): looking description attr.
-        tell (action, withS): dialogue attr.
-        think (action, withS): subject's thought attr.
-        must (action, withS): for episode purpose attr.
-        want (action, withS): for episode reason attr.
-        result (action, withS): for episode result attr.
+        act (action, behavior, act_word, with_act, with_sub): basic action attr.
+        look (action, act_word, with_act, with_sub): looking description attr.
+        tell (action, act_word, with_act, with_sub): dialogue attr.
+        think (action, act_word, with_act, with_sub): subject's thought attr.
+        must (action, act_word, with_act, with_sub): for episode purpose attr.
+        want (action, act_word, with_act, with_sub): for episode reason attr.
+        result (action, act_word, with_act, with_sub): for episode result attr.
     """
     def __init__(self, name, age, sex, job, selfcall="私", info="nothing"):
         super().__init__(name, age, sex, job, info)
@@ -32,10 +32,10 @@ class Person(BasePerson):
     def close(self, action, act_word="閉める", with_act=True, with_sub=False):
         return Act(self, ActType.ACT, Behavior.CLOSE, action, act_word, with_act, with_sub)
 
-    def come(self, action, act_word="来る", withAct=True, withS=False):
+    def come(self, action, act_word="来る", with_act=True, with_sub=False):
         return Act(self, ActType.ACT, Behavior.COME, action, act_word, with_act, with_sub)
 
-    def feel(self, action, act_word="感じる", withAct=True, withS=False):
+    def feel(self, action, act_word="感じる", with_act=True, with_sub=False):
         return Act(self, ActType.THINK, Behavior.FEEL, action, act_word, with_act, with_sub)
 
     def go(self, action, act_word="行く", with_act=True, with_sub=False):
@@ -78,7 +78,7 @@ class Person(BasePerson):
         return Act(self, ActType.ACT, Behavior.RELEASE, action, act_word, with_act, with_sub)
 
     def talk(self, action, act_word="話す", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.TALK, action, withS)
+        return Act(self, ActType.ACT, Behavior.TALK, action, act_word, with_act, with_sub)
 
     def wake(self, action, act_word="目覚める", with_act=True, with_sub=False):
         return Act(self, ActType.ACT, Behavior.WAKE, action, act_word, with_act, with_sub)
