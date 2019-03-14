@@ -20,13 +20,15 @@ class Subject(object):
         self.info = info
         self.name = name
 
-    def look(self, state, withS=False):
+    def look(self, state, act_word="見える", with_act=False, with_sub=False):
         """
         Args:
             state (str): the subject looking.
-            withS (bool): with subject.
+            act_word (str, optional): action string.
+            with_act (bool, optional): with act word.
+            with_sub (bool, optional): with subject.
         """
-        return Act(self, ActType.DESC, Behavior.LOOK, state, withS)
+        return Act(self, ActType.DESC, Behavior.LOOK, state, act_word, with_act, with_sub)
 
 
 class Act(object):
@@ -34,27 +36,33 @@ class Act(object):
 
     Attributes:
         act_type (:enum:ActType): action major type.
+        act_word (str): base action word.
         action (str): action describes.
         behavior (:enum:Behavior): action behavior type.
         description (str): a description of this action.
         subject (:obj:`Subject`): subject of this action.
-        withS (bool): which has desplayed with subject.
+        with_act (bool): which has desplayed with act word.
+        with_sub (bool): which has desplayed with subject.
     """
-    def __init__(self, subject, act_type, behavior, action, withS=False):
+    def __init__(self, subject, act_type, behavior, action, act_word="", with_act=False, with_sub=False):
         """
         Args:
             subject (:obj:`Subject`): action subject.
             act_type (:enum:`ActType`): action type.
             behavior (:enum:`Behavior`): action behavior type.
             action (str): description of this action.
-            withS (bool): if True, description displays with subject.
+            act_word (str, optional): an action string.
+            with_act (bool, optional): if True, action displays with act word
+            with_sub (bool, optional): if True, description displays with subject.
         """
         self.action = action
         self.act_type = act_type
+        self.act_word = act_word
         self.behavior = behavior
         self.description = ""
         self.subject = subject
-        self.withS = withS
+        self.with_act = with_act
+        self.with_sub = with_sub
 
     def desc(self, description):
         """
@@ -102,66 +110,78 @@ class BasePerson(Subject):
         self.job = job
         self.sex = sex
 
-    def act(self, action, behaviour=Behavior.DO, withS=False):
+    def act(self, action, behaviour=Behavior.DO, act_word="", with_act=False, with_sub=False):
         """
         Args:
             action (str): action string.
-            behaviour (:enum:`Behavior`): action behavior type.
-            withS (bool): with subject.
+            behaviour (:enum:`Behavior`, optional): action behavior type.
+            act_word (str, optional): action word.
+            with_act (bool, optional): with act word.
+            with_sub (bool, optional): with subject.
         Returns:
             Act object contained a personal action.
         """
-        return Act(self, ActType.ACT, behaviour, action, withS)
+        return Act(self, ActType.ACT, behaviour, action, act_word, with_act, with_sub)
 
-    def tell(self, action, withS=False):
+    def tell(self, action, act_word="", with_act=False, with_sub=False):
         """
         Args:
             action (str): short description.
-            withS (bool): with subject.
+            act_word (str, optional): action string.
+            with_act (bool, optional): with act word.
+            with_sub (bool, optional): with subject.
         Returns:
             Act object contained a dialogue.
         """
-        return Act(self, ActType.TELL, Behavior.TALK, action, withS)
+        return Act(self, ActType.TELL, Behavior.TALK, action, act_word, with_act, with_sub)
 
-    def think(self, action, withS=False):
+    def think(self, action, act_word="思う", with_act=False, with_sub=False):
         """
         Args:
             action (str): thinking strings.
-            withS (bool): with subject.
+            act_word (str, optional): action string.
+            with_act (bool, optional): with act word.
+            with_sub (bool, optional): with subject.
         Returns:
             Act object contained a personal thought.
         """
-        return Act(self, ActType.THINK, Behavior.FEEL, action, withS)
+        return Act(self, ActType.THINK, Behavior.FEEL, action, act_word, with_act, with_sub)
 
-    def must(self, action, withS=False):
+    def must(self, action, act_word="しなければならない", with_act=False, with_sub=False):
         """
         Args:
             action (str): a subject must do something.
-            withS (bool): with subject.
+            act_word (str, optional): action string.
+            with_act (bool, optional): with act word.
+            with_sub (bool, optional): with subject.
         Returns:
             Act object contained a personal thought.
         """
-        return Act(self, ActType.THINK, Behavior.MUST_DO, action, withS)
+        return Act(self, ActType.THINK, Behavior.MUST_DO, action, act_word, with_act, with_sub)
 
-    def want(self, action, withS=False):
+    def want(self, action, act_word="したい", with_act=False, with_sub=False):
         """
         Args:
             action (str): a subject want to do something.
-            withS (bool): with subject.
+            act_word (str, optional): action string.
+            with_act (bool, optional): with act word.
+            with_sub (bool, optional): with subject.
         Returns:
             Act object contained a personal thought.
         """
-        return Act(self, ActType.THINK, Behavior.WANT, action, withS)
+        return Act(self, ActType.THINK, Behavior.WANT, action, act_word, with_act, with_sub)
 
-    def result(self, action, withS=False):
+    def result(self, action, act_word="だった", with_act=False, with_sub=False):
         """
         Args:
             action (str): a subject got any result.
-            withS (bool): with subject.
+            act_word (str, optional): act string.
+            with_act (bool, optional): with act word.
+            with_sub (bool, optional): with subject.
         Returns:
             Act object contained a personal thought.
         """
-        return Act(self, ActType.ACT, Behavior.RESULT, action, withS)
+        return Act(self, ActType.ACT, Behavior.RESULT, action, act_word, with_act, with_sub)
 
 
 class Stage(Subject):
@@ -213,5 +233,13 @@ class DayTime(Subject):
         self.mon = mon
         self.year = year
 
-    def elapse(self, action="過ぎる", withS=False):
-        return Act(self, ActType.DESC, Behavior.PASS, action, withS)
+    def elapse(self, action, act_word="過ぎる", with_act=True, with_sub=False):
+        """
+        Args:
+            action (str): action description.
+            act_word (str, optional): action string.
+            with_act (bool, optional): with act word.
+            with_sub (bool, optional): with subject.
+        """
+        return Act(self, ActType.DESC, Behavior.PASS, action, act_word, with_act, with_sub)
+
