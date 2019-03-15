@@ -3,6 +3,8 @@
 """
 
 import unittest
+import sys
+from io import StringIO
 
 from builder.acttypes import ActType, Behavior
 from builder.base import Act, Title, Stage, DayTime
@@ -66,9 +68,18 @@ class TestTools(unittest.TestCase):
         self.assertEqual(descs[4], "bother morning。\n")
 
     def test_output(self):
-        """TODO: in preparation
-        """
-        pass
+        # ready
+        org_stdout, sys.stdout = sys.stdout, StringIO()
+        test_story = (
+                Title("Test story"),
+                self.taro.sleep("zzz"),
+                )
+        output("Test", test_story, False, True)
+        self.assertEqual(sys.stdout.getvalue(),
+                "# Test (as Actions)\n\n\n## Test story\n\nTaro - 眠る: zzz\n")
+
+        # fallback to stdout
+        sys.stdout = org_stdout
 
     def test_output_md(self):
         """TODO: in preparation

@@ -3,8 +3,26 @@
 """
 
 import os
+import sys
+import argparse
 
 from .acttypes import ActType
+
+
+def options_parsed():
+    '''
+    '''
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('-d', '--desc', help="output the story as a description", action='store_false')
+    parser.add_argument('-a', '--action', help="no output the story action", action='store_true')
+    parser.add_argument('-i', '--info', help="output the story info", action='store_false')
+    parser.add_argument('-c', '--console', help="output to the console", action='store_false')
+
+    # get result
+    args = parser.parse_args()
+
+    return (args)
 
 
 def build_action_strings(story, is_debug=False):
@@ -56,22 +74,35 @@ def build_description_strings(story, is_debug=False):
     return desc_str
 
 
-def output(story, is_desc=False, is_debug=False):
+def output(title, story, is_desc=False, is_debug=False):
     '''Output story to the console.
 
+    Args:
+        title (str): a story title.
+        story (:tuple:obj:`Act`): a story object.
+        is_desc (bool, optional): if True, as a description.
+        is_debug (bool, optional): if True, use a debug mode.
     Returns:
         True if complete, otherwise False.
     '''
     strs = build_description_strings(story, is_debug) if is_desc else build_action_strings(story, is_debug)
+    print("# {}{}\n".format(title, "" if is_desc else " (as Actions)"))
     for p in strs:
         print(p, end="")
 
     return True
 
 
-def output_md(story, filename='story', build_dir='build', is_desc=False, is_debug=False):
+def output_md(title, story, filename='story', build_dir='build', is_desc=False, is_debug=False):
     '''Output story as a markdown file.
 
+    Args:
+        title (str): a story title.
+        story (:tuple:obj:`Act`): the story object.
+        filename (str, optional): a file name.
+        build_dir (str, optional): a build directory path.
+        is_desc (bool, optional): if True, as a description.
+        is_debug (bool, optional)
     Returns:
         True if compelete, otherwise False
     '''
@@ -81,9 +112,10 @@ def output_md(story, filename='story', build_dir='build', is_desc=False, is_debu
     if not os.path.isdir(build_dir):
         os.makedirs(build_dir) # create build dir
     # create file
-    filefullpath = os.path.join(build_dir, "{}.{}".format(filename, EXT_MARKDOWN))
+    filefullpath = os.path.join(build_dir, "{}.{}".format(filename if is_desc else "{}_a".format(filename), EXT_MARKDOWN))
     strs = build_description_strings(story, is_debug) if is_desc else build_action_strings(story, is_debug)
     with open(filefullpath, 'w') as f:
+        f.write("# {}{}\n".format(title, "" if is_desc else " (as Actions)"))
         for s in strs:
             f.write(s)
 
