@@ -9,123 +9,97 @@ class Person(BasePerson):
     """Character object created.
 
     Attributes:
-    (inherited)
-        act (action, behavior, act_word, with_act, with_sub): basic action attr.
-        look (action, act_word, with_act, with_sub): looking description attr.
-        tell (action, act_word, with_act, with_sub): dialogue attr.
-        think (action, act_word, with_act, with_sub): subject's thought attr.
-        must (action, act_word, with_act, with_sub): for episode purpose attr.
-        want (action, act_word, with_act, with_sub): for episode reason attr.
-        result (action, act_word, with_act, with_sub): for episode result attr.
+        selfcall (str, optioanl): a subject called himself.
     """
-    def __init__(self, name, age, sex, job, selfcall="私", info="nothing"):
-        super().__init__(name, age, sex, job, info)
+    def __init__(self, name, age, sex, job, selfcall="私", note="nothing"):
+        super().__init__(name, age, sex, job, note)
         self.selfcall = selfcall
 
     # basic actions
-    def acquire(self, action, act_word="手に入れる", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.ACQUIRE, action, act_word, with_act, with_sub)
+    def deal(self, action, act_word="扱う"):
+        return Act(self, ActType.ACT, Behavior.DEAL, action, act_word)
 
-    def catch(self, action, act_word="捕まえる", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.CATCH, action, act_word, with_act, with_sub)
+    def do(self, action, act_word="行う"):
+        return Act(self, ActType.ACT, Behavior.DO, action, act_word)
 
-    def close(self, action, act_word="閉める", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.CLOSE, action, act_word, with_act, with_sub)
+    def feel(self, action, act_word="感じる"):
+        return Act(self, ActType.ACT, Behavior.FEEL, action, act_word)
 
-    def come(self, action, act_word="来る", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.COME, action, act_word, with_act, with_sub)
+    def handle(self, action, act_word="操作する"):
+        return Act(self, ActType.ACT, Behavior.HANDLE, action, act_word)
 
-    def feel(self, action, act_word="感じる", with_act=True, with_sub=False):
-        return Act(self, ActType.THINK, Behavior.FEEL, action, act_word, with_act, with_sub)
+    def hear(self, action, act_word="聞く"):
+        return Act(self, ActType.ACT, Behavior.HEAR, action, act_word)
 
-    def go(self, action, act_word="行く", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.GO, action, act_word, with_act, with_sub)
+    def move(self, action, act_word="動く"):
+        return Act(self, ActType.ACT, Behavior.MOVE, action, act_word)
 
-    def hear(self, action, act_word="聞く", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.HEAR, action, act_word, with_act, with_sub)
+    def react(self, action, act_word="反応する"):
+        return Act(self, ActType.ACT, Behavior.REACT, action, act_word)
 
-    def move(self, action, act_word="動く", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.MOVE, action, act_word, with_act, with_sub)
+    def see(self, action, act_word="見る"):
+        return Act(self, ActType.ACT, Behavior.SEE, action, act_word)
 
-    def open(self, action, act_word="開く", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.OPEN, action, act_word, with_act, with_sub)
-
-    def punch(self, action, act_word="殴る", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.PUNCH, action, act_word, with_act, with_sub)
-
-    def remember(self, action, act_word="思い出す", with_act=True, with_sub=False):
-        return Act(self, ActType.THINK, Behavior.REMEMBER, action, act_word, with_act, with_sub)
-
-    def reply(self, action, act_word="返事する", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.REPLY, action, act_word, with_act, with_sub)
-
-    def see(self, action, act_word="見る", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.SEE, action, act_word, with_act, with_sub)
-
-    def sleep(self, action, act_word="眠る", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.SLEEP, action, act_word, with_act, with_sub)
-
-    def smell(self, action, act_word="匂う", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.SMELL, action, act_word, with_act, with_sub)
-
-    def smile(self, action, act_word="微笑する", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.SMILE, action, act_word, with_act, with_sub)
-
-    def speak(self, action, act_word="声を出す", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.SPEAK, action, act_word, with_act, with_sub)
-
-    def release(self, action, act_word="解放する", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.RELEASE, action, act_word, with_act, with_sub)
-
-    def talk(self, action, act_word="話す", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.TALK, action, act_word, with_act, with_sub)
-
-    def wake(self, action, act_word="目覚める", with_act=True, with_sub=False):
-        return Act(self, ActType.ACT, Behavior.WAKE, action, act_word, with_act, with_sub)
+    def talk(self, action, act_word="話す"):
+        return Act(self, ActType.ACT, Behavior.TALK, action, act_word)
 
     # sub actions
-    def agree(self, action, act_word="頷く", with_act=True, with_sub=False):
-        return self.reply(action, act_word, with_act, with_sub)
+    def acquire(self, action): return self.deal(action, "手に入れる")
 
-    def ask(self, action, act_word="尋ねる", with_act=True, with_sub=False):
-        return self.hear(action, act_word, with_act, with_sub)
+    def agree(self, action): return self.react(action, "頷く")
 
-    def brow(self, action, act_word="眉を顰める", with_act=True, with_sub=False):
-        return self.feel(action, act_word, with_act, with_sub)
+    def ask(self, action): return self.hear(action, "尋ねる")
 
-    def call(self, action, act_word="呼ぶ", with_act=True, with_sub=False):
-        return self.speak(action, act_word, with_act, with_sub)
+    def brow(self, action): return self.feel(action, "眉を顰める")
 
-    def check(self, action, act_word="確認する", with_act=True, with_sub=False):
-        return self.hear(action, act_word, with_act, with_sub)
+    def call(self, action): return self.talk(action, "呼ぶ")
 
-    def confuse(self, action, act_word="困惑する", with_act=True, with_sub=False):
-        return self.feel(action, act_word, with_act, with_sub)
+    def catch(self, action): return self.deal(action, "捕まえる")
 
-    def explain(self, action, act_word="説明する", with_act=True, with_sub=False):
-        return self.talk(action, act_word, with_act, with_sub)
+    def check(self, action): return self.deal(action, "確認する")
 
-    def gaze(self, action, act_word="見つめる", with_act=True, with_sub=False):
-        return self.see(action, act_word, with_act, with_sub)
+    def close(self, action): return self.handle(action, "閉める")
 
-    def growl(self, action, act_word="唸る", with_act=True, with_sub=False):
-        return self.speak(action, act_word, with_act, with_sub)
+    def come(self, action): return self.move(action, "来る")
 
-    def maon(self, action, act_word="呻く", with_act=True, with_sub=False):
-        return self.speak(action, act_word, with_act, with_sub)
+    def confuse(self, action): return self.feel(action, "困惑する")
 
-    def oppose(self, action, act_word="反対する", with_act=True, with_sub=False):
-        return self.reply(action, act_word, with_act, with_sub)
+    def explain(self, action): return self.talk(action, "説明する")
 
-    def surprise(self, action, act_word="驚く", with_act=True, with_sub=False):
-        return self.feel(action, act_word, with_act, with_sub)
+    def gaze(self, action): return self.see(action, "見つめる")
 
-    def stare(self, action, act_word="睨む", with_act=True, with_sub=False):
-        return self.see(action, act_word, with_act, with_sub)
+    def go(self, action): return self.move(action, "行く")
 
-    def take(self, action, act_word="連れて行く", with_act=True, with_sub=False):
-        return self.go(action, act_word, with_act, with_sub)
+    def growl(self, action): return self.feel(action, "唸る")
 
-    def visit(self, action, act_word="訪れる", with_act=True, with_sub=False):
-        return self.go(action, act_word, with_act, with_sub)
+    def maon(self, action): return self.feel(action, "呻く")
 
+    def open(self, action): return self.handle(action, "開く")
+
+    def oppose(self, action): return self.react(action, "反対する")
+
+    def punch(self, action): return self.handle(action, "殴る")
+
+    def remember(self, action): return self.think(action, "思い出す")
+
+    def reply(self, action): return self.react(action, "返事する")
+
+    def release(self, action): return self.deal(action, "解放する")
+
+    def sleep(self, action): return self.do(action, "眠る")
+
+    def smell(self, action): return self.deal(action, "匂う")
+
+    def smile(self, action): return self.feel(action, "微笑する")
+
+    def speak(self, action): return self.talk(action, "声を出す")
+
+    def stare(self, action): return self.see(action, "睨む")
+
+    def surprise(self, action): return self.react(action, "驚く")
+
+    def take(self, action): return self.move(action, "連れて行く")
+
+    def visit(self, action): return self.move(action, "訪れる")
+
+    def wake(self, action): return self.do(action, "目覚める")

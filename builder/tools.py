@@ -17,15 +17,15 @@ def build_action_strings(story, is_debug=False):
     
     for s in story:
         if s.act_type is ActType.SYMBOL:
-            act_str.append("\n## {}\n\n".format(_action_with_act_word_if_selected(s)))
+            act_str.append("\n## {}\n\n".format(s.action))
         elif s.act_type is ActType.DESC or s.act_type is ActType.ACT:
-            act_str.append("{}\n".format(_action_with_act_word_if_selected(s)))
+            act_str.append("{}\n".format(_action_info_builded(s)))
         elif s.act_type is ActType.TELL:
-            act_str.append("「{}」{}\n".format(s.action, s.act_word))
+            act_str.append("{}\n".format(_action_info_builded(s)))
         elif s.act_type is ActType.THINK:
-            act_str.append("{}\n".format(_action_with_act_word_if_selected(s)))
+            act_str.append("{}\n".format(_action_info_builded(s)))
         elif s.act_type is ActType.TEST and is_debug:
-            act_str.append("> TEST:{}\n".format(_action_with_act_word_if_selected(s)))
+            act_str.append("> TEST:{}\n".format(_action_info_builded(s)))
         else:
             pass
 
@@ -43,7 +43,7 @@ def build_description_strings(story, is_debug=False):
     for s in story:
         if s.act_type is ActType.SYMBOL:
             if s.description:
-                desc_str.append("\n## {} -- {}\n\n".format(s.action, s.description))
+                desc_str.append("\n## {} -- {}\n\n".format(s.action, s.description.description))
             else:
                 desc_str.append("\n## {}\n\n".format(s.action))
         elif s.act_type is ActType.DESC or s.act_type is ActType.ACT or s.act_type is ActType.THINK:
@@ -64,7 +64,7 @@ def output(story, is_desc=False, is_debug=False):
     '''
     strs = build_description_strings(story, is_debug) if is_desc else build_action_strings(story, is_debug)
     for p in strs:
-        print(p)
+        print(p, end="")
 
     return True
 
@@ -90,6 +90,17 @@ def output_md(story, filename='story', build_dir='build', is_desc=False, is_debu
     return True
 
 
+def _action_info_builded(act):
+    '''Action string builder for a display.
+    Args:
+        :obj:`Act`: an action object.
+    Returns:
+        str: action info string.
+    '''
+    return "{} - {}: {}".format(act.subject.name, act.act_word,
+            "「{}」".format(act.action) if act.act_type == ActType.TELL else act.action)
+
+
 def _description_selected(act):
     '''Description selector.
 
@@ -97,15 +108,6 @@ def _description_selected(act):
         description if the act has a description, otherwise a action.
     '''
     if act.description:
-        return act.description
+        return act.description.description
     return act.action
-
-
-def _action_with_act_word_if_selected(act):
-    '''Action string created with selecting act word.
-
-    Returns:
-        str: action string.
-    '''
-    return "{}{}".format(act.action, act.act_word) if act.with_act else act.action
 

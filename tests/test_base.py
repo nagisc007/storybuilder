@@ -20,7 +20,7 @@ class SubjectTest(unittest.TestCase):
 
         self.assertTrue(isinstance(subjected, Act))
         self.assertEqual(sbj.name, "test1")
-        self.assertEqual(sbj.info, "test info")
+        self.assertEqual(sbj.note, "test info")
         self.assertEqual(subjected.subject, sbj)
 
 
@@ -41,12 +41,12 @@ class ActTest(unittest.TestCase):
     def test_desc(self):
         act = Act(self.subject, ActType.TEST, Behavior.DO, "test act")
 
-        self.assertEqual(act.description, "")
+        self.assertEqual(act.description, None)
         
         acted = act.desc("this is an action")
 
         self.assertTrue(isinstance(acted, Act))
-        self.assertEqual(acted.description, "this is an action")
+        self.assertEqual(acted.description.description, "this is an action")
 
 
 class TitleTest(unittest.TestCase):
@@ -58,7 +58,7 @@ class TitleTest(unittest.TestCase):
         self.assertEqual(ttl.act_type, ActType.SYMBOL)
         self.assertEqual(ttl.behavior, Behavior.DISPLAY)
         self.assertEqual(ttl.action, "test1")
-        self.assertEqual(ttl.subject.info, "this is test")
+        self.assertEqual(ttl.subject.note, "this is test")
 
 
 class PersonTest(unittest.TestCase):
@@ -75,7 +75,7 @@ class PersonTest(unittest.TestCase):
         self.assertEqual(psn.sex, "male")
         self.assertEqual(psn.job, "student")
         self.assertEqual(psn.selfcall, "I am")
-        self.assertEqual(psn.info, "he is a man")
+        self.assertEqual(psn.note, "he is a man")
 
     def test_act(self):
         psn = Person("Taro", 15, "male", "student", "he is a man")
@@ -97,16 +97,6 @@ class PersonTest(unittest.TestCase):
         self.assertEqual(acted.action, "go home")
         self.assertEqual(acted.behavior, Behavior.GO)
 
-    def test_reply(self):
-        psn = Person("Taro", 15, "male", "student", "he is a man")
-
-        acted = psn.reply("Yes")
-
-        self.assertTrue(isinstance(acted, Act))
-        self.assertEqual(acted.act_type, ActType.ACT)
-        self.assertEqual(acted.action, "Yes")
-        self.assertEqual(acted.behavior, Behavior.REPLY)
-
     def test_tell(self):
         psn = Person("Taro", 15, "male", "student", "he is a man")
 
@@ -127,43 +117,13 @@ class PersonTest(unittest.TestCase):
         self.assertEqual(acted.action, "about himself")
         self.assertEqual(acted.behavior, Behavior.FEEL)
 
-    def test_must(self):
-        psn = Person("Taro", 15, "male", "student", "he is a man")
-
-        acted = psn.must("home work")
-
-        self.assertTrue(isinstance(acted, Act))
-        self.assertEqual(acted.act_type, ActType.THINK)
-        self.assertEqual(acted.action, "home work")
-        self.assertEqual(acted.behavior, Behavior.MUST_DO)
-
-    def test_want(self):
-        psn = Person("Taro", 15, "male", "student", "he is a man")
-
-        acted = psn.want("sleep")
-
-        self.assertTrue(isinstance(acted, Act))
-        self.assertEqual(acted.act_type, ActType.THINK)
-        self.assertEqual(acted.action, "sleep")
-        self.assertEqual(acted.behavior, Behavior.WANT)
-
-    def test_result(self):
-        psn = Person("Taro", 15, "male", "student", "he is a man")
-
-        acted = psn.result("forget his home work")
-
-        self.assertTrue(isinstance(acted, Act))
-        self.assertEqual(acted.act_type, ActType.ACT)
-        self.assertEqual(acted.action, "forget his home work")
-        self.assertEqual(acted.behavior, Behavior.RESULT)
-
     def test_sub_act_check(self):
         acted = self.psn.check("note")
 
         self.assertTrue(isinstance(acted, Act))
         self.assertEqual(acted.act_type, ActType.ACT)
         self.assertEqual(acted.action, "note")
-        self.assertEqual(acted.behavior, Behavior.HEAR)
+        self.assertEqual(acted.behavior, Behavior.DEAL)
 
 
 class StageTest(unittest.TestCase):
@@ -173,7 +133,7 @@ class StageTest(unittest.TestCase):
 
         self.assertTrue(isinstance(stg, Stage))
         self.assertEqual(stg.name, "test1")
-        self.assertEqual(stg.info, "here is a test")
+        self.assertEqual(stg.note, "here is a test")
 
     def test_look(self):
         stg = Stage("test1", "here is a test")
@@ -191,7 +151,7 @@ class ItemTest(unittest.TestCase):
 
         self.assertTrue(isinstance(itm, Item))
         self.assertEqual(itm.name, "test1")
-        self.assertEqual(itm.info, "this is an item")
+        self.assertEqual(itm.note, "this is an item")
 
     def test_look(self):
         itm = Item("test1", "this is an item")
@@ -205,7 +165,7 @@ class ItemTest(unittest.TestCase):
 class DayTimeTest(unittest.TestCase):
 
     def test_attributes(self):
-        dt = DayTime("test1", mon=10, day=5, year=2019, hour=12, info="this is a test")
+        dt = DayTime("test1", mon=10, day=5, year=2019, hour=12, note="this is a test")
 
         self.assertTrue(isinstance(dt, DayTime))
         self.assertEqual(dt.name, "test1")
@@ -213,10 +173,10 @@ class DayTimeTest(unittest.TestCase):
         self.assertEqual(dt.day, 5)
         self.assertEqual(dt.year, 2019)
         self.assertEqual(dt.hour, 12)
-        self.assertEqual(dt.info, "this is a test")
+        self.assertEqual(dt.note, "this is a test")
 
     def test_look(self):
-        dt = DayTime("test1", mon=10, day=5, year=2019, hour=12, info="this is a test")
+        dt = DayTime("test1", mon=10, day=5, year=2019, hour=12, note="this is a test")
 
         dayed = dt.look("a rainy day")
 

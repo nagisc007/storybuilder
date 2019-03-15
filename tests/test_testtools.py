@@ -20,13 +20,13 @@ class TestCheckTools(unittest.TestCase):
         self.test_story = (
                 Title("Test story 01", "this is a test"),
                 self.taro.act("sleeping", Behavior.SLEEP),
-                self.taro.want("find a girl friend"),
+                self.taro.think("find a girl friend"),
                 self.taro.think("boring"),
-                self.hanako.act("come in", Behavior.COME),
+                self.hanako.come("in the room"),
                 self.hanako.look("transfer student"),
                 self.classroom.look("bother space"),
                 self.loveday.look("morning"),
-                self.taro.result("meet Hanako"),
+                self.taro.think("meet Hanako"),
                 )
 
     def test_checked_if_all_actions(self):
@@ -34,15 +34,15 @@ class TestCheckTools(unittest.TestCase):
 
     def test_checked_has_basic_info(self):
         self.assertTrue(
-                checked_has_basic_info(self, self.test_story,
-                                        self.taro, self.hanako,
-                                        "boring", "transfer"))
+                checked_has_basic_info(
+                    self, self.test_story, self.taro, self.hanako,
+                    "find", "boring", "transfer", "meet"))
 
     def test_checked_has_basic_info_why_by_tell(self):
         why_tell_story = self.test_story + (self.taro.tell("bored"),)
 
         self.assertTrue(
-                checked_has_basic_info(self,
-                    why_tell_story, self.taro, self.hanako,
-                    "bored", "transfer"
+                checked_has_basic_info(
+                    self, why_tell_story, self.taro, self.hanako,
+                    "find", "bored", "transfer", "meet"
                     ))
