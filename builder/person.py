@@ -16,6 +16,7 @@ class Person(BasePerson):
         self.selfcall = selfcall
 
     # basic actions
+    ## Todo: adding note arg
     def deal(self, action, act_word="扱う"):
         return Act(self, ActType.ACT, Behavior.DEAL, action, act_word)
 

@@ -6,14 +6,16 @@ import os
 import argparse
 
 from .acttypes import ActType
+from .base import Act
+from .base import Story, Episode, Scene
 
 
-def story_builded(title, story, filename='story', build_dir='build', is_debug=False):
+def story_builded(title: str, story: Story, filename: str='story', build_dir: str='build', is_debug: bool=False):
     '''Building a story.
 
     Args:
         title (str): a story title.
-        story (:tuple:obj:`Act`): a story objects.
+        story (:tuple:obj:`Story`): a story objects.
         filename (str, optional): a file name.
         build_dir (str, optional): a build path.
         is_debug (bool, optional): if True, with a debug mode.
@@ -58,79 +60,75 @@ def options_parsed():
     return (args)
 
 
-def build_action_strings(story, is_debug=False):
+def story_strings_as_actions(story: Story, is_debug: bool=False):
     '''Action strings to build.
 
+    Args:
+        story (:obj:`Story`): a story object.
+        is_debug (bool, optional): if True, with a debug mode.
     Returns:
         action strings converted from story objects.
     '''
-    act_str = []
-    
-    for s in story:
-        if s.act_type is ActType.SYMBOL:
-            act_str.append("\n## {}\n\n".format(s.action))
-        elif s.act_type is ActType.DESC or s.act_type is ActType.ACT:
-            act_str.append("{}\n".format(_action_info_builded(s)))
-        elif s.act_type is ActType.TELL:
-            act_str.append("{}\n".format(_action_info_builded(s)))
-        elif s.act_type is ActType.THINK:
-            act_str.append("{}\n".format(_action_info_builded(s)))
-        elif s.act_type is ActType.TEST and is_debug:
-            act_str.append("> TEST:{}\n".format(_action_info_builded(s)))
-        else:
-            pass
+    tmp = []
 
-    return act_str
+    tmp.append(_story_title_of(story))
+    for episode in story.data:
+        tmp.append(_episode_title_of(episode))
+        for scene in episode.data:
+            tmp.append(_scene_title_of(scene))
+            for a in scene.data:
+                tmp.append(_action_string_builded_with_type(a, is_debug))
+    return tmp
 
 
-def build_description_strings(story, is_debug=False):
+def story_strings_as_descriptions(story: Story, is_debug: bool=False):
     '''Description strings to build.
 
     Returns:
         description strings converted from story objects.
     '''
-    desc_str = []
+    tmp = []
 
-    for s in story:
-        if s.act_type is ActType.SYMBOL:
-            if s.description:
-                desc_str.append("\n## {} -- {}\n\n".format(s.action, s.description.description))
-            else:
-                desc_str.append("\n## {}\n\n".format(s.action))
-        elif s.act_type is ActType.DESC or s.act_type is ActType.ACT or s.act_type is ActType.THINK:
-            desc_str.append("{}。\n".format( _description_selected(s)))
-        elif s.act_type is ActType.TELL:
-            desc_str.append("「{}」\n".format(_description_selected(s)))
-        elif s.act_type is ActType.TEST and is_debug:
-            desc_str.append("> TEST:{}\n".format(_description_selected(s)))
-
-    return desc_str
+    tmp.append(_story_title_of(story))
+    for episode in story.data:
+        tmp.append(_episode_title_of(episode))
+        for scene in episode.data:
+            tmp.append(_scene_title_of(scene))
+            for a in scene.data:
+                tmp.append(_description_builded_with_type(a, is_debug))
+    return tmp
 
 
-def output(title, story, is_desc=False, is_debug=False):
+def story_strings_as_infos(story: Story, is_debug: bool=False):
+    '''Information strings build.
+
+    Todo: in preparation
+    '''
+    tmp = []
+    return tmp
+
+
+def output(story: Story, is_desc: bool=False, is_debug: bool=False):
     '''Output story to the console.
 
     Args:
-        title (str): a story title.
         story (:tuple:obj:`Act`): a story object.
         is_desc (bool, optional): if True, as a description.
         is_debug (bool, optional): if True, use a debug mode.
     Returns:
         True if complete, otherwise False.
     '''
-    strs = build_description_strings(story, is_debug) if is_desc else build_action_strings(story, is_debug)
-    print("# {}{}\n".format(title, "" if is_desc else " (as Actions)"))
+    strs = story_strings_as_descriptions(story, is_debug) if is_desc else story_strings_as_actions(story, is_debug)
     for p in strs:
         print(p, end="")
 
     return True
 
 
-def output_md(title, story, filename='story', build_dir='build', is_desc=False, is_debug=False):
+def output_md(story: Story, filename: str='story', build_dir: str='build', is_desc: bool=False, is_debug: bool=False):
     '''Output story as a markdown file.
 
     Args:
-        title (str): a story title.
         story (:tuple:obj:`Act`): the story object.
         filename (str, optional): a file name.
         build_dir (str, optional): a build directory path.
@@ -146,16 +144,31 @@ def output_md(title, story, filename='story', build_dir='build', is_desc=False, 
         os.makedirs(build_dir) # create build dir
     # create file
     filefullpath = os.path.join(build_dir, "{}.{}".format(filename if is_desc else "{}_a".format(filename), EXT_MARKDOWN))
-    strs = build_description_strings(story, is_debug) if is_desc else build_action_strings(story, is_debug)
+    strs = story_strings_as_descriptions(story, is_debug) if is_desc else story_strings_as_actions(story, is_debug)
     with open(filefullpath, 'w') as f:
-        f.write("# {}{}\n".format(title, "" if is_desc else " (as Actions)"))
         for s in strs:
             f.write(s)
 
     return True
 
 
-def _action_info_builded(act):
+def _action_string_builded_with_type(act: Act, is_debug: bool):
+    '''Action string build.
+    '''
+    if act.act_type == ActType.SYMBOL:
+        return "**{}**\n".format(_action_string_builded(act))
+    elif act.act_type in (ActType.ACT, ActType.DESC, ActType.THINK):
+        return "{}\n".format(_action_string_builded(act))
+    elif act.act_type == ActType.TELL:
+        return "{}\n".format(_action_string_builded(act))
+    elif act.act_type == ActType.TEST:
+        return "> TEST: {}\n".format(_action_string_builded(act)) if is_debug else ""
+    else:
+        assert False, "Unknown type of an action!"
+        return ""
+
+
+def _action_string_builded(act: Act):
     '''Action string builder for a display.
     Args:
         :obj:`Act`: an action object.
@@ -163,16 +176,49 @@ def _action_info_builded(act):
         str: action info string.
     '''
     return "{} - {}: {}".format(act.subject.name, act.act_word,
-            "「{}」".format(act.action) if act.act_type == ActType.TELL else act.action)
+            "「{}」".format(act.title) if act.act_type == ActType.TELL else act.title)
 
 
-def _description_selected(act):
-    '''Description selector.
-
-    Returns:
-        description if the act has a description, otherwise a action.
+def _description_builded_with_type(act: Act, is_debug: bool):
+    '''Description build.
     '''
-    if act.description:
-        return act.description.description
-    return act.action
+    if act.act_type == ActType.SYMBOL:
+        return "**{}**\n".format(_description_builded(act))
+    elif act.act_type in (ActType.ACT, ActType.DESC, ActType.THINK):
+        return "{}\n".format(_description_builded(act))
+    elif act.act_type == ActType.TELL:
+        return "{}\n".format(_description_builded(act))
+    elif act.act_type == ActType.TEST:
+        return "> TEST: {}\n".format(_description_builded(act)) if is_debug else ""
+    else:
+        assert False, "Unknown type of an action!"
+        return ""
 
+
+def _description_builded(act: Act):
+    '''Description string build.
+    '''
+    tmp = []
+    for d in act.data:
+        tmp.append(d.description)
+    if act.act_type == ActType.SYMBOL:
+        return " - ".join(tmp)
+    return "「{}」".format("、".join(tmp)) if act.act_type == ActType.TELL else "{}。".format("、".join(tmp))
+
+
+def _story_title_of(story: Story):
+    '''Story title.
+    '''
+    return "{}\n===\n".format(story.title)
+
+
+def _episode_title_of(episode: Episode):
+    '''Episode title.
+    '''
+    return "\n## {}\n\n".format(episode.title)
+
+
+def _scene_title_of(scene: Scene):
+    '''Scene title.
+    '''
+    return "\n### {}\n\n".format(scene.title)

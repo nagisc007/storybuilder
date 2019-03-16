@@ -13,17 +13,24 @@ def suite():
     '''
     suite = unittest.TestSuite()
 
+    # base
+    suite.addTest(unittest.makeSuite(test_base.BaseActionTest))
     suite.addTest(unittest.makeSuite(test_base.SubjectTest))
+    suite.addTest(unittest.makeSuite(test_base.DescTest))
     suite.addTest(unittest.makeSuite(test_base.ActTest))
-    suite.addTest(unittest.makeSuite(test_base.TitleTest))
-    suite.addTest(unittest.makeSuite(test_base.PersonTest))
+    suite.addTest(unittest.makeSuite(test_base.BasePersonTest))
     suite.addTest(unittest.makeSuite(test_base.StageTest))
     suite.addTest(unittest.makeSuite(test_base.ItemTest))
     suite.addTest(unittest.makeSuite(test_base.DayTimeTest))
+    suite.addTest(unittest.makeSuite(test_base.SceneTest))
+    suite.addTest(unittest.makeSuite(test_base.EpisodeTest))
+    suite.addTest(unittest.makeSuite(test_base.StoryTest))
 
-    suite.addTest(unittest.makeSuite(test_tools.TestTools))
+    # testtools
+    suite.addTest(unittest.makeSuite(test_testtools.BasicMethodTest))
 
-    suite.addTest(unittest.makeSuite(test_testtools.TestCheckTools))
+    # tools
+    suite.addTest(unittest.makeSuite(test_tools.BasicMethodTest))
 
     return suite
 
