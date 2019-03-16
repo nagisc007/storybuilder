@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """Utility tools for story building
 """
-
+from __future__ import print_function
 import os
-import sys
 import argparse
 
 from .acttypes import ActType
@@ -25,7 +24,7 @@ def story_builded(title, story, filename='story', build_dir='build', is_debug=Fa
 
     if options.action: # output as an action
         if options.build:
-            ouotput_md(title, story, is_desc=False, is_debug=is_debug)
+            output_md(title, story, is_desc=False, is_debug=is_debug)
         else:
             output(title, story, is_desc=False, is_debug=is_debug)
     if not options.descoff: # output as a description
