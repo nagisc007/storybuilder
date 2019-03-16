@@ -9,15 +9,49 @@ import argparse
 from .acttypes import ActType
 
 
-def options_parsed():
+def story_builded(title, story, filename='story', build_dir='build', is_debug=False):
+    '''Building a story.
+
+    Args:
+        title (str): a story title.
+        story (:tuple:obj:`Act`): a story objects.
+        filename (str, optional): a file name.
+        build_dir (str, optional): a build path.
+        is_debug (bool, optional): if True, with a debug mode.
+    Returns:
+        True: if complete success, otherwise False
     '''
+    options = options_parsed()
+
+    if options.action: # output as an action
+        if options.build:
+            ouotput_md(title, story, is_desc=False, is_debug=is_debug)
+        else:
+            output(title, story, is_desc=False, is_debug=is_debug)
+    if not options.descoff: # output as a description
+        if options.build:
+            output_md(title, story, is_desc=True, is_debug=is_debug)
+        else:
+            output(title, story, is_desc=True, is_debug=is_debug)
+    if options.info: # output as an info
+        # in preparation
+        pass
+
+    return True
+
+
+def options_parsed():
+    '''Get and setting a commandline option.
+
+    Returns:
+        :obj:`ArgumentParser`: contain commandline options.
     '''
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-d', '--desc', help="output the story as a description", action='store_false')
-    parser.add_argument('-a', '--action', help="no output the story action", action='store_true')
-    parser.add_argument('-i', '--info', help="output the story info", action='store_false')
-    parser.add_argument('-c', '--console', help="output to the console", action='store_false')
+    parser.add_argument('-a', '--action', help="display with action data", action='store_false')
+    parser.add_argument('-b', '--build', help="build and output a file", action='store_false')
+    parser.add_argument('-d', '--descoff', help="off display the description", action='store_false')
+    parser.add_argument('-i', '--info', help="display with informations", action='store_false')
 
     # get result
     args = parser.parse_args()
