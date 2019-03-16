@@ -74,27 +74,43 @@ def has_episode_outline_infos(test_case: unittest.TestCase, episode: Episode,
     test_case.assertIsInstance(episode, Episode, "It is not a Episode object!")
     ERR_MSG = "not exists in the episode!"
     # What
+    is_existed = False
     for s in episode.data:
         for a in s.data:
-            if has_contained_the_purpose(a, purpose): break
+            if has_contained_the_purpose(a, purpose):
+                is_existed = True
+                break
+        if is_existed: break
     else:
         test_case.fail("The purpose ({}) {}".format(purpose, ERR_MSG))
     # Why
+    is_existed = False
     for s in episode.data:
         for a in s.data:
-            if has_contained_the_reason(a, reason): break
+            if has_contained_the_reason(a, reason):
+                is_existed = True
+                break
+        if is_existed: break
     else:
         test_case.fail("The reason ({}) {}".format(reason, ERR_MSG))
     # How
+    is_existed = False
     for s in episode.data:
         for a in s.data:
-            if has_contained_the_process(a, process): break
+            if has_contained_the_process(a, process):
+                is_existed = True
+                break
+        if is_existed: break
     else:
         test_case.fail("The process ({}) {}".format(process, ERR_MSG))
     # Result
+    is_existed = False
     for s in episode.data:
         for a in s.data:
-            if has_contained_the_result(a, result): break
+            if has_contained_the_result(a, result):
+                is_existed = True
+                break
+        if is_existed: break
     else:
         test_case.fail("The result ({}) {}".format(result, ERR_MSG))
 
