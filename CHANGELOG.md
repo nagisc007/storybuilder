@@ -5,9 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.0.3] - 2019-03-18
 ### Added
 - Github issue template
 - Github pull request template
+- BaseAction class
+- Story class
+- Episode class
+- Scene class
+- story building method
+- option parser
+- output as action infos
 ### Changed
 - Act's verb without a particle
 ### Fixed
@@ -35,6 +44,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Example story as usage.
 - Output story as markdown.
 
-[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.0.2...HEAD
+[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/nagisc007/storybuilder/releases/v0.0.3
 [0.0.2]: https://github.com/nagisc007/storybuilder/releases/v0.0.2
 [0.0.1]: https://github.com/nagisc007/storybuilder/releases/v0.0.1
