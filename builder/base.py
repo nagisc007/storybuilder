@@ -1,50 +1,28 @@
 # -*- coding: utf-8 -*-
 """Module to build a story.
 """
-from .acttypes import ActType, Behavior
+from .acttypes import ActType, Behavior, TagType, LangType
+from .acttypes import tag_str_of
 
 
 class _BaseAction(object):
-    """Base action object.
-    """
-    def __init__(self, data_class=None, title: str="action", note: str="nothing"):
-        self.data = ()
-        self.data_class = data_class
-        self.note = note
-        self.title = title
-
-    def commit(self, *args: object):
-        """
-        Args:
-            *args (:tuple:obj:): a core data tuple.
-        Returns:
-            this object.
-        Raises:
-            if double committed or the object type mismatch.
-        """
-        if self.is_double_commited():
-            raise AssertionError("Cannot double commit!")
-
-        for a in args:
-            if not self.is_data_checked(a):
-                raise AssertionError("Mismatch type object!")
-
-        self.data = args
-        return self
-
-    def is_data_checked(self, arg):
-        return isinstance(arg, self.data_class)
-
-    def is_double_commited(self):
-        return self.data
-
-
-class Subject(object):
-    """Subject of action.
+    """Base action class.
 
     Attributes:
-        name (str): name or title.
-        info (str, optional): short description.
+        name (str): a name of this action.
+        note (str, optional): a short description.
+    """
+    def __init__(self, name: str, note: str="nothing"):
+        self.name = name
+        self.note = note
+
+
+class _BaseSubject(object):
+    """Base subject class.
+
+    Attributes:
+        name (str): a name of this subject.
+        note (str, optional): a short description.
     """
     def __init__(self, name: str, note:str ="nothing"):
         """
@@ -55,60 +33,72 @@ class Subject(object):
         self.name = name
         self.note = note
 
-    def look(self, state: str, note: str="nothing"):
+    def explain(self, info: str, note: str="nothing"):
         """
         Args:
-            state (str): the subject looking.
+            info (str): a information.
+            note (str, optional): a short description.
         """
-        return Act(self, ActType.DESC, Behavior.LOOK, state, "描写", note=note)
+        return Action(self, ActType.EXPLAIN, Behavior.EXPLAIN, info, note=note)
 
 
-class Desc(object):
-    """Description object.
-
-    Attributes:
-        description: a description of an action.
-    """
-    def __init__(self, description: str):
-        self.description = description
-
-
-class Act(_BaseAction):
-    """Action object created.
+class Action(_BaseAction):
+    """A general action class.
 
     Attributes:
-        act_type (:enum:`ActType`): an action major type.
-        act_word (str): an action word.
+        act_type (:enum:`ActType`): an action category type.
         action (str): an action string.
         behavior (:enum:`Behavior`): a behavior type of this action.
-        description (:obj:`Description`): a description of this action.
-        subject (:obj:`Subject`): a subject of this action.
+        description (str): a description of this action.
+        name (str): an action name.
+        note (str): a short description.
+        subject (:obj:`_BaseSubject`): a subject of this action.
     """
-    def __init__(self, subject: Subject, act_type: ActType, behavior: Behavior, title: str="(something)", act_word: str="", note: str="nothing"):
+    def __init__(self, subject: _BaseSubject, act_type: ActType, behavior: Behavior, action: str="(something)", name: str="行動", note: str="nothing"):
         """
         Args:
-            subject (:obj:`Subject`): action subject.
-            act_type (:enum:`ActType`): action type.
+            subject (:obj:`_BaseSubject`): action subject.
             behavior (:enum:`Behavior`): action behavior type.
             action (str): description of this action.
-            act_word (str, optional): an action string.
+            name (str, optional): an action name.
+            note (str, optional): a short description.
         """
-        super().__init__(Desc, title, note)
+        super().__init__(name, note)
         self.act_type = act_type
-        self.act_word = act_word
+        self.action = action
         self.behavior = behavior
+        self.description = ""
         self.subject = subject
 
-    def desc(self, *args: str):
-        self.commit(*(self._desc_build_if_str(s) for s in args))
+    def desc(self, desc_: str):
+        self.description = desc_
         return self
 
-    def _desc_build_if_str(self, arg):
-        return arg if isinstance(arg, Desc) else Desc(arg)
+
+class ActionGroup(_BaseAction):
+    """Acrion grouping class.
+
+    Attributes:
+        actions (:tuple:obj:`Action`): action lists.
+        lang (:enum:`LangType`): a language type.
+        name (str): a goup name.
+        note (str): a short description.
+    """
+    def __init__(self, *args: Action, lang: LangType=LangType.JPN, name: str="_actiongroup", note: str="nothing"):
+        """
+        Args:
+            *args (:tuple:obj:`Action`): actions
+            lang (:enum:`LangType`): a language type.
+            name (str, optional): an action group name.
+            note (str, optional): a short description.
+        """
+        super().__init__(name, note)
+        self.actions = args
+        self.lang = lang
 
 
-class BasePerson(Subject):
-    """Basic character object created.
+class _BasePerson(_BaseSubject):
+    """Basic character class.
 
     Attributes:
     """
@@ -126,38 +116,31 @@ class BasePerson(Subject):
         self.job = job
         self.sex = sex
 
-    def act(self, action: str, behaviour: Behavior=Behavior.DO, act_word: str="", note: str="nothing"):
+    def act(self, action: str, behaviour: Behavior, name: str, note: str="nothing"):
         """
         Args:
-            action (str): action string.
-            behaviour (:enum:`Behavior`, optional): action behavior type.
-            act_word (str, optional): action word.
+            action (str): an action string.
+            behaviour (:enum:`Behavior`): a behavior type.
+            name (str): an action name.
+            note (str, optional): a short description.
         Returns:
             Act object contained a personal action.
         """
-        return Act(self, ActType.ACT, behaviour, action, act_word, note=note)
+        return Action(self, ActType.ACT, behaviour, action, name, note=note)
 
     def tell(self, action: str, note: str="nothing"):
         """
         Args:
-            action (str): a short description.
+            action (str): a short dialogue.
+            note (str, optional): a short description.
         Returns:
             Act object contained a dialogue.
         """
-        return Act(self, ActType.TELL, Behavior.TALK, action, "言う", note=note)
-
-    def think(self, action: str, note: str="nothing"):
-        """
-        Args:
-            action (str): thinking strings.
-        Returns:
-            Act object contained a personal thought.
-        """
-        return Act(self, ActType.THINK, Behavior.FEEL, action, "思う", note=note)
+        return Action(self, ActType.TELL, Behavior.TELL, action, "台詞", note=note)
 
 
-class Stage(Subject):
-    """Stage object created.
+class Stage(_BaseSubject):
+    """Stage class.
 
     Attributes:
     """
@@ -170,8 +153,8 @@ class Stage(Subject):
         super().__init__(name, note)
 
 
-class Item(Subject):
-    """Item object created.
+class Item(_BaseSubject):
+    """Item class.
 
     Attributes.
     """
@@ -184,8 +167,8 @@ class Item(Subject):
         super().__init__(name, note)
 
 
-class DayTime(Subject):
-    """Day and Time object created.
+class DayTime(_BaseSubject):
+    """Day and Time management class.
 
     Attributes.
     """
@@ -205,31 +188,21 @@ class DayTime(Subject):
         self.mon = mon
         self.year = year
 
-    def elapse(self, action: str, note: str="nothing"):
-        """
-        Args:
-            action (str): action description.
-        """
-        return Act(self, ActType.DESC, Behavior.PASS, action, "過ぎる", note=note)
 
+class Master(_BaseSubject):
+    """A story management class.
 
-class Scene(_BaseAction):
-    """Scene object that is a minimum story.
+    Attributes:
     """
-    def __init__(self, title: str, note: str="nothing"):
-        super().__init__(Act, title, note)
+    def __init__(self, name, note="nothing"):
+        super().__init__(name, note)
 
+    def comment(self, comment_: str, note: str="nothing"):
+        return Action(self, ActType.TAG, Behavior.NONE, comment_, tag_str_of(TagType.COMMENT), note)
 
-class Episode(_BaseAction):
-    """Episode object that has some scenes.
-    """
-    def __init__(self, title: str, note: str="nothing"):
-        super().__init__(Scene, title, note)
+    def story(self, *args: Action, lang: LangType=LangType.JPN, note: str="nothing"):
+        return ActionGroup(name="_story", lang=lang, note=note, *args)
 
-
-class Story(_BaseAction):
-    """Story object.
-    """
-    def __init__(self, title: str, note: str="nothing"):
-        super().__init__(Episode, title, note)
+    def title(self, title_: str, note: str="nothing"):
+        return Action(self, ActType.TAG, Behavior.NONE, title_, tag_str_of(TagType.TITLE), note)
 

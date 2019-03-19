@@ -7,36 +7,63 @@ from enum import Enum, auto
 class ActType(Enum):
     """Act type enum.
     """
-    ACT = auto()
-    DESC = auto()
-    SYMBOL = auto() # for title etc
-    TELL = auto()
-    TEST = auto()
-    THINK = auto()
+    ACT = auto() # general type
+    EXPLAIN = auto() # information type
+    TAG = auto() # structure type
+    TELL = auto() # dialogue type
+    TEST = auto() # test type
+
+
+class TagType(Enum):
+    """Tag type enum.
+    """
+    NONE = auto()
+    TITLE = auto()
+    COMMENT = auto()
+    HR = auto()
+
+
+def tag_str_of(tag: TagType) -> str:
+    return {
+            TagType.NONE: "_tag_nothing",
+            TagType.COMMENT: "_tag_comment",
+            TagType.HR: "_tag_hr",
+            TagType.TITLE: "_tag_title",
+            }[tag]
+
+class LangType(Enum):
+    """Language type enum.
+    """
+    ENG = auto()
+    JPN = auto()
+
 
 class Behavior(Enum):
     """Behavior type enum.
     """
-    ABANDON = auto()
-    ABSORB = auto()
-    ABUSE = auto()
-    ACCEPT = auto()
-    ACCOMPANY = auto()
-    ACCORD = auto()
-    ACCOUNT = auto()
-    ACCUSE = auto()
-    ACHIEVE = auto()
-    ACQUIRE = auto()
-    # ACT = auto()
-    ADD = auto()
-    ADDRESS = auto()
-    ADJUST = auto()
-    ADMIRE = auto()
-    ADMIT = auto()
-    ADOPT = auto()
-    ADVANCE = auto()
-    ADVERTISE = auto()
-    ADVISE = auto()
+    # nothing
+    NONE = auto()
+    # act behavior
+    ABANDON = auto() # 放棄する
+    ABSORB = auto() # 吸い取る
+    ABUSE = auto() # 乱用する
+    ACCEPT = auto() # 受け入れる
+    ACCOMPANY = auto() # 伴う
+    ACCORD = auto() # 調和する
+    ACCOUNT = auto() # 勘定する
+    ACCUSE = auto() # 訴える
+    ACHIEVE = auto() # 果たす
+    ACQUIRE = auto() # 得る
+    ACT = auto() # 行動する
+    ADD = auto() # 加える
+    ADDRESS = auto() # 
+    ADJUST = auto() # 調整する
+    ADMIRE = auto() # 憧れる
+    ADMIT = auto() # 認める
+    ADOPT = auto() # 採用する
+    ADVANCE = auto() # 進める
+    ADVERTISE = auto() # 宣伝する
+    ADVISE = auto() # 助言する
     AFFECT = auto()
     AFFORD = auto()
     AGREE = auto()
@@ -108,6 +135,7 @@ class Behavior(Enum):
     BREAK = auto()
     BREATHE = auto()
     BRING = auto()
+    BROW = auto() # 眉を顰める
     BUILD = auto()
     BURN = auto()
     BURST = auto()
@@ -203,7 +231,7 @@ class Behavior(Enum):
     DANCE = auto()
     DAMAGE = auto()
     DARE = auto()
-    DEAL = auto()
+    DEAL = auto() # 扱う
     DECAY = auto()
     DECIDE = auto()
     DECLARE = auto()
@@ -268,6 +296,7 @@ class Behavior(Enum):
     EDUCATE = auto()
     ELECT = auto()
     ELIMINATE = auto()
+    EMAIL = auto()
     EMBARRASS = auto()
     EMERGE = auto()
     EMPHASIZE = auto()
@@ -315,6 +344,7 @@ class Behavior(Enum):
     FIND = auto()
     FINISH = auto()
     FIRE = auto()
+    FIREJOB = auto()
     FIT = auto()
     FIX = auto()
     FLASH = auto()
@@ -348,6 +378,7 @@ class Behavior(Enum):
     GREET = auto()
     GRIN = auto()
     GROW = auto()
+    GROWL = auto() # 唸る
     GUARANTEE = auto()
     GUARD = auto()
     GUESS = auto()
@@ -413,6 +444,7 @@ class Behavior(Enum):
     JUMP = auto()
     JUSTIFY = auto()
     KEEP = auto()
+    KEYBOARD = auto()
     KICK = auto()
     KILL = auto()
     KISS = auto()
@@ -432,6 +464,7 @@ class Behavior(Enum):
     LEND = auto()
     LET = auto()
     LIE = auto()
+    LIFE = auto()
     LIFT = auto()
     LIGHT = auto()
     LIKE = auto()
@@ -441,13 +474,15 @@ class Behavior(Enum):
     LOAD = auto()
     LOAN = auto()
     LOCK = auto()
-    LOOK = auto() # for subject looking
+    LOOK = auto()
     LOSE = auto()
     LOVE = auto()
     MAINTAIN = auto()
-    MAKE = auto()
+    # MAKE = auto()
+    MAKEUP = auto()
     MANAGE = auto()
     MANUFACTURE = auto()
+    MAON = auto()
     MARK = auto()
     MARRY = auto()
     MARVEL = auto()
@@ -465,15 +500,14 @@ class Behavior(Enum):
     MISUNDERSTAND = auto()
     MIX = auto()
     MODIFY = auto()
-    MOITOR = auto()
+    MONITOR = auto()
     MOUNT = auto()
     MOVE = auto()
     MULTIPLY = auto()
-    MUST_DO = auto() # for think action as Must
+    MUST = auto()
     NEED = auto()
     NEGLECT = auto()
     NOD = auto()
-    NODISPLSAY = auto() # for symbols
     NOTE = auto()
     NOTICE = auto()
     OBEY = auto()
@@ -504,6 +538,7 @@ class Behavior(Enum):
     PERFORM = auto()
     PERMIT = auto()
     PERSUADE = auto()
+    PHONE = auto()
     PICK = auto()
     PITY = auto()
     PLACE = auto()
@@ -724,16 +759,17 @@ class Behavior(Enum):
     SWIM = auto()
     SWING = auto()
     SWITCH = auto()
+    SWORD = auto()
     TAKE = auto()
-    TALK = auto() # for tell action
+    TALK = auto()
     TAP = auto()
     TEACH = auto()
     TEND = auto()
     TEAR = auto()
-    # TELL = auto()
-    # TEST = auto()
+    TELL = auto()
+    TEST = auto()
     THANK = auto()
-    # THINK = auto()
+    THINK = auto()
     THREATEN = auto()
     THROW = auto()
     TIE = auto()
@@ -794,3 +830,268 @@ class Behavior(Enum):
     WRY = auto()
     YAWN = auto()
     YELL = auto()
+
+def behavior_str_of(behavior: Behavior) -> str:
+    return {
+            Behavior.ACT: "行動する",
+            Behavior.ADD: "追加する",
+            Behavior.ACCEPT: "受け取る",
+            Behavior.ACQUIRE: "入手する",
+            Behavior.ADVISE: "助言する",
+            Behavior.AGREE: "賛成する",
+            Behavior.ANGRY: "怒る",
+            Behavior.ANSWER: "答える",
+            Behavior.APPLY: "申し込む",
+            Behavior.ARRIVE: "到着する",
+            Behavior.ASK: "尋ねる",
+            Behavior.ATTACK: "攻撃する",
+            Behavior.BECOME: "なる",
+            Behavior.BEGIN: "始まる",
+            Behavior.BELIEVE: "信じる",
+            Behavior.BET: "賭ける",
+            Behavior.BIND: "縛る",
+            Behavior.BORROW: "借りる",
+            Behavior.BREAK: "壊す",
+            Behavior.BREATHE: "息をする",
+            Behavior.BROW: "眉を顰める",
+            Behavior.BUILD: "建てる",
+            Behavior.BURN: "焼く",
+            Behavior.BURST: "弾ける",
+            Behavior.BURY: "葬る",
+            Behavior.BUY: "買う",
+            Behavior.CALCULATE: "計算する",
+            Behavior.CALL: "呼ぶ",
+            Behavior.CARE: "治療する",
+            Behavior.CARRY: "運ぶ",
+            Behavior.CATCH: "捕まえる",
+            Behavior.CHANGE: "変える",
+            Behavior.CHARM: "魅了する",
+            Behavior.CHECK: "確認する",
+            Behavior.CHEER: "応援する",
+            Behavior.CHOOSE: "選ぶ",
+            Behavior.CLEAN: "掃除する",
+            Behavior.CLICK: "クリックする",
+            Behavior.CLIMB: "登る",
+            Behavior.CLOSE: "閉じる",
+            Behavior.CLOTHE: "服を着せる",
+            Behavior.COACH: "指導する",
+            Behavior.COME: "来る",
+            Behavior.COMMAND: "命じる",
+            Behavior.COMPARE: "比べる",
+            Behavior.COMPLETE: "完了する",
+            Behavior.CONFESS: "告白する",
+            Behavior.CONTACT: "連絡する",
+            Behavior.CONTINUE: "続ける",
+            Behavior.COOPERATE: "協力する",
+            Behavior.COUGH: "咳をする",
+            Behavior.COOK: "料理する",
+            Behavior.CRY: "叫ぶ",
+            Behavior.CUT: "切る",
+            Behavior.DANCE: "踊る",
+            Behavior.DEAL: "扱う",
+            Behavior.DEFINE: "定義する",
+            Behavior.DIE: "死ぬ",
+            Behavior.DIG: "掘る",
+            Behavior.DISAPPEAR: "消える",
+            Behavior.DISLIKE: "嫌い",
+            Behavior.DISPLAY: "表示する",
+            Behavior.DIVE: "飛び込む",
+            Behavior.DO: "行う",
+            Behavior.DOUBT: "疑う",
+            Behavior.DRAW: "描く",
+            Behavior.DREAM: "夢を見る",
+            Behavior.DRESS: "着飾る",
+            Behavior.DRINK: "飲む",
+            Behavior.DRIVE: "運転する",
+            Behavior.DROP: "落ちる",
+            Behavior.DRY: "乾く",
+            Behavior.EARN: "稼ぐ",
+            Behavior.EAT: "食べる",
+            Behavior.EDUCATE: "教育する",
+            Behavior.EMAIL: "メールする",
+            Behavior.EMPLOY: "雇う",
+            Behavior.ENGAGE: "婚約する",
+            Behavior.ENJOY: "楽しむ",
+            Behavior.ENTER: "入る",
+            Behavior.ENVY: "恨む",
+            Behavior.EQUIP: "装備する",
+            Behavior.ESCAPE: "逃げる",
+            Behavior.EXCHANGE: "交換する",
+            Behavior.EXAMINE: "試験する",
+            Behavior.EXCITE: "興奮する",
+            Behavior.EXPLAIN: "説明する",
+            Behavior.EXPLORE: "探検する",
+            Behavior.FACE: "顔を合わせる",
+            Behavior.FAIL: "失敗する",
+            Behavior.FALL: "落下する",
+            Behavior.FEEL: "感じる",
+            Behavior.FIND: "見つける",
+            Behavior.FINISH: "終わる",
+            Behavior.FEEL: "感じる",
+            Behavior.FIB: "嘘をつく",
+            Behavior.FIGHT: "戦う",
+            Behavior.FILL: "満たす",
+            Behavior.FIRE: "火を点ける",
+            Behavior.FIREJOB: "首にする",
+            Behavior.FLASH: "輝く",
+            Behavior.FLOAT: "浮かぶ",
+            Behavior.FLY: "飛ぶ",
+            Behavior.FOLLOW: "ついていく",
+            Behavior.FORGET: "忘れる",
+            Behavior.FORGIVE: "許す",
+            Behavior.FREEZE: "凍る",
+            Behavior.FRY: "揚げる",
+            Behavior.GATHER: "集める",
+            Behavior.GAZE: "見つめる",
+            Behavior.GIVE: "与える",
+            Behavior.GO: "行く",
+            Behavior.GRADUATE: "卒業する",
+            Behavior.GREET: "挨拶する",
+            Behavior.GROWL: "唸る",
+            Behavior.GUIDE: "案内する",
+            Behavior.HAND: "手を握る",
+            Behavior.HANDLE: "操作する",
+            Behavior.HANG: "掛ける",
+            Behavior.HAPPEN: "起こる",
+            Behavior.HATE: "嫌う",
+            Behavior.HEAL: "癒やす",
+            Behavior.HEAR: "聞く",
+            Behavior.HELP: "助ける",
+            Behavior.HIDE: "隠す",
+            Behavior.HIRE: "雇う",
+            Behavior.HIT: "打つ",
+            Behavior.HOLD: "握る",
+            Behavior.HOPE: "希望する",
+            Behavior.HUG: "抱く",
+            Behavior.HUNT: "狩る",
+            Behavior.HURRY: "急ぐ",
+            Behavior.HURT: "傷つける",
+            Behavior.IGNORE: "無視する",
+            Behavior.IMAGINE: "想像する",
+            Behavior.INJURE: "負傷する",
+            Behavior.INVEST: "投資する",
+            Behavior.INVESTIGATE: "捜査する",
+            Behavior.INVITE: "招く",
+            Behavior.JOG: "ジョギングする",
+            Behavior.JOIN: "加わる",
+            Behavior.JUDGE: "審判する",
+            Behavior.JUMP: "ジャンプする",
+            Behavior.KEEP: "保つ",
+            Behavior.KEYBOARD: "キィを打つ",
+            Behavior.KICK: "蹴る",
+            Behavior.KILL: "殺す",
+            Behavior.KISS: "キスする",
+            Behavior.KNOCK: "ノックする",
+            Behavior.KNOW: "知る",
+            Behavior.LAUGH: "笑う",
+            Behavior.LEARN: "学ぶ",
+            Behavior.LEAVE: "残る",
+            Behavior.LET: "させる",
+            Behavior.LIFE: "暮らす",
+            Behavior.LIGHT: "明かりを点ける",
+            Behavior.LIVE: "生きる",
+            Behavior.LOCK: "鍵を掛ける",
+            Behavior.LOSE: "失う",
+            Behavior.LOVE: "愛する",
+            Behavior.MAKEUP: "化粧する",
+            Behavior.MANAGE: "管理する",
+            Behavior.MANUFACTURE: "製作する",
+            behavior.MAON: "呻く",
+            Behavior.MARK: "印をつける",
+            Behavior.MARRY: "結婚する",
+            Behavior.MASTER: "習得する",
+            Behavior.MEET: "会う",
+            Behavior.MELT: "溶ける",
+            Behavior.MEAN: "意味する",
+            Behavior.MISS: "ミスする",
+            Behavior.MIX: "混ぜる",
+            Behavior.MODIFY: "修正する",
+            Behavior.MOVE: "移動する",
+            Behavior.MUST: "しなければならない",
+            Behavior.NEED: "必要とする",
+            Behavior.NONE: "なし",
+            Behavior.NOTICE: "気づく",
+            Behavior.OCCUR: "発生する",
+            Behavior.OPPOSE: "反対する",
+            Behavior.OWN: "所有する",
+            Behavior.PACK: "パックする",
+            Behavior.PAINT: "塗る",
+            Behavior.PASS: "通る",
+            Behavior.PAUSE: "休止する",
+            Behavior.PAY: "支払う",
+            Behavior.PHONE: "電話する",
+            Behavior.PLACE: "設置する",
+            Behavior.PLAY: "遊ぶ",
+            Behavior.PRAY: "祈る",
+            Behavior.PRACTICE: "練習する",
+            Behavior.PRESS: "押す",
+            Behavior.PRINT: "印刷する",
+            Behavior.PROMISE: "約束する",
+            Behavior.PULL: "引く",
+            Behavior.PUSH: "押す",
+            Behavior.PUT: "置く",
+            Behavior.PUZZLE: "困らせる",
+            Behavior.REACT: "反応する",
+            Behavior.RECEIVE: "受け取る",
+            Behavior.RECOMMEND: "勧める",
+            Behavior.REFRESH: "リフレッシュする",
+            Behavior.RELEASE: "離す",
+            Behavior.REMEMBER: "思い出す",
+            Behavior.RENT: "貸す",
+            Behavior.RESCUE: "救助する",
+            Behavior.RETURN: "戻る",
+            Behavior.RING: "鳴る",
+            Behavior.RUN: "走る",
+            Behavior.SACRIFICE: "犠牲になる",
+            Behavior.SAD: "悲しむ",
+            Behavior.SAVE: "保存する",
+            Behavior.SAY: "言う",
+            Behavior.SCARE: "悲鳴をあげる",
+            Behavior.SCRATCH: "引っ掻く",
+            Behavior.SEARCH: "探す",
+            Behavior.SEE: "見る",
+            Behavior.SELL: "売る",
+            Behavior.SHAKE: "振る",
+            Behavior.SHARE: "分ける",
+            Behavior.SMILE: "微笑する",
+            behavior.SMOKE: "煙草を吸う",
+            Behavior.STEAL: "盗む",
+            behavior.STARE: "凝視する",
+            Behavior.SPEAK: "声を出す",
+            Behavior.SUCCEED: "成功する",
+            Behavior.SURPRISE: "驚かす",
+            Behavior.SURROUND: "囲む",
+            Behavior.SWING: "振る",
+            Behavior.SWORD: "剣を振るう",
+            Behavior.TAKE: "連れて行く",
+            Behavior.TALK: "話す",
+            Behavior.TEACH: "教える",
+            Behavior.TELL: "台詞",
+            Behavior.TEST: "テスト",
+            Behavior.THANK: "感謝する",
+            Behavior.THROW: "投げる",
+            Behavior.TRAIN: "鍛える",
+            Behavior.TRANSFORM: "変形する",
+            Behavior.TRAVEL: "旅行する",
+            Behavior.TRIP: "旅に出る",
+            Behavior.TRY: "挑戦する",
+            Behavior.TURN: "向きを変える",
+            Behavior.TWIST: "捻る",
+            Behavior.UNDERSTAND: "理解する",
+            Behavior.UNITE: "合わせる",
+            Behavior.USE: "使う",
+            Behavior.VANISH: "消える",
+            Behavior.VISIT: "訪れる",
+            Behavior.WAIT: "待つ",
+            Behavior.WAKE: "目覚める",
+            Behavior.WALK: "歩く",
+            Behavior.WANT: "したい",
+            Behavior.WARM: "温める",
+            Behavior.WASTE: "無駄にする",
+            Behavior.WEAR: "着る",
+            Behavior.WEIGH: "測る",
+            Behavior.WISH: "願う",
+            Behavior.WORRY: "心配する",
+            Behavior.WRY: "苦笑する",
+            Behavior.WRITE: "書く",
+            }[behavior]

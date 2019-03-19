@@ -5,40 +5,27 @@ from __future__ import print_function
 import os
 import argparse
 
-from .acttypes import ActType
-from .base import Act
-from .base import Story, Episode, Scene
+from .acttypes import ActType, TagType, LangType
+from .acttypes import behavior_str_of
+from .acttypes import tag_str_of
+from .base import Action, ActionGroup
 
 
-def story_builded(title: str, story: Story, filename: str='story', build_dir: str='build', is_debug: bool=False):
-    '''Building a story.
+# output
+
+def build_to_story(story: ActionGroup):
+    '''Build a story.
 
     Args:
-        title (str): a story title.
-        story (:tuple:obj:`Story`): a story objects.
-        filename (str, optional): a file name.
-        build_dir (str, optional): a build path.
-        is_debug (bool, optional): if True, with a debug mode.
+        story (:obj:ActionGroup:): a story actions.
     Returns:
-        True: if complete success, otherwise False
+        True: if complete to success, otherwise False.
     '''
+    assert isinstance(story, ActionGroup), "The story is not ActionGroup"
+    FILE_NAME = "story"
     options = options_parsed()
-
-    if options.action: # output as an action
-        if options.build:
-            output_md(title, story, is_desc=False, is_debug=is_debug)
-        else:
-            output(title, story, is_desc=False, is_debug=is_debug)
-    if not options.descoff: # output as a description
-        if options.build:
-            output_md(title, story, is_desc=True, is_debug=is_debug)
-        else:
-            output(title, story, is_desc=True, is_debug=is_debug)
-    if options.info: # output as an info
-        # in preparation
-        pass
-
-    return True
+    file_name = options.filename if options.filename else FILE_NAME
+    return output_story(story, file_name, options.action, options.build, options.debug)
 
 
 def options_parsed():
@@ -49,10 +36,11 @@ def options_parsed():
     '''
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-a', '--action', help="display with action data", action='store_false')
-    parser.add_argument('-b', '--build', help="build and output a file", action='store_false')
-    parser.add_argument('-d', '--descoff', help="off display the description", action='store_false')
+    parser.add_argument('-a', '--action', help="output as action data", action='store_false')
+    parser.add_argument('-b', '--build', help="build and output as a file", action='store_false')
+    parser.add_argument('-d', '--debug', help="with debug mode", action='store_false')
     parser.add_argument('-i', '--info', help="display with informations", action='store_false')
+    parser.add_argument('-f', '--file', help="advanced output file name")
 
     # get result
     args = parser.parse_args()
@@ -60,165 +48,116 @@ def options_parsed():
     return (args)
 
 
-def story_strings_as_actions(story: Story, is_debug: bool=False):
-    '''Action strings to build.
+def output_story(story: ActionGroup, filename: str, is_action_data: bool=False, is_out_as_file: bool=False, is_debug: bool=False):
+    '''Output a story.
 
     Args:
-        story (:obj:`Story`): a story object.
-        is_debug (bool, optional): if True, with a debug mode.
+        story (:obj:`ActionGroup`): a story action group.
     Returns:
-        action strings converted from story objects.
+        True: if complete to success, otherwise False.
     '''
-    tmp = []
-
-    tmp.append(_story_title_of(story))
-    for episode in story.data:
-        tmp.append(_episode_title_of(episode))
-        for scene in episode.data:
-            tmp.append(_scene_title_of(scene))
-            for a in scene.data:
-                tmp.append(_action_string_builded_with_type(a, is_debug))
-    return tmp
+    if is_out_as_file:
+        return _output_story_to_file(
+                _story_data_converted(story, is_action_data, is_debug),
+                filename, is_action_data, is_debug)
+    else:
+        return _output_story_to_console(
+                _story_data_converted(story, is_action_data, is_debug),
+                is_debug)
 
 
-def story_strings_as_descriptions(story: Story, is_debug: bool=False):
-    '''Description strings to build.
-
-    Returns:
-        description strings converted from story objects.
-    '''
-    tmp = []
-
-    tmp.append(_story_title_of(story))
-    for episode in story.data:
-        tmp.append(_episode_title_of(episode))
-        for scene in episode.data:
-            tmp.append(_scene_title_of(scene))
-            for a in scene.data:
-                tmp.append(_description_builded_with_type(a, is_debug))
-    return tmp
+def _story_data_converted(story: ActionGroup, is_action_data: bool, is_debug: bool) -> list:
+    return  _story_converted_as_action(story, is_debug) if is_action_data else _story_converted_as_description(story, is_debug)
 
 
-def story_strings_as_infos(story: Story, is_debug: bool=False):
-    '''Information strings build.
-
-    Todo: in preparation
-    '''
-    tmp = []
-    return tmp
-
-
-def output(story: Story, is_desc: bool=False, is_debug: bool=False):
-    '''Output story to the console.
-
-    Args:
-        story (:tuple:obj:`Act`): a story object.
-        is_desc (bool, optional): if True, as a description.
-        is_debug (bool, optional): if True, use a debug mode.
-    Returns:
-        True if complete, otherwise False.
-    '''
-    strs = story_strings_as_descriptions(story, is_debug) if is_desc else story_strings_as_actions(story, is_debug)
-    for p in strs:
-        print(p, end="")
-
+def _output_story_to_console(story: list, is_debug: bool):
+    for s in story:
+        print(s)
     return True
 
 
-def output_md(story: Story, filename: str='story', build_dir: str='build', is_desc: bool=False, is_debug: bool=False):
-    '''Output story as a markdown file.
-
-    Args:
-        story (:tuple:obj:`Act`): the story object.
-        filename (str, optional): a file name.
-        build_dir (str, optional): a build directory path.
-        is_desc (bool, optional): if True, as a description.
-        is_debug (bool, optional)
-    Returns:
-        True if compelete, otherwise False
-    '''
+def _output_story_to_file(story: list, filename: str, is_action_data: bool, is_debug: bool):
     EXT_MARKDOWN = 'md'
-
-    # check build dir. it created if not exists.
-    if not os.path.isdir(build_dir):
-        os.makedirs(build_dir) # create build dir
-    # create file
-    filefullpath = os.path.join(build_dir, "{}.{}".format(filename if is_desc else "{}_a".format(filename), EXT_MARKDOWN))
-    strs = story_strings_as_descriptions(story, is_debug) if is_desc else story_strings_as_actions(story, is_debug)
-    with open(filefullpath, 'w') as f:
-        for s in strs:
-            f.write(s)
+    BUILD_DIR = 'build'
+    if not os.path.isdir(BUILD_DIR):
+        os.makedirs(BUILD_DIR)
+    fullpath = os.path.join(BUILD_DIR, "{}.{}".format("{}_a".format(filename) if is_action_data else filename, EXT_MARKDOWN))
+    with open(fullpath, 'w') as f:
+        for s in story:
+            f.write("{}\n".format(s))
 
     return True
 
 
-def _action_string_builded_with_type(act: Act, is_debug: bool):
-    '''Action string build.
-    '''
-    if act.act_type == ActType.SYMBOL:
-        return "**{}**\n".format(_action_string_builded(act))
-    elif act.act_type in (ActType.ACT, ActType.DESC, ActType.THINK):
-        return "{}\n".format(_action_string_builded(act))
-    elif act.act_type == ActType.TELL:
-        return "{}\n".format(_action_string_builded(act))
-    elif act.act_type == ActType.TEST:
-        return "> TEST: {}\n".format(_action_string_builded(act)) if is_debug else ""
-    else:
-        assert False, "Unknown type of an action!"
-        return ""
+def _story_converted_as_action(story: ActionGroup, is_debug: bool) -> list:
+    return _story_converted_as_action_in_group(story, 1, is_debug)
 
 
-def _action_string_builded(act: Act):
-    '''Action string builder for a display.
-    Args:
-        :obj:`Act`: an action object.
-    Returns:
-        str: action info string.
-    '''
-    return "{} - {}: {}".format(act.subject.name, act.act_word,
-            "「{}」".format(act.title) if act.act_type == ActType.TELL else act.title)
-
-
-def _description_builded_with_type(act: Act, is_debug: bool):
-    '''Description build.
-    '''
-    if act.act_type == ActType.SYMBOL:
-        return "**{}**\n".format(_description_builded(act))
-    elif act.act_type in (ActType.ACT, ActType.DESC, ActType.THINK):
-        return "{}\n".format(_description_builded(act))
-    elif act.act_type == ActType.TELL:
-        return "{}\n".format(_description_builded(act))
-    elif act.act_type == ActType.TEST:
-        return "> TEST: {}\n".format(_description_builded(act)) if is_debug else ""
-    else:
-        assert False, "Unknown type of an action!"
-        return ""
-
-
-def _description_builded(act: Act):
-    '''Description string build.
-    '''
+def _story_converted_as_action_in_group(group: ActionGroup, level: int, is_debug: bool) -> list:
     tmp = []
-    for d in act.data:
-        tmp.append(d.description)
-    if act.act_type == ActType.SYMBOL:
-        return " - ".join(tmp)
-    return "「{}」".format("、".join(tmp)) if act.act_type == ActType.TELL else "{}。".format("、".join(tmp))
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            tmp.extend(_story_converted_as_action_in_group(a, level + 1, is_debug))
+        else:
+            tmp.append(_action_str_by_type(a, level, is_debug))
+    return tmp
 
 
-def _story_title_of(story: Story):
-    '''Story title.
-    '''
-    return "{}\n===\n".format(story.title)
+def _action_str_by_type(act: Action, level: int, is_debug: bool) -> str:
+    if act.act_type == ActType.ACT:
+        return "{:8}:{:8}:{}:{}".format(act.subject.name, behavior_str_of(act.behavior), act.action, "" if act.note == "nothing" or not act.note else act.note)
+    elif act.act_type == ActType.EXPLAIN:
+        return "{:8}:{:8}:{}:{}".format(act.subject.name, behavior_str_of(act.behavior), act.action, "" if act.note == "nothing" or not act.note else act.note)
+    elif act.act_type == ActType.TAG:
+        return _action_str_by_tag(act, level)
+    elif act.act_type == ActType.TELL:
+        return "{:8}:{:8}:「{}」:{}".format(act.subject.name, behavior_str_of(act.behavior), act.action, "" if act.note == "nothing" or act.note else act.note)
+    elif act.act_type == ActType.TEST and is_debug:
+        return "> {:8}:{:8}:{}:{}".format(act.subject.name, behavior_str_of(act.behavior), act.action, "" if act.note == "nothing" or act.note else act.note)
+    else:
+        return ""
+
+def _action_str_by_tag(act: Action, level: int) -> str:
+    if act.name == tag_str_of(TagType.COMMENT):
+        return "<!-- {} -->".format(act.action)
+    elif act.name == tag_str_of(TagType.TITLE):
+        return "{} {}".format("#" * level, act.action)
+    else:
+        return ""
 
 
-def _episode_title_of(episode: Episode):
-    '''Episode title.
-    '''
-    return "\n## {}\n\n".format(episode.title)
+def _story_converted_as_description(story: ActionGroup, is_debug: bool):
+    return _story_converted_as_description_in_group(story, 1, is_debug)
 
 
-def _scene_title_of(scene: Scene):
-    '''Scene title.
-    '''
-    return "\n### {}\n\n".format(scene.title)
+def _story_converted_as_description_in_group(group: ActionGroup, level: int, is_debug: bool):
+    tmp = []
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            tmp.extend(_story_converted_as_description_in_group(a, level + 1, is_debug))
+        else:
+            tmp.append(_description_str_by_type(a, group.lang, level, is_debug))
+    return tmp
+
+
+def _description_str_by_type(act: Action, lang: LangType, level: int, is_debug: bool) -> str:
+    if act.act_type in (ActType.ACT, ActType.EXPLAIN):
+        return "{}{}{}".format("　" if lang == LangType.JPN else " ", act.description, "。" if lang == LangType.JPN else ".")
+    elif act.act_type == ActType.TELL:
+        return "{}{}{}".format("「" if lang == LangType.JPN else '"', act.description, "」" if lang == LangType.JPN else '"')
+    elif act.act_type == ActType.TAG:
+        return _description_str_by_tag(act, level, is_debug)
+    elif act.act_type == ActType.TEST and is_debug:
+        return "> {}".format(act.description if act.description else act.action)
+    else:
+        return ""
+
+
+def _description_str_by_tag(act: Action, level: int, is_debug: bool) -> str:
+    if act.name == tag_str_of(TagType.COMMENT):
+        return ""
+    elif act.name == tag_str_of(TagType.TITLE):
+        return "{} {}".format("#" * level, act.description if act.description else act.action)
+    else:
+        return ""
+

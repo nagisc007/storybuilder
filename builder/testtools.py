@@ -3,139 +3,132 @@
 """
 import unittest
 
-from .acttypes import ActType, Behavior
-from .base import Act, Stage, DayTime, Story, Episode, Scene
+from .acttypes import Behavior
+from .acttypes import behavior_str_of
+from .base import Action, ActionGroup, Stage, DayTime
 from .person import Person
 
 
-def is_story_structed_episodes(test_case: unittest.TestCase, story: Story):
-    '''Check the story.
+def is_all_actions(test_case: unittest.TestCase, acts: ActionGroup) -> bool:
+    '''Check all action and action group.
     '''
-    test_case.assertTrue(story.data, "A story's data not exists!")
-    for a in story.data:
-        test_case.assertIsInstance(a, Episode, "The story's episode is not a mismatch type!")
+    test_case.assertIsInstance(acts, ActionGroup)
+    return _is_actiongroup_all_actions(test_case, acts)
+
+
+def _is_actiongroup_all_actions(test_case: unittest.TestCase, group: ActionGroup) -> bool:
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if not _is_actiongroup_all_actions(test_case, a):
+                return False
+        else:
+            if not isinstance(a, Action):
+                return False
+    return True
+
+
+def has_basic_infos(test_case: unittest.TestCase, story: ActionGroup,
+        hero: Person, rival: Person) -> bool:
+    '''Check basic info.
+
+    Basic informations are Who, Whom, When, Where
+    '''
+    ERR_MSG = "is not exists!"
+    # who
+    if not _has_the_name_in_group(story, hero):
+        test_case.fail("Hero {} {}".format(hero.name, ERR_MSG))
+    # whom
+    if not _has_the_name_in_group(story, rival):
+        test_case.fail("Rival {} {}".format(rival.name, ERR_MSG))
+    # when
+    if not _has_a_daytime_in_group(story):
+        test_case.fail("DayTime {}".format(ERR_MSG))
+    # where
+    if not _has_a_stage_in_group(story):
+        test_case.fail("Stage {}".format(ERR_MSG))
 
     return True
 
 
-def is_episode_structed_scenes(test_case: unittest.TestCase, episode: Episode):
-    '''Check the episode.
-    '''
-    test_case.assertTrue(episode.data, "A episode's data not exists!")
-    for a in episode.data:
-        test_case.assertIsInstance(a, Scene, "The episode's scene is not a mismatch type!")
+def _has_the_name_in_group(group: ActionGroup, target: Person) -> bool:
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_the_name_in_group(a, target):
+                return True
+        else:
+            if _has_the_name(a, target):
+                return True
+    return False
+
+
+def _has_the_name(act: Action, target: Person) -> bool:
+    return act.subject.name == target.name
+
+
+def _has_a_stage_in_group(group: ActionGroup) -> bool:
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_a_stage_in_group(a):
+                return True
+        else:
+            if _has_a_stage(a):
+                return True
+    return False
+
+
+def _has_a_stage(act: Action) -> bool:
+    return isinstance(act.subject, Stage)
+
+
+def _has_a_daytime_in_group(group: ActionGroup) -> bool:
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_a_daytime_in_group(a):
+                return True
+        else:
+            if _has_a_daytime(a):
+                return True
+    return False
+
+
+def _has_a_daytime(act: Action) -> bool:
+    return isinstance(act.subject, DayTime)
+
+
+def has_outline_infos(test_case: unittest.TestCase, story: ActionGroup,
+        what_sub: Person, what_behav: Behavior, purpose: str,
+        why_sub: Person, why_behav: Behavior, reason: str,
+        how_sub: Person, how_behav: Behavior, process: str,
+        res_sub: Person, res_behav: Behavior, result: str) -> bool:
+    ERR_MSG = "is not exists!"
+    # what
+    if not _has_the_word_in_group(story, what_sub, what_behav, purpose):
+        test_case.fail("{}'s purpose {}{} {}".format(what_sub.name, purpose, behavior_str_of(what_behav), ERR_MSG))
+    # why
+    if not _has_the_word_in_group(story, why_sub, why_behav, reason):
+        test_case.fail("{}'s reason {}{} {}".format(why_sub.name, reason, behavior_str_of(why_behav), ERR_MSG))
+    # how
+    if not _has_the_word_in_group(story, how_sub, how_behav, process):
+        test_case.fail("{}'s process {}{} {}".format(how_sub.name, process, behavior_str_of(how_behav), ERR_MSG))
+    # result
+    if not _has_the_word_in_group(story, res_sub, res_behav, result):
+        test_case.fail("{}'s result {}{} {}".format(res_sub.name, result, behavior_str_of(res_behav), ERR_MSG))
 
     return True
 
 
-def is_scene_structed_acts(test_case: unittest.TestCase, scene: Scene):
-    '''Check the scene.
-    '''
-    test_case.assertTrue(scene.data, "A scene's data not exists!")
-    for a in scene.data:
-        test_case.assertIsInstance(a, Act, "The scene's act is not a mismatch type!")
-
-    return True
-
-
-def has_scene_basic_infos(test_case: unittest.TestCase, scene: Scene, hero: Person, rival: Person):
-    '''Check the scene contained basic infos.
-    '''
-    test_case.assertIsInstance(scene, Scene, "It is not a Scene object!")
-    ERR_MSG = "not exists in the scene!"
-    # Who
-    for a in scene.data:
-        if is_contained_the_name(a, hero.name): break
-    else:
-        test_case.fail("{} (as hero) {}".format(hero.name, ERR_MSG))
-    # Whom
-    for a in scene.data:
-        if is_contained_the_name(a, rival.name): break
-    else:
-        test_case.fail("{} (as rival) {}".format(rival.name, ERR_MSG))
-    # When
-    for a in scene.data:
-        if isinstance(a.subject, Stage): break
-    else:
-        test_case.fail("The Stage {}".format(ERR_MSG))
-    # Where
-    for a in scene.data:
-        if isinstance(a.subject, DayTime): break
-    else:
-        test_case.fail("The DayTime {}".format(ERR_MSG))
-
-    return True 
+def _has_the_word_in_group(group: ActionGroup, target: Person, behavior: Behavior,
+        word: str) -> bool:
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_the_word_in_group(a, target, behavior, word):
+                return True
+        else:
+            if _has_the_word(a, target, behavior, word):
+                return True
+    return False
 
 
-def has_episode_outline_infos(test_case: unittest.TestCase, episode: Episode,
-        purpose, reason, process, result):
-    '''Check the episode contained outline infos.
-    '''
-    test_case.assertIsInstance(episode, Episode, "It is not a Episode object!")
-    ERR_MSG = "not exists in the episode!"
-    # What
-    is_existed = False
-    for s in episode.data:
-        for a in s.data:
-            if has_contained_the_purpose(a, purpose):
-                is_existed = True
-                break
-        if is_existed: break
-    else:
-        test_case.fail("The purpose ({}) {}".format(purpose, ERR_MSG))
-    # Why
-    is_existed = False
-    for s in episode.data:
-        for a in s.data:
-            if has_contained_the_reason(a, reason):
-                is_existed = True
-                break
-        if is_existed: break
-    else:
-        test_case.fail("The reason ({}) {}".format(reason, ERR_MSG))
-    # How
-    is_existed = False
-    for s in episode.data:
-        for a in s.data:
-            if has_contained_the_process(a, process):
-                is_existed = True
-                break
-        if is_existed: break
-    else:
-        test_case.fail("The process ({}) {}".format(process, ERR_MSG))
-    # Result
-    is_existed = False
-    for s in episode.data:
-        for a in s.data:
-            if has_contained_the_result(a, result):
-                is_existed = True
-                break
-        if is_existed: break
-    else:
-        test_case.fail("The result ({}) {}".format(result, ERR_MSG))
-
-    return True
-
-
-def is_contained_the_name(act: Act, name: str):
-    return name in act.subject.name
-
-
-def has_contained_the_purpose(act: Act, purpose: str):
-    return act.act_type in (ActType.TELL, ActType.THINK) \
-            and purpose in act.title
-
-
-def has_contained_the_reason(act: Act, reason: str):
-    return act.act_type in (ActType.ACT, ActType.TELL, ActType.THINK) \
-            and reason in act.title
-
-
-def has_contained_the_process(act: Act, process: str):
-    return act.act_type == ActType.ACT and process in act.title
-
-
-def has_contained_the_result(act: Act, result: str):
-    return act.act_type in (ActType.ACT, ActType.TELL, ActType.THINK) \
-            and result in act.title
-
+def _has_the_word(act: Action, target: Person, behavior: Behavior,
+        word: str) -> bool:
+    return _has_the_name(act, target) and act.behavior == behavior and word in act.action
