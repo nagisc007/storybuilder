@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.0.4] - 2019-03-19
+### Added
+- ActionGroup class
+- Master class (inherited Subject class)
+### Changed
+- Action class < Act class
+- Story management as ActionGroup
+### Deleted
+- Story class
+- Episode class
+- Scene class
+
 ## [0.0.3] - 2019-03-18
 ### Added
 - Github issue template
@@ -44,7 +56,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Example story as usage.
 - Output story as markdown.
 
-[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.0.3...HEAD
+[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.0.4...HEAD
+[0.0.4]: https://github.com/nagisc007/storybuilder/releases/v0.0.4
 [0.0.3]: https://github.com/nagisc007/storybuilder/releases/v0.0.3
 [0.0.2]: https://github.com/nagisc007/storybuilder/releases/v0.0.2
 [0.0.1]: https://github.com/nagisc007/storybuilder/releases/v0.0.1
