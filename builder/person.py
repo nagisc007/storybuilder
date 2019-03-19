@@ -29,6 +29,9 @@ class Person(_BasePerson):
     def ask(self, action: str, note: str="nothing"):
         return self.act(action, Behavior.ASK, behavior_str_of(Behavior.ASK), note)
 
+    def believe(self, action: str, note: str="nothing"):
+        return self.act(action, Behavior.BELIEVE, behavior_str_of(Behavior.BELIEVE), note)
+
     def brow(self, action: str, note: str="nothing"):
         return self.act(action, Behavior.BROW, behavior_str_of(Behavior.BROW), note)
 
@@ -65,6 +68,9 @@ class Person(_BasePerson):
     def deal(self, action: str, note: str="nothing"):
         return self.act(action, Behavior.DEAL, behavior_str_of(Behavior.DEAL), note)
 
+    def dispel(self, action: str, note: str="nothing"):
+        return self.act(action, Behavior.DISPEL, behavior_str_of(Behavior.DISPEL), note)
+
     def do(self, action: str, note: str="nothing"):
         return self.act(action, Behavior.DO, behavior_str_of(Behavior.DO), note)
 
@@ -90,6 +96,9 @@ class Person(_BasePerson):
 
     def fib(self, action: str, note: str="nothing"):
         return self.act(action, Behavior.FIB, behavior_str_of(Behavior.FIB), note)
+
+    def find(self, action: str, note: str="nothing"):
+        return self.act(action, Behavior.FIND, behavior_str_of(Behavior.FIND), note)
 
     def finish(self, action: str, note: str="nothing"):
         return self.act(action, Behavior.FINISH, behavior_str_of(Behavior.FINISH), note)

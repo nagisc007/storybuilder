@@ -271,6 +271,7 @@ class Behavior(Enum):
     DISGUST = auto()
     DISLIKE = auto()
     DISMISS = auto()
+    DISPEL = auto()
     DISPLAY = auto() # for symbols
     DISTINGUISH = auto()
     DISTRIBUTE = auto()
@@ -894,6 +895,7 @@ def behavior_str_of(behavior: Behavior) -> str:
             Behavior.DIG: "掘る",
             Behavior.DISAPPEAR: "消える",
             Behavior.DISLIKE: "嫌い",
+            Behavior.DISPEL: "晴らす",
             Behavior.DISPLAY: "表示する",
             Behavior.DIVE: "飛び込む",
             Behavior.DO: "行う",
@@ -931,6 +933,7 @@ def behavior_str_of(behavior: Behavior) -> str:
             Behavior.FIB: "嘘をつく",
             Behavior.FIGHT: "戦う",
             Behavior.FILL: "満たす",
+            Behavior.FIND: "見つける",
             Behavior.FIRE: "火を点ける",
             Behavior.FIREJOB: "首にする",
             Behavior.FLASH: "輝く",
