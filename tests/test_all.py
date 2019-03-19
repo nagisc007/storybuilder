@@ -24,6 +24,7 @@ def suite():
     suite.addTest(unittest.makeSuite(test_base.ItemTest))
     suite.addTest(unittest.makeSuite(test_base.DayTimeTest))
     suite.addTest(unittest.makeSuite(test_base.MasterTest))
+    suite.addTest(unittest.makeSuite(test_base.WordTest))
 
     # person
     suite.addTest(unittest.makeSuite(test_person.PersonTest))

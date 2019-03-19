@@ -6,7 +6,7 @@ import unittest
 from builder.acttypes import ActType, Behavior, TagType
 from builder.acttypes import tag_str_of
 from builder.base import _BaseAction, _BaseSubject, Action, ActionGroup
-from builder.base import _BasePerson, Stage, Item, DayTime
+from builder.base import _BasePerson, Stage, Item, DayTime, Word
 from builder.base import Master
 
 
@@ -186,3 +186,14 @@ class MasterTest(unittest.TestCase):
         self.assertEqual(len(acted.actions), 2)
         for a in acted.actions:
             self.assertIsInstance(a, Action)
+
+
+class WordTest(unittest.TestCase):
+
+    def setUp(self):
+        self.body = Word("Test", "a test word")
+
+    def test_attributes(self):
+        self.assertIsInstance(self.body, Word)
+        self.assertEqual(self.body.name, "Test")
+        self.assertEqual(self.body.note, "a test word")

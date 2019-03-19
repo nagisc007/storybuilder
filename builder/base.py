@@ -42,6 +42,48 @@ class _BaseSubject(object):
         return Action(self, ActType.EXPLAIN, Behavior.EXPLAIN, info, note=note)
 
 
+class _BasePerson(_BaseSubject):
+    """Basic character class.
+
+    Attributes:
+    """
+    def __init__(self, name: str, age: int, sex: str, job: str, note: str="nothing"):
+        """
+        Args:
+            name (str): character's name
+            age (int): character's age
+            sex (str): character's sex
+            job (str): character's job
+            note (str, optional): a short description.
+        """
+        super().__init__(name, note)
+        self.age = age
+        self.job = job
+        self.sex = sex
+
+    def act(self, action: str, behaviour: Behavior, name: str, note: str="nothing"):
+        """
+        Args:
+            action (str): an action string.
+            behaviour (:enum:`Behavior`): a behavior type.
+            name (str): an action name.
+            note (str, optional): a short description.
+        Returns:
+            Act object contained a personal action.
+        """
+        return Action(self, ActType.ACT, behaviour, action, name, note=note)
+
+    def tell(self, action: str, note: str="nothing"):
+        """
+        Args:
+            action (str): a short dialogue.
+            note (str, optional): a short description.
+        Returns:
+            Act object contained a dialogue.
+        """
+        return Action(self, ActType.TELL, Behavior.TELL, action, "台詞", note=note)
+
+
 class Action(_BaseAction):
     """A general action class.
 
@@ -97,76 +139,6 @@ class ActionGroup(_BaseAction):
         self.lang = lang
 
 
-class _BasePerson(_BaseSubject):
-    """Basic character class.
-
-    Attributes:
-    """
-    def __init__(self, name: str, age: int, sex: str, job: str, note: str="nothing"):
-        """
-        Args:
-            name (str): character's name
-            age (int): character's age
-            sex (str): character's sex
-            job (str): character's job
-            note (str, optional): a short description.
-        """
-        super().__init__(name, note)
-        self.age = age
-        self.job = job
-        self.sex = sex
-
-    def act(self, action: str, behaviour: Behavior, name: str, note: str="nothing"):
-        """
-        Args:
-            action (str): an action string.
-            behaviour (:enum:`Behavior`): a behavior type.
-            name (str): an action name.
-            note (str, optional): a short description.
-        Returns:
-            Act object contained a personal action.
-        """
-        return Action(self, ActType.ACT, behaviour, action, name, note=note)
-
-    def tell(self, action: str, note: str="nothing"):
-        """
-        Args:
-            action (str): a short dialogue.
-            note (str, optional): a short description.
-        Returns:
-            Act object contained a dialogue.
-        """
-        return Action(self, ActType.TELL, Behavior.TELL, action, "台詞", note=note)
-
-
-class Stage(_BaseSubject):
-    """Stage class.
-
-    Attributes:
-    """
-    def __init__(self, name: str, note: str="nothing"):
-        """
-        Args:
-            name (str): stage's name.
-            note (str, optional): a short description.
-        """
-        super().__init__(name, note)
-
-
-class Item(_BaseSubject):
-    """Item class.
-
-    Attributes.
-    """
-    def __init__(self, name: str, note: str="nothing"):
-        """
-        Args:
-            name (str): item's name.
-            note (str, optional): a short description.
-        """
-        super().__init__(name, note)
-
-
 class DayTime(_BaseSubject):
     """Day and Time management class.
 
@@ -189,6 +161,20 @@ class DayTime(_BaseSubject):
         self.year = year
 
 
+class Item(_BaseSubject):
+    """Item class.
+
+    Attributes.
+    """
+    def __init__(self, name: str, note: str="nothing"):
+        """
+        Args:
+            name (str): item's name.
+            note (str, optional): a short description.
+        """
+        super().__init__(name, note)
+
+
 class Master(_BaseSubject):
     """A story management class.
 
@@ -205,4 +191,32 @@ class Master(_BaseSubject):
 
     def title(self, title_: str, note: str="nothing"):
         return Action(self, ActType.TAG, Behavior.NONE, title_, tag_str_of(TagType.TITLE), note)
+
+
+class Stage(_BaseSubject):
+    """Stage class.
+
+    Attributes:
+    """
+    def __init__(self, name: str, note: str="nothing"):
+        """
+        Args:
+            name (str): stage's name.
+            note (str, optional): a short description.
+        """
+        super().__init__(name, note)
+
+
+class Word(_BaseSubject):
+    """Word class.
+
+    Attributes.
+    """
+    def __init__(self, name: str, note: str="nothing"):
+        """
+        Args:
+            name (str): a word title.
+            note (str, optional): a short description.
+        """
+        super().__init__(name, note)
 
