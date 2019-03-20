@@ -96,39 +96,34 @@ def _has_a_daytime(act: Action) -> bool:
 
 
 def has_outline_infos(test_case: unittest.TestCase, story: ActionGroup,
-        what_sub: Person, what_behav: Behavior, purpose: str,
-        why_sub: Person, why_behav: Behavior, reason: str,
-        how_sub: Person, how_behav: Behavior, process: str,
-        res_sub: Person, res_behav: Behavior, result: str) -> bool:
+        what_act: Action, why_act: Action, how_act: Action, res_act: Action) -> bool:
     ERR_MSG = "is not exists!"
     # what
-    if not _has_the_word_in_group(story, what_sub, what_behav, purpose):
-        test_case.fail("{}'s purpose {}{} {}".format(what_sub.name, purpose, behavior_str_of(what_behav), ERR_MSG))
+    if not _has_the_word_in_group(story, what_act):
+        test_case.fail("{}'s purpose {}{} {}".format(what_act.subject.name, purpose, behavior_str_of(what_act.behavior), ERR_MSG))
     # why
-    if not _has_the_word_in_group(story, why_sub, why_behav, reason):
-        test_case.fail("{}'s reason {}{} {}".format(why_sub.name, reason, behavior_str_of(why_behav), ERR_MSG))
+    if not _has_the_word_in_group(story, why_act):
+        test_case.fail("{}'s reason {}{} {}".format(why_act.subject.name, reason, behavior_str_of(why_act.behavior), ERR_MSG))
     # how
-    if not _has_the_word_in_group(story, how_sub, how_behav, process):
-        test_case.fail("{}'s process {}{} {}".format(how_sub.name, process, behavior_str_of(how_behav), ERR_MSG))
+    if not _has_the_word_in_group(story, how_act):
+        test_case.fail("{}'s process {}{} {}".format(how_act.subject.name, process, behavior_str_of(how_act.behavior), ERR_MSG))
     # result
-    if not _has_the_word_in_group(story, res_sub, res_behav, result):
-        test_case.fail("{}'s result {}{} {}".format(res_sub.name, result, behavior_str_of(res_behav), ERR_MSG))
+    if not _has_the_word_in_group(story, res_act):
+        test_case.fail("{}'s result {}{} {}".format(res_act.subject.name, result, behavior_str_of(res_act.behavior), ERR_MSG))
 
     return True
 
 
-def _has_the_word_in_group(group: ActionGroup, target: Person, behavior: Behavior,
-        word: str) -> bool:
+def _has_the_word_in_group(group: ActionGroup, act: Action) -> bool:
     for a in group.actions:
         if isinstance(a, ActionGroup):
-            if _has_the_word_in_group(a, target, behavior, word):
+            if _has_the_word_in_group(a, act):
                 return True
         else:
-            if _has_the_word(a, target, behavior, word):
+            if _has_the_word(a, act):
                 return True
     return False
 
 
-def _has_the_word(act: Action, target: Person, behavior: Behavior,
-        word: str) -> bool:
-    return _has_the_name(act, target) and act.behavior == behavior and word in act.action
+def _has_the_word(act: Action, comp_act: Action) -> bool:
+    return _has_the_name(act, comp_act.subject) and act.behavior == comp_act.behavior and comp_act.action in act.action

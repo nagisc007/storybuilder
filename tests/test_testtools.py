@@ -37,8 +37,9 @@ class BasicMethodTest(unittest.TestCase):
         self.assertTrue(testtools.has_basic_infos(self, self.story, self.taro, self.hanako))
 
     def test_has_outline_infos(self):
+        what_act = self.taro.tell("Boring")
+        why_act = self.taro.lose("love")
+        how_act = self.taro.meet("girl")
+        res_act = self.taro.fall("love")
         self.assertTrue(testtools.has_outline_infos(self, self.story,
-            self.taro, Behavior.TELL, "Boring",
-            self.taro, Behavior.LOSE, "love",
-            self.taro, Behavior.MEET, "girl",
-            self.taro, Behavior.FALL, "love"))
+            what_act, why_act, how_act, res_act))
