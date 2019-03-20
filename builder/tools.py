@@ -36,10 +36,10 @@ def options_parsed():
     '''
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-a', '--action', help="output as action data", action='store_false')
-    parser.add_argument('-b', '--build', help="build and output as a file", action='store_false')
-    parser.add_argument('-d', '--debug', help="with debug mode", action='store_false')
-    parser.add_argument('-i', '--info', help="display with informations", action='store_false')
+    parser.add_argument('-a', '--action', help="output as action data", action='store_true')
+    parser.add_argument('-b', '--build', help="build and output as a file", action='store_true')
+    parser.add_argument('-d', '--debug', help="with debug mode", action='store_true')
+    parser.add_argument('-i', '--info', help="display with informations", action='store_true')
     parser.add_argument('-f', '--filename', help="advanced output file name")
 
     # get result
