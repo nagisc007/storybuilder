@@ -106,24 +106,24 @@ def _story_converted_as_action_in_group(group: ActionGroup, level: int, is_debug
 def _action_str_by_type(act: Action, lang: LangType, level: int, is_debug: bool) -> str:
     if act.act_type == ActType.ACT:
         if lang == LangType.JPN:
-            return "{:　8}{:　8}:{}:{}".format(act.subject.name, behavior_str_of(act.behavior), act.action, "" if act.note == "nothing" or not act.note else act.note)
+            return "{:\u3000<8s}:{:\u3000<8s}:{}:{}".format(act.subject.name, behavior_str_of(act.behavior), act.action, "" if act.note == "nothing" or not act.note else act.note)
         else:
             return "{:8}:{:8}:{}:{}".format(act.subject.name, behavior_str_of(act.behavior), act.action, "" if act.note == "nothing" or not act.note else act.note)
     elif act.act_type == ActType.EXPLAIN:
         if lang == LangType.JPN:
-            return "{:　8}:{:　8}:{}:{}".format(act.subject.name, behavior_str_of(act.behavior), act.action, "" if act.note == "nothing" or not act.note else act.note)
+            return "{:\u3000<8s}:{:\u3000<8s}:{}:{}".format(act.subject.name, behavior_str_of(act.behavior), act.action, "" if act.note == "nothing" or not act.note else act.note)
         else:
             return "{:8}:{:8}:{}:{}".format(act.subject.name, behavior_str_of(act.behavior), act.action, "" if act.note == "nothing" or not act.note else act.note)
     elif act.act_type == ActType.TAG:
         return _action_str_by_tag(act, level)
     elif act.act_type == ActType.TELL:
         if lang == LangType.JPN:
-            return "{:　8}:{:　8}:「{}」:{}".format(act.subject.name, behavior_str_of(act.behavior), act.action, "" if act.note == "nothing" or act.note else act.note)
+            return "{:\u3000<8s}:{:\u3000<8s}:「{}」:{}".format(act.subject.name, behavior_str_of(act.behavior), act.action, "" if act.note == "nothing" or act.note else act.note)
         else:
             return "{:8}:{:8}:「{}」:{}".format(act.subject.name, behavior_str_of(act.behavior), act.action, "" if act.note == "nothing" or act.note else act.note)
     elif act.act_type == ActType.TEST and is_debug:
         if lang == LangType.JPN:
-            return "> {:　8}:{:　8}:{}:{}".format(act.subject.name, behavior_str_of(act.behavior), act.action, "" if act.note == "nothing" or act.note else act.note)
+            return "> {:\u3000<8s}:{:\u3000<8s}:{}:{}".format(act.subject.name, behavior_str_of(act.behavior), act.action, "" if act.note == "nothing" or act.note else act.note)
         else:
             return "> {:8}:{:8}:{}:{}".format(act.subject.name, behavior_str_of(act.behavior), act.action, "" if act.note == "nothing" or act.note else act.note)
     else:

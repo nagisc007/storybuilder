@@ -26,6 +26,12 @@ class BasicMethodTest(unittest.TestCase):
                 self.hanako.tell("boring").desc("I'm not fine"),
                 lang=LangType.ENG,
                 )
+        self.story_j = self.sm.story(
+                self.sm.title("太郎と花子"),
+                self.hanako.come("部屋").desc("可愛い少女"),
+                self.taro.tell("ああ").desc("よう"),
+                self.hanako.tell("不満").desc("全然")
+                )
         self.test_file = "test_file"
 
     def test_build_to_story(self):
@@ -72,6 +78,13 @@ class BasicMethodTest(unittest.TestCase):
                 ["# Taro and Hanako", "Hanako  :来る      :in room:",
                     "Taro    :台詞      :「wow」:",
                     "Hanako  :台詞      :「boring」:"])
+
+
+    def test__story_converted_as_action_jpn(self):
+        self.assertEqual(tools._story_converted_as_action(self.story_j, False),
+                ["# 太郎と花子", "Hanako　　:来る　　　　　　:部屋:",
+                    "Taro　　　　:台詞　　　　　　:「ああ」:",
+                    "Hanako　　:台詞　　　　　　:「不満」:"])
 
 
     def test__story_converted_as_action_in_group(self):
