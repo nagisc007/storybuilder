@@ -3,7 +3,7 @@
 """
 import unittest
 
-from builder.acttypes import Behavior
+from builder.behavior import Behavior
 from builder.base import Stage, DayTime, Master
 from builder.person import Person
 import builder.testtools as testtools

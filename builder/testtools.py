@@ -3,8 +3,7 @@
 """
 import unittest
 
-from .acttypes import Behavior
-from .acttypes import behavior_str_of
+from .behavior import behavior_str_of
 from .base import Action, ActionGroup, Stage, DayTime
 from .person import Person
 
@@ -100,16 +99,16 @@ def has_outline_infos(test_case: unittest.TestCase, story: ActionGroup,
     ERR_MSG = "is not exists!"
     # what
     if not _has_the_word_in_group(story, what_act):
-        test_case.fail("{}'s purpose {}{} {}".format(what_act.subject.name, purpose, behavior_str_of(what_act.behavior), ERR_MSG))
+        test_case.fail("{}'s purpose {}{} {}".format(what_act.subject.name, what_act.action, behavior_str_of(what_act.behavior), ERR_MSG))
     # why
     if not _has_the_word_in_group(story, why_act):
-        test_case.fail("{}'s reason {}{} {}".format(why_act.subject.name, reason, behavior_str_of(why_act.behavior), ERR_MSG))
+        test_case.fail("{}'s reason {}{} {}".format(why_act.subject.name, why_act.action, behavior_str_of(why_act.behavior), ERR_MSG))
     # how
     if not _has_the_word_in_group(story, how_act):
-        test_case.fail("{}'s process {}{} {}".format(how_act.subject.name, process, behavior_str_of(how_act.behavior), ERR_MSG))
+        test_case.fail("{}'s process {}{} {}".format(how_act.subject.name, how_act.action, behavior_str_of(how_act.behavior), ERR_MSG))
     # result
     if not _has_the_word_in_group(story, res_act):
-        test_case.fail("{}'s result {}{} {}".format(res_act.subject.name, result, behavior_str_of(res_act.behavior), ERR_MSG))
+        test_case.fail("{}'s result {}{} {}".format(res_act.subject.name, res_act.action, behavior_str_of(res_act.behavior), ERR_MSG))
 
     return True
 

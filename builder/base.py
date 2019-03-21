@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """Module to build a story.
 """
-from .acttypes import ActType, Behavior, TagType, LangType
+from .acttypes import ActType, TagType, LangType
 from .acttypes import tag_str_of
+from .behavior import Behavior
 
 
 class _BaseAction(object):

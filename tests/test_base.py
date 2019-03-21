@@ -3,8 +3,9 @@
 """
 import unittest
 
-from builder.acttypes import ActType, Behavior, TagType
+from builder.acttypes import ActType, TagType
 from builder.acttypes import tag_str_of
+from builder.behavior import Behavior
 from builder.base import _BaseAction, _BaseSubject, Action, ActionGroup
 from builder.base import _BasePerson, Stage, Item, DayTime, Word
 from builder.base import Master

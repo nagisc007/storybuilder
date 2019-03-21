@@ -3,10 +3,11 @@
 """
 import unittest
 
-from builder.acttypes import ActType, Behavior
-from builder.acttypes import behavior_str_of
+from builder.acttypes import ActType
 from builder.base import Action
 from builder.person import Person
+from builder.behavior import Behavior
+from builder.behavior import behavior_str_of
 
 
 class PersonTest(unittest.TestCase):

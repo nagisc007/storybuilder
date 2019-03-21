@@ -6,9 +6,9 @@ import os
 import argparse
 
 from .acttypes import ActType, TagType, LangType
-from .acttypes import behavior_str_of
 from .acttypes import tag_str_of
 from .base import Action, ActionGroup
+from .behavior import behavior_str_of
 
 
 # output
