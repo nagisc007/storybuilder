@@ -99,16 +99,16 @@ def has_outline_infos(test_case: unittest.TestCase, story: ActionGroup,
     ERR_MSG = "is not exists!"
     # what
     if not _has_the_word_in_group(story, what_act):
-        test_case.fail("{}'s purpose {}{} {}".format(what_act.subject.name, what_act.action, behavior_str_of(what_act.behavior), ERR_MSG))
+        test_case.fail("{}'s purpose {}{}{} {}".format(what_act.subject.name, what_act.action, behavior_str_of(what_act.behavior), _passive_str_if(what_act), ERR_MSG))
     # why
     if not _has_the_word_in_group(story, why_act):
-        test_case.fail("{}'s reason {}{} {}".format(why_act.subject.name, why_act.action, behavior_str_of(why_act.behavior), ERR_MSG))
+        test_case.fail("{}'s reason {}{}{} {}".format(why_act.subject.name, why_act.action, behavior_str_of(why_act.behavior), _passive_str_if(why_act), ERR_MSG))
     # how
     if not _has_the_word_in_group(story, how_act):
-        test_case.fail("{}'s process {}{} {}".format(how_act.subject.name, how_act.action, behavior_str_of(how_act.behavior), ERR_MSG))
+        test_case.fail("{}'s process {}{}{} {}".format(how_act.subject.name, how_act.action, behavior_str_of(how_act.behavior), _passive_str_if(how_act), ERR_MSG))
     # result
     if not _has_the_word_in_group(story, res_act):
-        test_case.fail("{}'s result {}{} {}".format(res_act.subject.name, res_act.action, behavior_str_of(res_act.behavior), ERR_MSG))
+        test_case.fail("{}'s result {}{}{} {}".format(res_act.subject.name, res_act.action, behavior_str_of(res_act.behavior), _passive_str_if(res_act), ERR_MSG))
 
     return True
 
@@ -125,4 +125,10 @@ def _has_the_word_in_group(group: ActionGroup, act: Action) -> bool:
 
 
 def _has_the_word(act: Action, comp_act: Action) -> bool:
-    return _has_the_name(act, comp_act.subject) and act.behavior == comp_act.behavior and comp_act.action in act.action
+    return _has_the_name(act, comp_act.subject) \
+            and act.behavior == comp_act.behavior and act.is_passive == comp_act.is_passive \
+            and comp_act.action in act.action
+
+
+def _passive_str_if(act: Action) -> str:
+    return "（受）" if act.is_passive else ""

@@ -93,6 +93,7 @@ class Action(_BaseAction):
         action (str): an action string.
         behavior (:enum:`Behavior`): a behavior type of this action.
         description (str): a description of this action.
+        is_passive (bool, optional): if True is a passive mode.
         name (str): an action name.
         note (str): a short description.
         subject (:obj:`_BaseSubject`): a subject of this action.
@@ -111,10 +112,15 @@ class Action(_BaseAction):
         self.action = action
         self.behavior = behavior
         self.description = ""
+        self.is_passive = False
         self.subject = subject
 
     def desc(self, desc_: str):
         self.description = desc_
+        return self
+
+    def passive(self, mode: bool=True):
+        self.is_passive = mode
         return self
 
 

@@ -68,8 +68,8 @@ class BasicMethodTest(unittest.TestCase):
 
     def test__story_data_converted(self):
         self.assertEqual(tools._story_data_converted(self.story, True, False),
-                 ["# Taro and Hanako", "Hanako  :来る      :in room:",
-                    "Taro    :台詞      :「wow」:",
+                ["# Taro and Hanako", "Hanako  :来る      :in room:",
+                     "Taro    :台詞      :「wow」:",
                     "Hanako  :台詞      :「boring」:"])
 
 
