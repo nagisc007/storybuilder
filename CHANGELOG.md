@@ -5,8 +5,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.0.5] - 2019-03-19
 ### Added
 - Word class
+- Action's object param
+- Behavior type
+- Many new attribute words to Person class
+- Passive mode to Action
+- Language type
+### Changed
+- Outline test using Action
+### Fixed
+- Top space with a description
+- Exchanged commandline action flags
 
 ## [0.0.4] - 2019-03-19
 ### Added
@@ -58,7 +70,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Example story as usage.
 - Output story as markdown.
 
-[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.0.4...HEAD
+[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.0.5...HEAD
+[0.0.5]: https://github.com/nagisc007/storybuilder/releases/v0.0.5
 [0.0.4]: https://github.com/nagisc007/storybuilder/releases/v0.0.4
 [0.0.3]: https://github.com/nagisc007/storybuilder/releases/v0.0.3
 [0.0.2]: https://github.com/nagisc007/storybuilder/releases/v0.0.2
