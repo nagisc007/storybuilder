@@ -39,6 +39,7 @@ class Behavior(Enum):
     ACT = auto() # 行動する
     ADD = auto() # 加える
     ADDRESS = auto() # 
+    ADHERE = auto()
     ADJUST = auto() # 調整する
     ADMIRE = auto() # 憧れる
     ADMIT = auto() # 認める
@@ -246,6 +247,7 @@ class Behavior(Enum):
     DIGEST = auto()
     DISAPPEAR = auto()
     DISAPPOINT = auto()
+    DISAPPROVE = auto()
     DISCHARGE = auto()
     DISCOVER = auto()
     DISCUSS = auto()
@@ -353,6 +355,7 @@ class Behavior(Enum):
     GAZE = auto()
     GET = auto()
     GIVE = auto()
+    GLAD = auto()
     GLANCE = auto()
     GLOW = auto()
     GO = auto()
@@ -370,6 +373,7 @@ class Behavior(Enum):
     HANDLE = auto()
     HANG = auto()
     HAPPEN = auto()
+    HAPPY = auto()
     HARVEST = auto()
     HATE = auto()
     HAVE = auto()
@@ -408,6 +412,7 @@ class Behavior(Enum):
     INSPIRE = auto()
     INSTALL = auto()
     INSTRUCT = auto()
+    INSTRUMENT = auto()
     INSULT = auto()
     INTEND = auto()
     INTERFERE = auto()
@@ -458,10 +463,11 @@ class Behavior(Enum):
     LOAN = auto()
     LOCK = auto()
     LOOK = auto()
+    LOOKDOWN = auto()
     LOSE = auto()
     LOVE = auto()
     MAINTAIN = auto()
-    # MAKE = auto()
+    MAKE = auto()
     MAKEUP = auto()
     MANAGE = auto()
     MANUFACTURE = auto()
@@ -507,6 +513,7 @@ class Behavior(Enum):
     OPPOSE = auto()
     ORGANIZE = auto()
     OVERCOME = auto()
+    OVERFLOW = auto()
     OVERLOOK = auto()
     OWE = auto()
     OWN = auto()
@@ -529,6 +536,7 @@ class Behavior(Enum):
     PLANT = auto()
     PLAY = auto()
     PLEASE = auto()
+    PLUNGE = auto()
     POINT = auto()
     POP = auto()
     POSE = auto()
@@ -689,6 +697,7 @@ class Behavior(Enum):
     SLICE = auto()
     SLIDE = auto()
     SLIP = auto()
+    SLOBBER = auto()
     SMASH = auto()
     SMELL = auto()
     SMILE = auto()
@@ -700,6 +709,7 @@ class Behavior(Enum):
     SPECIALIZE = auto()
     SPEAK = auto()
     SPEND = auto()
+    SPILL = auto()
     SPIN = auto()
     SPLIT = auto()
     SPOIL = auto()
@@ -822,8 +832,10 @@ def behavior_str_of(behavior: Behavior) -> str:
             Behavior.ACCEPT: "受け取る",
             Behavior.ACQUIRE: "入手する",
             Behavior.ADD: "追加する",
+            Behavior.ADHERE: "付く",
             Behavior.ADVISE: "助言する",
             Behavior.AGREE: "賛成する",
+            Behavior.AIM: "向ける",
             Behavior.ANGRY: "怒る",
             Behavior.ANSWER: "答える",
             Behavior.APPEAR: "現れる",
@@ -882,6 +894,7 @@ def behavior_str_of(behavior: Behavior) -> str:
             Behavior.DIE: "死ぬ",
             Behavior.DIG: "掘る",
             Behavior.DISAPPEAR: "消える",
+            Behavior.DISAPPROVE: "不賛成",
             Behavior.DISLIKE: "嫌い",
             Behavior.DISPEL: "晴らす",
             Behavior.DISPLAY: "表示する",
@@ -936,6 +949,7 @@ def behavior_str_of(behavior: Behavior) -> str:
             Behavior.GAZE: "見つめる",
             Behavior.GET: "手に入れる",
             Behavior.GIVE: "与える",
+            Behavior.GLAD: "嬉しい",
             Behavior.GO: "行く",
             Behavior.GRADUATE: "卒業する",
             Behavior.GREET: "挨拶する",
@@ -947,7 +961,9 @@ def behavior_str_of(behavior: Behavior) -> str:
             Behavior.HANDLE: "操作する",
             Behavior.HANG: "掛ける",
             Behavior.HAPPEN: "起こる",
+            Behavior.HAPPY: "幸せ",
             Behavior.HATE: "嫌う",
+            Behavior.HAVE: "持つ",
             Behavior.HEAL: "癒やす",
             Behavior.HEAR: "聞く",
             Behavior.HELP: "助ける",
@@ -963,6 +979,7 @@ def behavior_str_of(behavior: Behavior) -> str:
             Behavior.IGNORE: "無視する",
             Behavior.IMAGINE: "想像する",
             Behavior.INJURE: "負傷する",
+            Behavior.INSTRUMENT: "楽器",
             Behavior.INTRODUCE: "紹介する",
             Behavior.INVEST: "投資する",
             Behavior.INVESTIGATE: "捜査する",
@@ -989,9 +1006,12 @@ def behavior_str_of(behavior: Behavior) -> str:
             Behavior.LIGHT: "明かりを点ける",
             Behavior.LISTEN: "聞く",
             Behavior.LIVE: "生きる",
+            Behavior.LOOK: "見る",
+            Behavior.LOOKDOWN: "俯く",
             Behavior.LOCK: "鍵を掛ける",
             Behavior.LOSE: "失う",
             Behavior.LOVE: "愛する",
+            Behavior.MAKE: "作る",
             Behavior.MAKEUP: "化粧する",
             Behavior.MANAGE: "管理する",
             Behavior.MANUFACTURE: "製作する",
@@ -1016,6 +1036,8 @@ def behavior_str_of(behavior: Behavior) -> str:
             Behavior.OCCUR: "発生する",
             Behavior.OPEN: "開く",
             Behavior.OPPOSE: "反対する",
+            Behavior.OVERCOME: "打開する",
+            Behavior.OVERFLOW: "溢れる",
             Behavior.OVERLOOK: "見落とす",
             Behavior.OWN: "所有する",
             Behavior.PACK: "パックする",
@@ -1023,9 +1045,11 @@ def behavior_str_of(behavior: Behavior) -> str:
             Behavior.PASS: "通る",
             Behavior.PAUSE: "休止する",
             Behavior.PAY: "支払う",
+            Behavior.PERFORM: "演じる",
             Behavior.PHONE: "電話する",
             Behavior.PLACE: "設置する",
             Behavior.PLAY: "遊ぶ",
+            Behavior.PLUNGE: "突っ込む",
             Behavior.PRAY: "祈る",
             Behavior.PRACTICE: "練習する",
             Behavior.PRESS: "押す",
@@ -1033,6 +1057,7 @@ def behavior_str_of(behavior: Behavior) -> str:
             Behavior.PROMISE: "約束する",
             Behavior.PUBLISH: "出版する",
             Behavior.PULL: "引く",
+            Behavior.PUNCH: "殴る",
             Behavior.PUSH: "押す",
             Behavior.PUT: "置く",
             Behavior.PUZZLE: "困らせる",
@@ -1044,17 +1069,23 @@ def behavior_str_of(behavior: Behavior) -> str:
             Behavior.RECOMMEND: "勧める",
             Behavior.REFLECT: "反射する",
             Behavior.REFRESH: "リフレッシュする",
+            Behavior.REGARD: "見做す",
             Behavior.REGRET: "後悔する",
             Behavior.RELEASE: "離す",
             Behavior.REMEMBER: "思い出す",
             Behavior.RENT: "貸す",
+            Behavior.REPLY: "返事",
             Behavior.RESCUE: "救助する",
             Behavior.REST: "休む",
             Behavior.RETURN: "戻る",
             Behavior.REVIEW: "見直す",
             Behavior.RIDE: "乗る",
             Behavior.RING: "鳴る",
+            Behavior.RISE: "上がる",
+            Behavior.ROB: "奪う",
+            Behavior.ROCK: "揺らす",
             Behavior.ROLL: "転がる",
+            Behavior.RUB: "擦る",
             Behavior.RUN: "走る",
             Behavior.SACRIFICE: "犠牲になる",
             Behavior.SAD: "悲しむ",
@@ -1089,6 +1120,7 @@ def behavior_str_of(behavior: Behavior) -> str:
             Behavior.SLICE: "スライスする",
             Behavior.SLIDE: "ずれる",
             Behavior.SLIP: "滑る",
+            Behavior.SLOBBER: "垂らす",
             Behavior.SMELL: "匂う",
             Behavior.SMILE: "微笑する",
             Behavior.SMOKE: "煙草を吸う",
@@ -1096,6 +1128,7 @@ def behavior_str_of(behavior: Behavior) -> str:
             Behavior.SOUND: "音が鳴る",
             Behavior.SPEAK: "声を出す",
             Behavior.SPEND: "費やす",
+            Behavior.SPILL: "零す",
             Behavior.SPIN: "紡ぐ",
             Behavior.SPLIT: "裂ける",
             Behavior.SPREAD: "広まる",
@@ -1105,8 +1138,9 @@ def behavior_str_of(behavior: Behavior) -> str:
             Behavior.START: "開始する",
             Behavior.STAY: "留まる",
             Behavior.STEAL: "盗む",
-            Behavior.STICK: "叩く",
+            Behavior.STICK: "刺す",
             Behavior.STOP: "止まる",
+            Behavior.STORE: "収める",
             Behavior.STUDY: "勉強する",
             Behavior.SUCCEED: "成功する",
             Behavior.SUGGEST: "提案する",
@@ -1179,8 +1213,10 @@ def behav_type_of(behavior: Behavior) -> BehavType:
             Behavior.ACCEPT: BehavType.DEALT,
             Behavior.ACQUIRE: BehavType.DEALT,
             Behavior.ADD: BehavType.DEALT,
+            Behavior.ADHERE: BehavType.DEALT,
             Behavior.ADVISE: BehavType.TALKED,
             Behavior.AGREE: BehavType.THOUGHT,
+            Behavior.AIM: BehavType.DEALT,
             Behavior.ANGRY: BehavType.FELT,
             Behavior.APPEAR: BehavType.VIEWED,
             Behavior.APPLY: BehavType.DEALT,
@@ -1242,6 +1278,7 @@ def behav_type_of(behavior: Behavior) -> BehavType:
             Behavior.DIE: BehavType.DONE,
             Behavior.DIG: BehavType.DEALT,
             Behavior.DISAPPEAR: BehavType.VIEWED,
+            Behavior.DISAPPROVE: BehavType.THOUGHT,
             Behavior.DISLIKE: BehavType.THOUGHT,
             Behavior.DISPEL: BehavType.DEALT,
             Behavior.DISPLAY: BehavType.VIEWED,
@@ -1301,6 +1338,7 @@ def behav_type_of(behavior: Behavior) -> BehavType:
             Behavior.GAZE: BehavType.EXPRESSED,
             Behavior.GET: BehavType.DEALT,
             Behavior.GIVE: BehavType.DEALT,
+            Behavior.GLAD: BehavType.FELT,
             Behavior.GO: BehavType.MOVED,
             Behavior.GRADUATE: BehavType.DEALT,
             Behavior.GREET: BehavType.TALKED,
@@ -1312,6 +1350,7 @@ def behav_type_of(behavior: Behavior) -> BehavType:
             Behavior.HANDLE: BehavType.HANDLED,
             Behavior.HANG: BehavType.DEALT,
             Behavior.HAPPEN: BehavType.EXPRESSED,
+            Behavior.HAPPY: BehavType.FELT,
             Behavior.HATE: BehavType.THOUGHT,
             Behavior.HAVE: BehavType.DONE,
             Behavior.HEAL: BehavType.DEALT,
@@ -1329,6 +1368,7 @@ def behav_type_of(behavior: Behavior) -> BehavType:
             Behavior.IGNORE: BehavType.THOUGHT,
             Behavior.IMAGINE: BehavType.THOUGHT,
             Behavior.INJURE: BehavType.DEALT,
+            Behavior.INSTRUMENT: BehavType.DEALT,
             Behavior.INVEST: BehavType.DEALT,
             Behavior.INVESTIGATE: BehavType.DEALT,
             Behavior.INVITE: BehavType.DEALT,
@@ -1355,9 +1395,12 @@ def behav_type_of(behavior: Behavior) -> BehavType:
             Behavior.LIKE: BehavType.THOUGHT,
             Behavior.LISTEN: BehavType.TALKED,
             Behavior.LIVE: BehavType.DONE,
+            Behavior.LOOK: BehavType.VIEWED,
+            Behavior.LOOKDOWN: BehavType.VIEWED,
             Behavior.LOCK: BehavType.HANDLED,
             Behavior.LOSE: BehavType.DEALT,
             Behavior.LOVE: BehavType.THOUGHT,
+            Behavior.MAKE: BehavType.DONE,
             Behavior.MAKEUP: BehavType.DEALT,
             Behavior.MANAGE: BehavType.DEALT,
             Behavior.MANUFACTURE: BehavType.DEALT,
@@ -1383,6 +1426,8 @@ def behav_type_of(behavior: Behavior) -> BehavType:
             Behavior.OPERATE: BehavType.HANDLED,
             Behavior.OPPOSE: BehavType.THOUGHT,
             Behavior.ORGANIZE: BehavType.DEALT,
+            Behavior.OVERCOME: BehavType.DEALT,
+            Behavior.OVERFLOW: BehavType.EXPRESSED,
             Behavior.OVERLOOK: BehavType.VIEWED,
             Behavior.OWN: BehavType.DEALT,
             Behavior.PACK: BehavType.DEALT,
@@ -1391,10 +1436,12 @@ def behav_type_of(behavior: Behavior) -> BehavType:
             Behavior.PAT: BehavType.DONE,
             Behavior.PAUSE: BehavType.DONE,
             Behavior.PAY: BehavType.DEALT,
+            Behavior.PERFORM: BehavType.MOVED,
             Behavior.PHONE: BehavType.TALKED,
             Behavior.PICK: BehavType.DEALT,
             Behavior.PLACE: BehavType.DONE,
             Behavior.PLAY: BehavType.DONE,
+            Behavior.PLUNGE: BehavType.DONE,
             Behavior.PRACTICE: BehavType.DONE,
             Behavior.PRAY: BehavType.THOUGHT,
             Behavior.PRESS: BehavType.HANDLED,
@@ -1415,16 +1462,22 @@ def behav_type_of(behavior: Behavior) -> BehavType:
             Behavior.RECOMMEND: BehavType.THOUGHT,
             Behavior.REFLECT: BehavType.DEALT,
             Behavior.REFRESH: BehavType.FELT,
+            Behavior.REGARD: BehavType.THOUGHT,
             Behavior.REGRET: BehavType.THOUGHT,
             Behavior.REMEMBER: BehavType.THOUGHT,
             Behavior.RENT: BehavType.DEALT,
+            Behavior.REPLY: BehavType.TALKED,
             Behavior.RESCUE: BehavType.DEALT,
             Behavior.REST: BehavType.DONE,
             Behavior.RETURN: BehavType.MOVED,
             Behavior.REVIEW: BehavType.DEALT,
             Behavior.RIDE: BehavType.HANDLED,
             Behavior.RING: BehavType.DONE,
+            Behavior.RISE: BehavType.MOVED,
+            Behavior.ROB: BehavType.DEALT,
+            Behavior.ROCK: BehavType.DEALT,
             Behavior.ROLL: BehavType.DEALT,
+            Behavior.RUB: BehavType.DEALT,
             Behavior.RUN: BehavType.MOVED,
             Behavior.SACRIFICE: BehavType.THOUGHT,
             Behavior.SAD: BehavType.FELT,
@@ -1460,6 +1513,7 @@ def behav_type_of(behavior: Behavior) -> BehavType:
             Behavior.SLICE: BehavType.DEALT,
             Behavior.SLIDE: BehavType.DEALT,
             Behavior.SLIP: BehavType.DONE,
+            Behavior.SLOBBER: BehavType.DONE,
             Behavior.SMELL: BehavType.DEALT,
             Behavior.SMILE: BehavType.EXPRESSED,
             Behavior.SMOKE: BehavType.DONE,
@@ -1467,6 +1521,7 @@ def behav_type_of(behavior: Behavior) -> BehavType:
             Behavior.SOUND: BehavType.HANDLED,
             Behavior.SPEAK: BehavType.EXPRESSED,
             Behavior.SPEND: BehavType.DEALT,
+            Behavior.SPILL: BehavType.EXPRESSED,
             Behavior.SPIN: BehavType.DONE,
             Behavior.SPLIT: BehavType.DEALT,
             Behavior.SPREAD: BehavType.EXPRESSED,
@@ -1478,6 +1533,7 @@ def behav_type_of(behavior: Behavior) -> BehavType:
             Behavior.STEAL: BehavType.DEALT,
             Behavior.STICK: BehavType.DONE,
             Behavior.STOP: BehavType.HANDLED,
+            Behavior.STORE: BehavType.DEALT,
             Behavior.STUDY: BehavType.DONE,
             Behavior.SUCCEED: BehavType.THOUGHT,
             Behavior.SUGGEST: BehavType.THOUGHT,

@@ -35,6 +35,9 @@ class Person(_BasePerson):
     def agree(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.AGREE, behavior_str_of(Behavior.AGREE), note)
 
+    def aim(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.AIM, behavior_str_of(Behavior.AIM), note)
+
     def angry(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.ANGRY, behavior_str_of(Behavior.ANGRY), note)
 
@@ -43,6 +46,12 @@ class Person(_BasePerson):
 
     def appear(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.APPEAR, behavior_str_of(Behavior.APPEAR), note)
+
+    def apply(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.APPLY, behavior_str_of(Behavior.APPLY), note)
+
+    def arrive(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.ARRIVE, behavior_str_of(Behavior.ARRIVE), note)
 
     def ask(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.ASK, behavior_str_of(Behavior.ASK), note)
@@ -203,6 +212,9 @@ class Person(_BasePerson):
     def disappear(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.DISAPPEAR, behavior_str_of(Behavior.DISAPPEAR), note)
 
+    def disapprove(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.DISAPPROVE, behavior_str_of(Behavior.DISAPPROVE), note)
+
     def dislike(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.DISLIKE, behavior_str_of(Behavior.DISLIKE), note)
 
@@ -350,6 +362,9 @@ class Person(_BasePerson):
     def give(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.GIVE, behavior_str_of(Behavior.GIVE), note)
 
+    def glad(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.GLAD, behavior_str_of(Behavior.GLAD), note)
+
     def go(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.GO, behavior_str_of(Behavior.GO), note)
 
@@ -361,6 +376,9 @@ class Person(_BasePerson):
 
     def growl(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.GROWL, behavior_str_of(Behavior.GROWL), note)
+
+    def guard(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.GUARD, behavior_str_of(Behavior.GUARD), note)
 
     def guide(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.GUIDE, behavior_str_of(Behavior.GUIDE), note)
@@ -376,6 +394,9 @@ class Person(_BasePerson):
 
     def happen(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.HAPPEN, behavior_str_of(Behavior.HAPPEN), note)
+
+    def happy(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.HAPPY, behavior_str_of(Behavior.HAPPY), note)
 
     def hate(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.HATE, behavior_str_of(Behavior.HATE), note)
@@ -428,6 +449,12 @@ class Person(_BasePerson):
     def injure(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.INJURE, behavior_str_of(Behavior.INJURE), note)
 
+    def instrument(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.INSTRUMENT, behavior_str_of(Behavior.INSTRUMENT), note)
+
+    def introduce(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.INTRODUCE, behavior_str_of(Behavior.INTRODUCE), note)
+
     def invest(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.INVEST, behavior_str_of(Behavior.INVEST), note)
 
@@ -464,6 +491,9 @@ class Person(_BasePerson):
     def kiss(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.KISS, behavior_str_of(Behavior.KISS), note)
 
+    def knit(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.KNIT, behavior_str_of(Behavior.KNIT), note)
+
     def knock(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.KNOCK, behavior_str_of(Behavior.KNOCK), note)
 
@@ -472,6 +502,9 @@ class Person(_BasePerson):
 
     def laugh(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.LAUGH, behavior_str_of(Behavior.LAUGH), note)
+
+    def lay(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.LAY, behavior_str_of(Behavior.LAY), note)
 
     def learn(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.LEARN, behavior_str_of(Behavior.LEARN), note)
@@ -482,14 +515,26 @@ class Person(_BasePerson):
     def let(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.LET, behavior_str_of(Behavior.LET), note)
 
+    def lie(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.LIE, behavior_str_of(Behavior.LIE), note)
+
     def life(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.LIFE, behavior_str_of(Behavior.LIFE), note)
 
     def light(self, action: str=DEF_ACT, note: str=DEF_NOTE):
-        return self.act(action, Behavior.LIGHT, behavior_str_of(Behavior.LIGHT))
+        return self.act(action, Behavior.LIGHT, behavior_str_of(Behavior.LIGHT), note)
+
+    def listen(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.LISTEN, behavior_str_of(Behavior.LISTEN), note)
 
     def live(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.LIVE, behavior_str_of(Behavior.LIVE), note)
+
+    def look(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.LOOK, behavior_str_of(Behavior.LOOK), note)
+
+    def lookdown(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.LOOKDOWN, behavior_str_of(Behavior.LOOKDOWN), note)
 
     def lock(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.LOCK, behavior_str_of(Behavior.LOCK), note)
@@ -500,6 +545,9 @@ class Person(_BasePerson):
     def love(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.LOVE, behavior_str_of(Behavior.LOVE), note)
     
+    def make(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.MAKE, behavior_str_of(Behavior.MAKE), note)
+
     def makeup(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.MAKEUP, behavior_str_of(Behavior.MAKEUP), note)
 
@@ -520,6 +568,9 @@ class Person(_BasePerson):
 
     def master(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.MASTER, behavior_str_of(Behavior.MASTER), note)
+
+    def measure(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.MEASURE, behavior_str_of(Behavior.MEASURE), note)
 
     def meet(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.MEET, behavior_str_of(Behavior.MEET), note)
@@ -554,7 +605,10 @@ class Person(_BasePerson):
     def notice(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.NOTICE, behavior_str_of(Behavior.NOTICE), note)
 
-    def occure(self, action: str, note: str=DEF_NOTE):
+    def obtain(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.OBTAIN, behavior_str_of(Behavior.OBTAIN), note)
+
+    def occur(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.OCCUR, behavior_str_of(Behavior.OCCUR), note)
 
     def open(self, action: str, note: str=DEF_NOTE):
@@ -562,6 +616,15 @@ class Person(_BasePerson):
 
     def oppose(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.OPPOSE, behavior_str_of(Behavior.OPPOSE), note)
+
+    def overcome(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.OVERCOME, behavior_str_of(Behavior.OVERCOME), note)
+
+    def overflow(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.OVERFLOW, behavior_str_of(Behavior.OVERFLOW), note)
+
+    def overlook(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.OVERLOOK, behavior_str_of(Behavior.OVERLOOK), note)
 
     def own(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.OWN, behavior_str_of(Behavior.OWN), note)
@@ -575,11 +638,20 @@ class Person(_BasePerson):
     def passes(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.PASS, behavior_str_of(Behavior.PASS), note)
 
+    def pause(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.PAUSE, behavior_str_of(Behavior.PAUSE), note)
+
+    def pay(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.PAY, behavior_str_of(Behavior.PAY), note)
+
     def phone(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.PHONE, behavior_str_of(Behavior.PHONE), note)
 
     def play(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.PLAY, behavior_str_of(Behavior.PLAY), note)
+
+    def plunge(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.PLUNGE, behavior_str_of(Behavior.PLUNGE), note)
 
     def pray(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.PRAY, behavior_str_of(Behavior.PRAY), note)
@@ -596,6 +668,9 @@ class Person(_BasePerson):
     def promise(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.PROMISE, behavior_str_of(Behavior.PROMISE), note)
 
+    def publish(self, action: str, note=DEF_NOTE):
+        return self.act(action, Behavior.PUBLISH, behavior_str_of(Behavior.PUBLISH), note)
+
     def pull(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.PULL, behavior_str_of(Behavior.PULL), note)
 
@@ -611,38 +686,80 @@ class Person(_BasePerson):
     def puzzle(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.PUZZLE, behavior_str_of(Behavior.PUZZLE), note)
 
+    def reach(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.REACH, behavior_str_of(Behavior.REACH), note)
+
     def react(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.REACT, behavior_str_of(Behavior.REACT), note)
+
+    def read(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.READ, behavior_str_of(Behavior.READ), note)
+
+    def realize(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.REALIZE, behavior_str_of(Behavior.REALIZE), note)
 
     def receive(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.RECEIVE, behavior_str_of(Behavior.RECEIVE), note)
 
-    def remember(self, action: str, note: str=DEF_NOTE):
-        return self.act(action, Behavior.REMEMBER, behavior_str_of(Behavior.REMEMBER), note)
-
-    def reply(self, action: str, note: str=DEF_NOTE):
-        return self.act(action, Behavior.REPLY, behavior_str_of(Behavior.REPLY), note)
-
     def recommend(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.RECOMMEND, behavior_str_of(Behavior.RECOMMEND), note)
+
+    def reflect(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.REFLECT, behavior_str_of(Behavior.REFLECT), note)
 
     def refresh(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.REFRESH, behavior_str_of(Behavior.REFRESH), note)
 
+    def regard(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.REGARD, behavior_str_of(Behavior.REGARD), note)
+
+    def regret(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.REGRET, behavior_str_of(Behavior.REGRET), note)
+
     def release(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.RELEASE, behavior_str_of(Behavior.RELEASE), note)
+
+    def remember(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.REMEMBER, behavior_str_of(Behavior.REMEMBER), note)
 
     def rent(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.RENT, behavior_str_of(Behavior.RENT), note)
 
+    def reply(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.REPLY, behavior_str_of(Behavior.REPLY), note)
+
     def rescue(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.RESCUE, behavior_str_of(Behavior.RESCUE), note)
     
+    def rest(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.REST, behavior_str_of(Behavior.REST), note)
+
     def returns(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.RETURN, behavior_str_of(Behavior.RETURN), note)
 
+    def review(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.REVIEW, behavior_str_of(Behavior.REVIEW), note)
+
+    def ride(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.RIDE, behavior_str_of(Behavior.RIDE), note)
+
     def ring(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.RING, behavior_str_of(Behavior.RING), note)
+
+    def rise(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.RISE, behavior_str_of(Behavior.RISE), note)
+
+    def rob(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.ROB, behavior_str_of(Behavior.ROB), note)
+
+    def rock(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.ROCK, behavior_str_of(Behavior.ROCK), note)
+
+    def roll(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.ROLL, behavior_str_of(Behavior.ROLL), note)
+
+    def rub(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.RUB, behavior_str_of(Behavior.RUB), note)
 
     def runs(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.RUN, behavior_str_of(Behavior.RUN), note)
@@ -665,14 +782,35 @@ class Person(_BasePerson):
     def scratch(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.SCRATCH, behavior_str_of(Behavior.SCRATCH), note)
 
+    def scream(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SCREAM, behavior_str_of(Behavior.SCREAM), note)
+
     def search(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.SEARCH, behavior_str_of(Behavior.SEARCH), note)
+
+    def seat(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SEAT, behavior_str_of(Behavior.SEAT), note)
 
     def see(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.SEE, behavior_str_of(Behavior.SEE), note)
 
+    def seek(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SEEK, behavior_str_of(Behavior.SEEK), note)
+
+    def seem(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SEEM, behavior_str_of(Behavior.SEEM), note)
+
     def sell(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.SELL, behavior_str_of(Behavior.SELL), note)
+
+    def send(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SEND, behavior_str_of(Behavior.SEND), note)
+
+    def separate(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SEPARATE, behavior_str_of(Behavior.SEPARATE), note)
+
+    def set(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SET, behavior_str_of(Behavior.SET), note)
 
     def shake(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.SHAKE, behavior_str_of(Behavior.SHAKE), note)
@@ -680,8 +818,50 @@ class Person(_BasePerson):
     def share(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.SHARE, behavior_str_of(Behavior.SHARE), note)
 
+    def shine(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SHINE, behavior_str_of(Behavior.SHINE), note)
+
+    def shock(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SHOCK, behavior_str_of(Behavior.SHOCK), note)
+
+    def shoot(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SHOOT, behavior_str_of(Behavior.SHOOT), note)
+
+    def show(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SHOW, behavior_str_of(Behavior.SHOW), note)
+
+    def sigh(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SIGH, behavior_str_of(Behavior.SIGH), note)
+
+    def sign(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SIGN, behavior_str_of(Behavior.SIGN), note)
+
+    def sing(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SING, behavior_str_of(Behavior.SING), note)
+
+    def sink(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SINK, behavior_str_of(Behavior.SINK), note)
+
+    def sit(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SIT, behavior_str_of(Behavior.SIT), note)
+
+    def skate(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SKATE, behavior_str_of(Behavior.SKATE), note)
+
     def sleep(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.SLEEP, behavior_str_of(Behavior.SLEEP), note)
+
+    def slice(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SLICE, behavior_str_of(Behavior.SLICE), note)
+
+    def slide(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SLIDE, behavior_str_of(Behavior.SLIDE), note)
+
+    def slip(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SLIP, behavior_str_of(Behavior.SLIP), note)
+
+    def slobber(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SLOBBER, behavior_str_of(Behavior.SLOBBER), note)
 
     def smell(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.SMELL, behavior_str_of(Behavior.SMELL), note)
@@ -692,23 +872,80 @@ class Person(_BasePerson):
     def smoke(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.SMOKE, behavior_str_of(Behavior.SMOKE), note)
 
+    def solve(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SOLVE, behavior_str_of(Behavior.SOLVE), note)
+
+    def sound(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SOUND, behavior_str_of(Behavior.SOUND), note)
+
     def speak(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.SPEAK, behavior_str_of(Behavior.SPEAK), note)
+
+    def spend(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SPEND, behavior_str_of(Behavior.SPEND), note)
+
+    def spill(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SPILL, behavior_str_of(Behavior.SPILL), note)
+
+    def spin(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SPIN, behavior_str_of(Behavior.SPIN), note)
+
+    def split(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SPLIT, behavior_str_of(Behavior.SPLIT), note)
+
+    def spread(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SPREAD, behavior_str_of(Behavior.SPREAD), note)
+
+    def squeeze(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SQUEEZE, behavior_str_of(Behavior.SQUEEZE), note)
+
+    def stand(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.STAND, behavior_str_of(Behavior.STAND), note)
 
     def stare(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.STARE, behavior_str_of(Behavior.STARE), note)
 
+    def start(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.START, behavior_str_of(Behavior.START), note)
+
     def steal(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.STEAL, behavior_str_of(Behavior.STEAL), note)
 
+    def stick(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.STICK, behavior_str_of(Behavior.STICK), note)
+
+    def stop(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.STOP, behavior_str_of(Behavior.STOP), note)
+
+    def store(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.STORE, behavior_str_of(Behavior.STORE), note)
+
+    def study(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.STUDY, behavior_str_of(Behavior.STUDY), note)
+
     def succeed(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.SUCCEED, behavior_str_of(Behavior.SUCCEED), note)
+
+    def suggest(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SUGGEST, behavior_str_of(Behavior.SUGGEST), note)
+
+    def supply(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SUPPLY, behavior_str_of(Behavior.SUPPLY), note)
+
+    def support(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SUPPORT, behavior_str_of(Behavior.SUPPORT), note)
+
+    def suppose(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SUPPOSE, behavior_str_of(Behavior.SUPPOSE), note)
 
     def surprise(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.SURPRISE, behavior_str_of(Behavior.SURPRISE), note)
 
     def surround(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.SURROUND, behavior_str_of(Behavior.SURROUND), note)
+
+    def survive(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.SURVIVE, behavior_str_of(Behavior.SURVIVE), note)
 
     def swim(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.SWIM, behavior_str_of(Behavior.SWIM), note)
@@ -725,6 +962,9 @@ class Person(_BasePerson):
     def talk(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.TALK, behavior_str_of(Behavior.TALK), note)
 
+    def tap(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.TAP, behavior_str_of(Behavior.TAP), note)
+
     def teach(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.TEACH, behavior_str_of(Behavior.TEACH), note)
 
@@ -737,8 +977,20 @@ class Person(_BasePerson):
     def throw(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.THROW, behavior_str_of(Behavior.THROW), note)
 
+    def tie(self, action: str, note=DEF_NOTE):
+        return self.act(action, Behavior.TIE, behavior_str_of(Behavior.TIE), note)
+
+    def toss(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.TOSS, behavior_str_of(Behavior.TOSS), note)
+
+    def touch(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.TOUCH, behavior_str_of(Behavior.TOUCH), note)
+
     def train(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.TRAIN, behavior_str_of(Behavior.TRAIN), note)
+
+    def transfer(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.TRANSFER, behavior_str_of(Behavior.TRANSFER), note)
 
     def transform(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.TRANSFORM, behavior_str_of(Behavior.TRANSFORM), note)
@@ -751,6 +1003,9 @@ class Person(_BasePerson):
 
     def tries(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.TRY, behavior_str_of(Behavior.TRY), note)
+
+    def trust(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.TRUST, behavior_str_of(Behavior.TRUST), note)
 
     def turn(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.TURN, behavior_str_of(Behavior.TURN), note)
@@ -794,14 +1049,35 @@ class Person(_BasePerson):
     def waste(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.WASTE, behavior_str_of(Behavior.WASTE), note)
 
+    def watch(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.WATCH, behavior_str_of(Behavior.WATCH), note)
+
+    def wave(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.WAVE, behavior_str_of(Behavior.WAVE), note)
+
     def wear(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.WEAR, behavior_str_of(Behavior.WEAR), note)
 
     def weigh(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.WEIGH, behavior_str_of(Behavior.WEIGH), note)
 
+    def welcome(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.WELCOME, behavior_str_of(Behavior.WELCOME), note)
+
+    def whisper(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.WHISPER, behavior_str_of(Behavior.WHISPER), note)
+
+    def wind(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.WIND, behavior_str_of(Behavior.WIND), note)
+
+    def wipe(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.WIPE, behavior_str_of(Behavior.WIPE), note)
+
     def wish(self, action: str, note: str=DEF_NOTE):
         return self.act(action, Behavior.WISH, behavior_str_of(Behavior.WISH), note)
+
+    def wonder(self, action: str, note: str=DEF_NOTE):
+        return self.act(action, Behavior.WONDER, behavior_str_of(Behavior.WONDER), note)
 
     def work(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.WORK, behavior_str_of(Behavior.WORK), note)
@@ -814,4 +1090,7 @@ class Person(_BasePerson):
 
     def write(self, action: str=DEF_ACT, note: str=DEF_NOTE):
         return self.act(action, Behavior.WRITE, behavior_str_of(Behavior.WRITE), note)
+
+    def yell(self, action: str=DEF_ACT, note: str=DEF_NOTE):
+        return self.act(action, Behavior.YELL, behavior_str_of(Behavior.YELL), note)
 
