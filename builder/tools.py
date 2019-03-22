@@ -53,6 +53,10 @@ def output_story(story: ActionGroup, filename: str, is_action_data: bool=False, 
 
     Args:
         story (:obj:`ActionGroup`): a story action group.
+        filename (str): a filename.
+        is_action_data (bool, optional): if True, output as an action data.
+        is_out_as_file (bool, optional): if True, output to a markdown file.
+        is_debug (bool, optional): if True, use a debug mode.
     Returns:
         True: if complete to success, otherwise False.
     '''
@@ -67,6 +71,15 @@ def output_story(story: ActionGroup, filename: str, is_action_data: bool=False, 
 
 
 def _story_data_converted(story: ActionGroup, is_action_data: bool, is_debug: bool) -> list:
+    '''Story data converter.
+    
+    Args:
+        story (:obj:`ActionGroup`): a story action group.
+        is_action_data (bool, optional): if True, output as an action data.
+        is_debug (bool, optional): if True, use a debug mode.
+    Returns:
+        :list:str: strings list as a story.
+    '''
     return  _story_converted_as_action(story, is_debug) if is_action_data else _story_converted_as_description(story, is_debug)
 
 
@@ -106,34 +119,34 @@ def _story_converted_as_action_in_group(group: ActionGroup, level: int, is_debug
 def _action_str_by_type(act: Action, lang: LangType, level: int, is_debug: bool) -> str:
     if act.act_type == ActType.ACT:
         if lang == LangType.JPN:
-            return "{:\u3000<8s}:{:\u3000<8s}{}:{}:{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
-                    act.action, "" if act.note == "nothing" or not act.note else act.note)
+            return "{:\u3000<8s}:{:\u3000<8s}{} - {}/{}:{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
+                    _obj_name_if(act), act.action, "" if act.note == "nothing" or not act.note else act.note)
         else:
-            return "{:8}:{:8}{}:{}:{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
-                    act.action, "" if act.note == "nothing" or not act.note else act.note)
+            return "{:8}:{:8}{} - {}/{}:{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
+                    _obj_name_if(act), act.action, "" if act.note == "nothing" or not act.note else act.note)
     elif act.act_type == ActType.EXPLAIN:
         if lang == LangType.JPN:
-            return "{:\u3000<8s}:{:\u3000<8s}{}{}:{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
-                    act.action, "" if act.note == "nothing" or not act.note else act.note)
+            return "{:\u3000<8s}:{:\u3000<8s}{} - {}/{}:{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
+                    _obj_name_if(act), act.action, "" if act.note == "nothing" or not act.note else act.note)
         else:
-            return "{:8}:{:8}{}:{}:{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
-                    act.action, "" if act.note == "nothing" or not act.note else act.note)
+            return "{:8}:{:8}{} - {}/{}:{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
+                    _obj_name_if(act), act.action, "" if act.note == "nothing" or not act.note else act.note)
     elif act.act_type == ActType.TAG:
         return _action_str_by_tag(act, level)
     elif act.act_type == ActType.TELL:
         if lang == LangType.JPN:
-            return "{:\u3000<8s}:{:\u3000<8s}{}:「{}」:{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
-                    act.action, "" if act.note == "nothing" or act.note else act.note)
+            return "{:\u3000<8s}:{:\u3000<8s}{} - {}/「{}」:{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
+                    _obj_name_if(act), act.action, "" if act.note == "nothing" or act.note else act.note)
         else:
-            return "{:8}:{:8}{}:「{}」:{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
-                    act.action, "" if act.note == "nothing" or act.note else act.note)
+            return "{:8}:{:8}{} - {}/「{}」:{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
+                    _obj_name_if(act), act.action, "" if act.note == "nothing" or act.note else act.note)
     elif act.act_type == ActType.TEST and is_debug:
         if lang == LangType.JPN:
-            return "> {:\u3000<8s}:{:\u3000<8s}{}:{}:{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
-                    act.action, "" if act.note == "nothing" or act.note else act.note)
+            return "> {:\u3000<8s}:{:\u3000<8s}{} - {}/{}:{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
+                    _obj_name_if(act), act.action, "" if act.note == "nothing" or act.note else act.note)
         else:
-            return "> {:8}:{:8}{}{}:{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
-                    act.action, "" if act.note == "nothing" or act.note else act.note)
+            return "> {:8}:{:8}{} - {}/{}:{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
+                    _obj_name_if(act), act.action, "" if act.note == "nothing" or act.note else act.note)
     else:
         return ""
 
@@ -203,3 +216,6 @@ def _double_quatation_by_lang(lang: LangType, is_top: bool=True) -> str:
 def _is_passivemode(mode: bool) -> str:
     return "(P)" if mode else ""
 
+
+def _obj_name_if(act: Action) -> str:
+    return act.object.name if act.object else ""

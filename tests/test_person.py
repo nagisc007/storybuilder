@@ -25,7 +25,7 @@ class PersonTest(unittest.TestCase):
         self.assertEqual(self.body.note, "a man")
 
     def test_acquire(self):
-        acted = self.body.acquire("a box", "a testing")
+        acted = self.body.acquire("a box", note="a testing")
         self.assertIsInstance(acted, Action)
         self.assertEqual(acted.act_type, ActType.ACT)
         self.assertEqual(acted.action, "a box")
@@ -33,9 +33,10 @@ class PersonTest(unittest.TestCase):
         self.assertEqual(acted.description, "")
         self.assertEqual(acted.name, behavior_str_of(Behavior.ACQUIRE))
         self.assertEqual(acted.note, "a testing")
+        self.assertEqual(acted.object, None)
 
     def test_remember(self):
-        acted = self.body.remember("his girl friend", "a cute girl")
+        acted = self.body.remember("his girl friend", note="a cute girl")
         self.assertIsInstance(acted, Action)
         self.assertEqual(acted.act_type, ActType.ACT)
         self.assertEqual(acted.action, "his girl friend")
@@ -43,3 +44,4 @@ class PersonTest(unittest.TestCase):
         self.assertEqual(acted.description, "")
         self.assertEqual(acted.name, behavior_str_of(Behavior.REMEMBER))
         self.assertEqual(acted.note, "a cute girl")
+        self.assertEqual(acted.object, None)

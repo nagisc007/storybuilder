@@ -43,7 +43,7 @@ class ActionTest(unittest.TestCase):
     def setUp(self):
         self.sub = _BaseSubject("Taro", "a test subject")
         self.body = Action(self.sub,
-                ActType.ACT, Behavior.ACT, "testing", "test", "a test note")
+                ActType.ACT, Behavior.ACT, "testing", None, "test", "a test note")
 
     def test_attributes(self):
         self.assertIsInstance(self.body.subject, _BaseSubject)
@@ -53,6 +53,7 @@ class ActionTest(unittest.TestCase):
         self.assertEqual(self.body.action, "testing")
         self.assertEqual(self.body.note, "a test note")
         self.assertEqual(self.body.name, "test")
+        self.assertEqual(self.body.object, None)
 
     def test_desc(self):
         self.assertFalse(self.body.description)
@@ -91,13 +92,14 @@ class BasePersonTest(unittest.TestCase):
         self.assertEqual(self.body.note, "a man")
 
     def test_act(self):
-        acted = self.body.act("testing", Behavior.TEST, "test", "a test act")
+        acted = self.body.act("testing", Behavior.TEST, None, "test", "a test act")
         self.assertIsInstance(acted, Action)
         self.assertEqual(acted.action, "testing")
         self.assertEqual(acted.note, "a test act")
         self.assertEqual(acted.name, "test")
         self.assertEqual(acted.act_type, ActType.ACT)
         self.assertEqual(acted.behavior, Behavior.TEST)
+        self.assertEqual(acted.object, None)
 
     def test_tell(self):
         told = self.body.tell("I am Taro", note="Taro's voice")
@@ -156,7 +158,7 @@ class MasterTest(unittest.TestCase):
         self.assertEqual(self.body.note, "a test")
     
     def test_comment(self):
-        acted = self.body.comment("a test comment", "this is a test")
+        acted = self.body.comment("a test comment", note="this is a test")
         self.assertIsInstance(acted, Action)
         self.assertEqual(acted.act_type, ActType.TAG)
         self.assertEqual(acted.action, "a test comment")
@@ -165,6 +167,7 @@ class MasterTest(unittest.TestCase):
         self.assertEqual(acted.name, tag_str_of(TagType.COMMENT))
         self.assertEqual(acted.note, "this is a test")
         self.assertEqual(acted.subject, self.body)
+        self.assertEqual(acted.object, None)
 
     def test_title(self):
         acted = self.body.title("a test title", "this is a title")

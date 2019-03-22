@@ -127,7 +127,15 @@ def _has_the_word_in_group(group: ActionGroup, act: Action) -> bool:
 def _has_the_word(act: Action, comp_act: Action) -> bool:
     return _has_the_name(act, comp_act.subject) \
             and act.behavior == comp_act.behavior and act.is_passive == comp_act.is_passive \
+            and _eq_action_object(act, comp_act) \
             and comp_act.action in act.action
+
+
+def _eq_action_object(act: Action, comp_act: Action) -> bool:
+    if act.object:
+        return comp_act.object and act.object.name == comp_act.object.name
+    else:
+        return True
 
 
 def _passive_str_if(act: Action) -> str:

@@ -4,6 +4,7 @@
 from .acttypes import ActType, TagType, LangType
 from .acttypes import tag_str_of
 from .behavior import Behavior
+from .behavior import behavior_str_of
 
 
 class _BaseAction(object):
@@ -34,13 +35,14 @@ class _BaseSubject(object):
         self.name = name
         self.note = note
 
-    def explain(self, info: str, note: str="nothing"):
+    def explain(self, info: str, obj=None, note: str="nothing"):
         """
         Args:
             info (str): a information.
+            obj (:obj:`_BaseSubject`): a object of this action.
             note (str, optional): a short description.
         """
-        return Action(self, ActType.EXPLAIN, Behavior.EXPLAIN, info, note=note)
+        return Action(self, ActType.EXPLAIN, Behavior.EXPLAIN, info, obj, behavior_str_of(Behavior.EXPLAIN), note=note)
 
 
 class _BasePerson(_BaseSubject):
@@ -62,27 +64,29 @@ class _BasePerson(_BaseSubject):
         self.job = job
         self.sex = sex
 
-    def act(self, action: str, behaviour: Behavior, name: str, note: str="nothing"):
+    def act(self, action: str, behaviour: Behavior, obj: _BaseSubject, name: str, note: str="nothing"):
         """
         Args:
             action (str): an action string.
             behaviour (:enum:`Behavior`): a behavior type.
+            obj (:obj:`_BaseSubject`): a object of this action.
             name (str): an action name.
             note (str, optional): a short description.
         Returns:
             Act object contained a personal action.
         """
-        return Action(self, ActType.ACT, behaviour, action, name, note=note)
+        return Action(self, ActType.ACT, behaviour, action, obj, name, note=note)
 
-    def tell(self, action: str, note: str="nothing"):
+    def tell(self, action: str, obj: _BaseSubject=None, note: str="nothing"):
         """
         Args:
             action (str): a short dialogue.
+            obj (:obj:`_BaseSubject`): a object of this action.
             note (str, optional): a short description.
         Returns:
             Act object contained a dialogue.
         """
-        return Action(self, ActType.TELL, Behavior.TELL, action, "台詞", note=note)
+        return Action(self, ActType.TELL, Behavior.TELL, action, obj, behavior_str_of(Behavior.TELL), note=note)
 
 
 class Action(_BaseAction):
@@ -96,14 +100,17 @@ class Action(_BaseAction):
         is_passive (bool, optional): if True is a passive mode.
         name (str): an action name.
         note (str): a short description.
+        object (:obj:`_BaseSubject`): a object of this action.
         subject (:obj:`_BaseSubject`): a subject of this action.
     """
-    def __init__(self, subject: _BaseSubject, act_type: ActType, behavior: Behavior, action: str="(something)", name: str="行動", note: str="nothing"):
+    def __init__(self, subject: _BaseSubject, act_type: ActType, behavior: Behavior, action: str="(something)",
+            object_: _BaseSubject=None, name: str="行動", note: str="nothing"):
         """
         Args:
             subject (:obj:`_BaseSubject`): action subject.
             behavior (:enum:`Behavior`): action behavior type.
             action (str): description of this action.
+            obj (:obj:`_BaseSubject`): an action object.
             name (str, optional): an action name.
             note (str, optional): a short description.
         """
@@ -113,6 +120,7 @@ class Action(_BaseAction):
         self.behavior = behavior
         self.description = ""
         self.is_passive = False
+        self.object = object_
         self.subject = subject
 
     def desc(self, desc_: str):
@@ -190,14 +198,14 @@ class Master(_BaseSubject):
     def __init__(self, name, note="nothing"):
         super().__init__(name, note)
 
-    def comment(self, comment_: str, note: str="nothing"):
-        return Action(self, ActType.TAG, Behavior.NONE, comment_, tag_str_of(TagType.COMMENT), note)
+    def comment(self, comment_: str, obj: _BaseSubject=None, note: str="nothing"):
+        return Action(self, ActType.TAG, Behavior.NONE, comment_, obj, tag_str_of(TagType.COMMENT), note)
 
     def story(self, *args: Action, lang: LangType=LangType.JPN, note: str="nothing"):
         return ActionGroup(name="_story", lang=lang, note=note, *args)
 
     def title(self, title_: str, note: str="nothing"):
-        return Action(self, ActType.TAG, Behavior.NONE, title_, tag_str_of(TagType.TITLE), note)
+        return Action(self, ActType.TAG, Behavior.NONE, title_, None, tag_str_of(TagType.TITLE), note)
 
 
 class Stage(_BaseSubject):
