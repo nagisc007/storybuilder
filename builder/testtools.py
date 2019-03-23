@@ -3,6 +3,7 @@
 """
 import unittest
 
+from .acttypes import LangType
 from .behavior import behavior_str_of
 from .base import Action, ActionGroup, Stage, DayTime
 from .person import Person
@@ -128,19 +129,19 @@ def has_outline_infos(test_case: unittest.TestCase, story: ActionGroup,
     ERR_MSG = "is not exists!"
     # what
     if not _has_the_word_in_group(story, what_act):
-        test_case.fail("{}'s purpose {}{}{}/{} {}".format(what_act.subject.name, what_act.action, behavior_str_of(what_act.behavior),
+        test_case.fail("{}'s purpose {}{}{}/{} {}".format(what_act.subject.name, what_act.action, _behavior_str_with_negative_if(what_act, story.lang),
             _passive_str_if(what_act), _object_if(what_act), ERR_MSG))
     # why
     if not _has_the_word_in_group(story, why_act):
-        test_case.fail("{}'s reason {}{}{}/{} {}".format(why_act.subject.name, why_act.action, behavior_str_of(why_act.behavior),
+        test_case.fail("{}'s reason {}{}{}/{} {}".format(why_act.subject.name, why_act.action, _behavior_str_with_negative_if(why_act, story.lang),
             _passive_str_if(why_act), _object_if(why_Act), ERR_MSG))
     # how
     if not _has_the_word_in_group(story, how_act):
-        test_case.fail("{}'s process {}{}{}/{} {}".format(how_act.subject.name, how_act.action, behavior_str_of(how_act.behavior),
+        test_case.fail("{}'s process {}{}{}/{} {}".format(how_act.subject.name, how_act.action, _behavior_str_with_negative_if(how_act, story.lang),
             _passive_str_if(how_act), _object_if(how_act), ERR_MSG))
     # result
     if not _has_the_word_in_group(story, res_act):
-        test_case.fail("{}'s result {}{}{}/{} {}".format(res_act.subject.name, res_act.action, behavior_str_of(res_act.behavior),
+        test_case.fail("{}'s result {}{}{}/{} {}".format(res_act.subject.name, res_act.action, _behavior_str_with_negative_if(res_act, story.lang),
             _passive_str_if(res_act), _object_if(res_act), ERR_MSG))
 
     return True
@@ -162,6 +163,9 @@ def _has_the_word(act: Action, comp_act: Action) -> bool:
             and act.behavior == comp_act.behavior and act.is_passive == comp_act.is_passive \
             and _eq_action_object(act, comp_act) \
             and comp_act.action in act.action
+
+def _behavior_str_with_negative_if(act: Action, lang: LangType) -> str:
+    return behavior_str_of(act.behavior) + "{}".format("ない" if lang == LangType.JPN else " not") if act.is_negative else behavior_str_of(act.behavior)
 
 
 def _eq_action_object(act: Action, comp_act: Action) -> bool:

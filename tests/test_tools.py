@@ -23,14 +23,14 @@ class BasicMethodTest(unittest.TestCase):
                 self.sm.title("Taro and Hanako"),
                 self.hanako.come("in room").desc("a cute girl come in"),
                 self.taro.tell("wow", self.hanako).desc("Nice to meet you"),
-                self.hanako.tell("boring").desc("I'm not fine"),
+                self.hanako.tell("like").negative().desc("I'm not fine"),
                 lang=LangType.ENG,
                 )
         self.story_j = self.sm.story(
                 self.sm.title("太郎と花子"),
                 self.hanako.come("部屋").desc("可愛い少女"),
                 self.taro.tell("ああ").desc("よう"),
-                self.hanako.tell("不満").desc("全然")
+                self.hanako.tell("好き").negative().desc("全然")
                 )
         self.test_file = "test_file"
 
@@ -70,28 +70,28 @@ class BasicMethodTest(unittest.TestCase):
         self.assertEqual(tools._story_data_converted(self.story, True, False),
                 ["# Taro and Hanako", "Hanako  :来る       - /in room",
                      "Taro    :台詞       - Hanako/「wow」",
-                    "Hanako  :台詞       - /「boring」"])
+                    "Hanako  :台詞 not   - /「like」"])
 
 
     def test__story_converted_as_action(self):
         self.assertEqual(tools._story_converted_as_action(self.story, False),
                 ["# Taro and Hanako", "Hanako  :来る       - /in room",
                     "Taro    :台詞       - Hanako/「wow」",
-                    "Hanako  :台詞       - /「boring」"])
+                    "Hanako  :台詞 not   - /「like」"])
 
 
     def test__story_converted_as_action_jpn(self):
         self.assertEqual(tools._story_converted_as_action(self.story_j, False),
                 ["# 太郎と花子", "Hanako　　:来る　　　　　　 - /部屋",
                     "Taro　　　　:台詞　　　　　　 - /「ああ」",
-                    "Hanako　　:台詞　　　　　　 - /「不満」"])
+                    "Hanako　　:台詞ない　　　　 - /「好き」"])
 
 
     def test__story_converted_as_action_in_group(self):
         self.assertEqual(tools._story_converted_as_action_in_group(self.story, 1, False),
                 ["# Taro and Hanako", "Hanako  :来る       - /in room",
                     "Taro    :台詞       - Hanako/「wow」",
-                    "Hanako  :台詞       - /「boring」"])
+                    "Hanako  :台詞 not   - /「like」"])
 
 
     def test__story_converted_as_description(self):

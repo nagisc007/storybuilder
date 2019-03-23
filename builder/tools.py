@@ -119,36 +119,37 @@ def _story_converted_as_action_in_group(group: ActionGroup, level: int, is_debug
 def _action_str_by_type(act: Action, lang: LangType, level: int, is_debug: bool) -> str:
     if act.act_type == ActType.ACT:
         if lang == LangType.JPN:
-            return "{:\u3000<8s}:{:\u3000<8s}{} - {}/{}{}{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
-                    _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
+            return "{:\u3000<8s}:{:\u3000<8s}{} - {}/{}{}{}".format(act.subject.name, _behavior_str_with_negative_if(act, lang),
+                    _is_passivemode(act.is_passive), _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
         else:
-            return "{:8}:{:8}{} - {}/{}{}{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
-                    _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
+            return "{:8}:{:8}{} - {}/{}{}{}".format(act.subject.name, _behavior_str_with_negative_if(act, lang),
+                    _is_passivemode(act.is_passive), _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
     elif act.act_type == ActType.EXPLAIN:
         if lang == LangType.JPN:
-            return "{:\u3000<8s}:{:\u3000<8s}{} - {}/{}{}{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
-                    _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
+            return "{:\u3000<8s}:{:\u3000<8s}{} - {}/{}{}{}".format(act.subject.name, _behavior_str_with_negative_if(act, lang),
+                    _is_passivemode(act.is_passive), _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
         else:
-            return "{:8}:{:8}{} - {}/{}{}{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
-                    _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
+            return "{:8}:{:8}{} - {}/{}{}{}".format(act.subject.name, _behavior_str_with_negative_if(act, lang),
+                    _is_passivemode(act.is_passive), _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
     elif act.act_type == ActType.TAG:
         return _action_str_by_tag(act, level)
     elif act.act_type == ActType.TELL:
         if lang == LangType.JPN:
-            return "{:\u3000<8s}:{:\u3000<8s}{} - {}/「{}」{}{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
-                    _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
+            return "{:\u3000<8s}:{:\u3000<8s}{} - {}/「{}」{}{}".format(act.subject.name, _behavior_str_with_negative_if(act, lang),
+                    _is_passivemode(act.is_passive), _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
         else:
-            return "{:8}:{:8}{} - {}/「{}」{}{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
-                    _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
+            return "{:8}:{:8}{} - {}/「{}」{}{}".format(act.subject.name, _behavior_str_with_negative_if(act, lang),
+                    _is_passivemode(act.is_passive), _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
     elif act.act_type == ActType.TEST and is_debug:
         if lang == LangType.JPN:
-            return "> {:\u3000<8s}:{:\u3000<8s}{} - {}/{}{}{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
-                    _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
+            return "> {:\u3000<8s}:{:\u3000<8s}{} - {}/{}{}{}".format(act.subject.name, _behavior_str_with_negative_if(act, lang),
+                    _is_passivemode(act.is_passive), _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
         else:
-            return "> {:8}:{:8}{} - {}/{}{}{}".format(act.subject.name, behavior_str_of(act.behavior), _is_passivemode(act.is_passive),
-                    _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
+            return "> {:8}:{:8}{} - {}/{}{}{}".format(act.subject.name, _behavior_str_with_negative_if(act, lang),
+                    _is_passivemode(act.is_passive), _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
     else:
         return ""
+
 
 def _action_str_by_tag(act: Action, level: int) -> str:
     if act.name == tag_str_of(TagType.COMMENT):
@@ -211,6 +212,9 @@ def _double_quatation_by_lang(lang: LangType, is_top: bool=True) -> str:
         return "「" if lang == LangType.JPN else ' "'
     else:
         return "」" if lang == LangType.JPN else '" '
+
+def _behavior_str_with_negative_if(act: Action, lang: LangType) -> str:
+    return behavior_str_of(act.behavior) + "{}".format("ない" if lang == LangType.JPN else " not") if act.is_negative else behavior_str_of(act.behavior)
 
 
 def _is_passivemode(mode: bool) -> str:

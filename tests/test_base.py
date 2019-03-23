@@ -56,12 +56,19 @@ class ActionTest(unittest.TestCase):
         self.assertEqual(self.body.object, None)
         self.assertEqual(self.body.flag, "")
         self.assertEqual(self.body.deflag, "")
+        self.assertEqual(self.body.is_negative, False)
+        self.assertEqual(self.body.is_passive, False)
 
     def test_desc(self):
         self.assertFalse(self.body.description)
         self.body.desc("this is a test")
         self.assertIsInstance(self.body.description, str)
         self.assertEqual(self.body.description, "this is a test")
+
+    def test_negative(self):
+        self.assertFalse(self.body.is_negative)
+        self.body.negative()
+        self.assertTrue(self.body.is_negative)
 
     def test_passive(self):
         self.assertFalse(self.body.is_passive)

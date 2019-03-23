@@ -99,6 +99,7 @@ class Action(_BaseAction):
         description (str): a description of this action.
         flag (str): a story flag to associate this action.
         deflag (str): a story deflag to associate this action.
+        is_negative (bool, optional): if True is a negative mode.
         is_passive (bool, optional): if True is a passive mode.
         name (str): an action name.
         note (str): a short description.
@@ -124,12 +125,17 @@ class Action(_BaseAction):
         self.description = ""
         self.flag = ""
         self.deflag = ""
+        self.is_negative = False
         self.is_passive = False
         self.object = object_
         self.subject = subject
 
     def desc(self, desc_: str):
         self.description = desc_
+        return self
+
+    def negative(self, mode: bool=True):
+        self.is_negative = mode
         return self
 
     def passive(self, mode: bool=True):
