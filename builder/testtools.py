@@ -49,6 +49,35 @@ def has_basic_infos(test_case: unittest.TestCase, story: ActionGroup,
     return True
 
 
+def followed_all_flags(test_case: unittest.TestCase, story: ActionGroup) -> bool:
+    '''Check all flags and deflags.
+    '''
+    flags = set(_flags_gathered_in_group(story))
+    deflags = set(_flags_gathered_in_group(story, False))
+    result = flags & deflags
+    if len(result) != len(flags):
+        test_case.fail("Unsolved flags or deflags: {}".format((flags | deflags) - result))
+        return False
+    return True
+
+
+def _flags_gathered_in_group(group: ActionGroup, is_flag: bool=True) -> list:
+    tmp = []
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            tmp.extend(_flags_gathered_in_group(a, is_flag))
+        else:
+            tmp.append(_flag_gatherd(a, is_flag))
+    return tmp
+
+
+def _flag_gatherd(act: Action, is_flag: bool) ->str:
+    if is_flag:
+        return act.flag or ""
+    else:
+        return act.deflag or ""
+
+
 def _has_the_name_in_group(group: ActionGroup, target: Person) -> bool:
     for a in group.actions:
         if isinstance(a, ActionGroup):

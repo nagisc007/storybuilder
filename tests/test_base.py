@@ -54,12 +54,29 @@ class ActionTest(unittest.TestCase):
         self.assertEqual(self.body.note, "a test note")
         self.assertEqual(self.body.name, "test")
         self.assertEqual(self.body.object, None)
+        self.assertEqual(self.body.flag, "")
+        self.assertEqual(self.body.deflag, "")
 
     def test_desc(self):
         self.assertFalse(self.body.description)
         self.body.desc("this is a test")
         self.assertIsInstance(self.body.description, str)
         self.assertEqual(self.body.description, "this is a test")
+
+    def test_passive(self):
+        self.assertFalse(self.body.is_passive)
+        self.body.passive()
+        self.assertTrue(self.body.is_passive)
+
+    def test_flag(self):
+        self.assertEqual(self.body.flag, "")
+        self.body.set_flag("test")
+        self.assertEqual(self.body.flag, "test")
+
+    def test_deflag(self):
+        self.assertEqual(self.body.deflag, "")
+        self.body.set_deflag("test")
+        self.assertEqual(self.body.deflag, "test")
 
 
 class ActionGroupTest(unittest.TestCase):

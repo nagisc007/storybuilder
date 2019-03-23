@@ -3,7 +3,6 @@
 """
 import unittest
 
-from builder.behavior import Behavior
 from builder.base import Stage, DayTime, Master
 from builder.person import Person
 import builder.testtools as testtools
@@ -22,11 +21,11 @@ class BasicMethodTest(unittest.TestCase):
                 self.sm.comment("-- the test start --"),
                 self.day.explain("warming afternoon"),
                 self.room.explain("a silent room"),
-                self.taro.tell("I am"),
-                self.taro.tell("Boring"),
+                self.taro.tell("I am").set_flag("taro"),
+                self.taro.tell("Boring").set_flag(1),
                 self.hanako.come("in class"),
-                self.taro.lose("love"),
-                self.taro.meet("a cute girl"),
+                self.taro.lose("love").set_deflag("taro"),
+                self.taro.meet("a cute girl").set_deflag(1),
                 self.taro.fall("love", self.hanako),
                 )
 
@@ -43,3 +42,6 @@ class BasicMethodTest(unittest.TestCase):
         res_act = self.taro.fall("love", self.hanako)
         self.assertTrue(testtools.has_outline_infos(self, self.story,
             what_act, why_act, how_act, res_act))
+
+    def test_followed_all_flags(self):
+        self.assertTrue(testtools.followed_all_flags(self, self.story))

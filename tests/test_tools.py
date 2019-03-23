@@ -68,30 +68,30 @@ class BasicMethodTest(unittest.TestCase):
 
     def test__story_data_converted(self):
         self.assertEqual(tools._story_data_converted(self.story, True, False),
-                ["# Taro and Hanako", "Hanako  :来る       - /in room:",
-                     "Taro    :台詞       - Hanako/「wow」:",
-                    "Hanako  :台詞       - /「boring」:"])
+                ["# Taro and Hanako", "Hanako  :来る       - /in room",
+                     "Taro    :台詞       - Hanako/「wow」",
+                    "Hanako  :台詞       - /「boring」"])
 
 
     def test__story_converted_as_action(self):
         self.assertEqual(tools._story_converted_as_action(self.story, False),
-                ["# Taro and Hanako", "Hanako  :来る       - /in room:",
-                    "Taro    :台詞       - Hanako/「wow」:",
-                    "Hanako  :台詞       - /「boring」:"])
+                ["# Taro and Hanako", "Hanako  :来る       - /in room",
+                    "Taro    :台詞       - Hanako/「wow」",
+                    "Hanako  :台詞       - /「boring」"])
 
 
     def test__story_converted_as_action_jpn(self):
         self.assertEqual(tools._story_converted_as_action(self.story_j, False),
-                ["# 太郎と花子", "Hanako　　:来る　　　　　　 - /部屋:",
-                    "Taro　　　　:台詞　　　　　　 - /「ああ」:",
-                    "Hanako　　:台詞　　　　　　 - /「不満」:"])
+                ["# 太郎と花子", "Hanako　　:来る　　　　　　 - /部屋",
+                    "Taro　　　　:台詞　　　　　　 - /「ああ」",
+                    "Hanako　　:台詞　　　　　　 - /「不満」"])
 
 
     def test__story_converted_as_action_in_group(self):
         self.assertEqual(tools._story_converted_as_action_in_group(self.story, 1, False),
-                ["# Taro and Hanako", "Hanako  :来る       - /in room:",
-                    "Taro    :台詞       - Hanako/「wow」:",
-                    "Hanako  :台詞       - /「boring」:"])
+                ["# Taro and Hanako", "Hanako  :来る       - /in room",
+                    "Taro    :台詞       - Hanako/「wow」",
+                    "Hanako  :台詞       - /「boring」"])
 
 
     def test__story_converted_as_description(self):

@@ -97,12 +97,15 @@ class Action(_BaseAction):
         action (str): an action string.
         behavior (:enum:`Behavior`): a behavior type of this action.
         description (str): a description of this action.
+        flag (str): a story flag to associate this action.
+        deflag (str): a story deflag to associate this action.
         is_passive (bool, optional): if True is a passive mode.
         name (str): an action name.
         note (str): a short description.
         object (:obj:`_BaseSubject`): a object of this action.
         subject (:obj:`_BaseSubject`): a subject of this action.
     """
+
     def __init__(self, subject: _BaseSubject, act_type: ActType, behavior: Behavior, action: str="(something)",
             object_: _BaseSubject=None, name: str="行動", note: str="nothing"):
         """
@@ -119,6 +122,8 @@ class Action(_BaseAction):
         self.action = action
         self.behavior = behavior
         self.description = ""
+        self.flag = ""
+        self.deflag = ""
         self.is_passive = False
         self.object = object_
         self.subject = subject
@@ -129,6 +134,16 @@ class Action(_BaseAction):
 
     def passive(self, mode: bool=True):
         self.is_passive = mode
+        return self
+
+    def set_flag(self, flag_str: str):
+        if self.flag: return self
+        self.flag = flag_str
+        return self
+
+    def set_deflag(self, deflag_str: str):
+        if self.deflag: return self
+        self.deflag = deflag_str
         return self
 
 
