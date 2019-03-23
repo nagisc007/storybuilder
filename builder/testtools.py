@@ -128,16 +128,20 @@ def has_outline_infos(test_case: unittest.TestCase, story: ActionGroup,
     ERR_MSG = "is not exists!"
     # what
     if not _has_the_word_in_group(story, what_act):
-        test_case.fail("{}'s purpose {}{}{} {}".format(what_act.subject.name, what_act.action, behavior_str_of(what_act.behavior), _passive_str_if(what_act), ERR_MSG))
+        test_case.fail("{}'s purpose {}{}{}/{} {}".format(what_act.subject.name, what_act.action, behavior_str_of(what_act.behavior),
+            _passive_str_if(what_act), _object_if(what_act), ERR_MSG))
     # why
     if not _has_the_word_in_group(story, why_act):
-        test_case.fail("{}'s reason {}{}{} {}".format(why_act.subject.name, why_act.action, behavior_str_of(why_act.behavior), _passive_str_if(why_act), ERR_MSG))
+        test_case.fail("{}'s reason {}{}{}/{} {}".format(why_act.subject.name, why_act.action, behavior_str_of(why_act.behavior),
+            _passive_str_if(why_act), _object_if(why_Act), ERR_MSG))
     # how
     if not _has_the_word_in_group(story, how_act):
-        test_case.fail("{}'s process {}{}{} {}".format(how_act.subject.name, how_act.action, behavior_str_of(how_act.behavior), _passive_str_if(how_act), ERR_MSG))
+        test_case.fail("{}'s process {}{}{}/{} {}".format(how_act.subject.name, how_act.action, behavior_str_of(how_act.behavior),
+            _passive_str_if(how_act), _object_if(how_act), ERR_MSG))
     # result
     if not _has_the_word_in_group(story, res_act):
-        test_case.fail("{}'s result {}{}{} {}".format(res_act.subject.name, res_act.action, behavior_str_of(res_act.behavior), _passive_str_if(res_act), ERR_MSG))
+        test_case.fail("{}'s result {}{}{}/{} {}".format(res_act.subject.name, res_act.action, behavior_str_of(res_act.behavior),
+            _passive_str_if(res_act), _object_if(res_act), ERR_MSG))
 
     return True
 
@@ -169,3 +173,7 @@ def _eq_action_object(act: Action, comp_act: Action) -> bool:
 
 def _passive_str_if(act: Action) -> str:
     return "（受）" if act.is_passive else ""
+
+
+def _object_if(act: Action) -> str:
+    return act.object.name if act.object else ""
