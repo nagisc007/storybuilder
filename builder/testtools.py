@@ -77,19 +77,19 @@ def has_outline_infos(test_case: unittest.TestCase, story: ActionGroup,
     # why
     if not _contains_the_word_in_group(story, why_act):
         test_case.fail("{}'s reason {}/{}:{} {}".format(subject_name_of(why_act),
-            behavior_str_of(why_act),
+            behavior_with_np_of(why_act),
             object_name_of(why_act),
             why_act.info, ERR_MSG))
     # how
     if not _contains_the_word_in_group(story, how_act):
         test_case.fail("{}'s process {}/{}:{} {}".format(subject_name_of(how_act),
-            behavior_str_of(how_act),
+            behavior_with_np_of(how_act),
             object_name_of(how_act),
             how_act.info, ERR_MSG))
     # result
     if not _contains_the_word_in_group(story, res_act):
         test_case.fail("{}'s result {}/{}:{} {}".format(subject_name_of(res_act),
-            behavior_str_of(res_act),
+            behavior_with_np_of(res_act),
             object_name_of(res_act),
             res_act.info, ERR_MSG))
 
