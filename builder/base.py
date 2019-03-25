@@ -11,10 +11,10 @@ class _BaseAction(object):
     """Base action class.
 
     Attributes:
-        name (str): a name of this action.
-        note (str, optional): a short description.
+        name (str): a name of the action.
+        note (str): a short description.
     """
-    def __init__(self, name: str, note: str="nothing"):
+    def __init__(self, name: str, note):
         self.name = name
         self.note = note
 
@@ -26,7 +26,7 @@ class _BaseSubject(object):
         name (str): a name of this subject.
         note (str, optional): a short description.
     """
-    def __init__(self, name: str, note:str ="nothing"):
+    def __init__(self, name: str, note:str =""):
         """
         Args:
             name (str): the name or title.
@@ -35,14 +35,14 @@ class _BaseSubject(object):
         self.name = name
         self.note = note
 
-    def explain(self, info: str, obj=None, note: str="nothing"):
+    def explain(self, info: str, obj=None, note: str=""):
         """
         Args:
             info (str): a information.
-            obj (:obj:`_BaseSubject`): a object of this action.
+            obj (:obj:`_BaseSubject`, optional): a object of this action.
             note (str, optional): a short description.
         """
-        return Action(self, ActType.EXPLAIN, Behavior.EXPLAIN, info, obj, behavior_str_of(Behavior.EXPLAIN), note=note)
+        return Action(self, ActType.EXPLAIN, Behavior.EXPLAIN, obj, info, note)
 
 
 class _BasePerson(_BaseSubject):
@@ -50,7 +50,7 @@ class _BasePerson(_BaseSubject):
 
     Attributes:
     """
-    def __init__(self, name: str, age: int, sex: str, job: str, note: str="nothing"):
+    def __init__(self, name: str, age: int, sex: str, job: str, note: str=""):
         """
         Args:
             name (str): character's name
@@ -64,29 +64,28 @@ class _BasePerson(_BaseSubject):
         self.job = job
         self.sex = sex
 
-    def act(self, action: str, behaviour: Behavior, obj: _BaseSubject, name: str, note: str="nothing"):
+    def act(self, behaviour: Behavior, obj: _BaseSubject, info: str="", note: str=""):
         """
         Args:
-            action (str): an action string.
             behaviour (:enum:`Behavior`): a behavior type.
-            obj (:obj:`_BaseSubject`): a object of this action.
-            name (str): an action name.
+            obj (:obj:`_BaseSubject`): a object of the action.
+            info (str, optional): a information of the action.
             note (str, optional): a short description.
         Returns:
             Act object contained a personal action.
         """
-        return Action(self, ActType.ACT, behaviour, action, obj, name, note=note)
+        return Action(self, ActType.ACT, behaviour, obj, info, note)
 
-    def tell(self, action: str, obj: _BaseSubject=None, note: str="nothing"):
+    def tell(self, info: str, obj: _BaseSubject=None, note: str=""):
         """
         Args:
-            action (str): a short dialogue.
-            obj (:obj:`_BaseSubject`): a object of this action.
+            info (str): a short dialogue.
+            obj (:obj:`_BaseSubject`, optional): a object of this action.
             note (str, optional): a short description.
         Returns:
             Act object contained a dialogue.
         """
-        return Action(self, ActType.TELL, Behavior.TELL, action, obj, behavior_str_of(Behavior.TELL), note=note)
+        return Action(self, ActType.TELL, Behavior.TELL, obj, info, note)
 
 
 class Action(_BaseAction):
@@ -94,53 +93,64 @@ class Action(_BaseAction):
 
     Attributes:
         act_type (:enum:`ActType`): an action category type.
-        action (str): an action string.
         behavior (:enum:`Behavior`): a behavior type of this action.
         description (str): a description of this action.
         flag (str): a story flag to associate this action.
         deflag (str): a story deflag to associate this action.
-        is_negative (bool, optional): if True is a negative mode.
-        is_passive (bool, optional): if True is a passive mode.
-        name (str): an action name.
+        info (str): a information of the action.
+        is_negative (bool): if True is a negative mode.
+        is_passive (bool): if True is a passive mode.
         note (str): a short description.
         object (:obj:`_BaseSubject`): a object of this action.
         subject (:obj:`_BaseSubject`): a subject of this action.
     """
+    @classmethod
+    def assert_subject(cls, target: _BaseSubject):
+        if not target:
+            return None
+        assert isinstance(target, _BaseSubject), "object type {} is a mismatch!".format(type(target))
+        return target
 
-    def __init__(self, subject: _BaseSubject, act_type: ActType, behavior: Behavior, action: str="(something)",
-            object_: _BaseSubject=None, name: str="行動", note: str="nothing"):
+    CLS_NAME = "_action"
+
+    def __init__(self, subject: _BaseSubject, act_type: ActType, behavior: Behavior,
+            object_: _BaseSubject, info: str, note: str):
         """
         Args:
             subject (:obj:`_BaseSubject`): action subject.
             behavior (:enum:`Behavior`): action behavior type.
-            action (str): description of this action.
             obj (:obj:`_BaseSubject`): an action object.
-            name (str, optional): an action name.
+            info (str, optional): an action name.
             note (str, optional): a short description.
         """
-        super().__init__(name, note)
+        super().__init__(Action.CLS_NAME, note)
         self.act_type = act_type
-        self.action = action
         self.behavior = behavior
+        self.deflag = ""
         self.description = ""
         self.flag = ""
-        self.deflag = ""
+        self.info = info
         self.is_negative = False
         self.is_passive = False
-        self.object = object_
-        self.subject = subject
+        self.object = Action.assert_subject(object_)
+        self.subject = Action.assert_subject(subject)
+        
 
     def desc(self, desc_: str):
         self.description = desc_
         return self
 
-    def negative(self, mode: bool=True):
-        self.is_negative = mode
+    def negative(self):
+        self.is_negative = True
         return self
 
-    def passive(self, mode: bool=True):
-        self.is_passive = mode
+    def non(self): return self.negative()
+
+    def passive(self):
+        self.is_passive = True
         return self
+
+    def ps(self): return self.passive()
 
     def set_flag(self, flag_str: str):
         if self.flag: return self
@@ -159,10 +169,11 @@ class ActionGroup(_BaseAction):
     Attributes:
         actions (:tuple:obj:`Action`): action lists.
         lang (:enum:`LangType`): a language type.
-        name (str): a goup name.
+        name (str): a group name.
         note (str): a short description.
     """
-    def __init__(self, *args: Action, lang: LangType=LangType.JPN, name: str="_actiongroup", note: str="nothing"):
+    CLS_NAME = "_actiongroup"
+    def __init__(self, *args: Action, lang: LangType=LangType.JPN, name: str=CLS_NAME, note: str=""):
         """
         Args:
             *args (:tuple:obj:`Action`): actions
@@ -179,20 +190,28 @@ class DayTime(_BaseSubject):
     """Day and Time management class.
 
     Attributes.
+        day (int): a day number.
+        hour (int): a hour number.
+        min (int): a minute number.
+        mon (int): a month number.
+        name (str): a day name.
+        year (int): a year number.
     """
-    def __init__(self, name: str, mon: int=0, day: int=0, year: int=0, hour: int=0, note: str="nothing"):
+    def __init__(self, name: str, mon: int=0, day: int=0, year: int=0, hour: int=0, min: int=0, note: str=""):
         """
         Args:
-            name (str): object name.
-            mon (int): month number.
-            day (int): day number.
-            year (int): year number.
-            hour (int): hour number.
+            name (str): a day name.
+            mon (int): a month number.
+            day (int): a day number.
+            year (int): a year number.
+            hour (int): a hour number.
+            min (int): a minute number.
             note (str, optional): a short description.
         """
         super().__init__(name, note)
         self.day = day
         self.hour = hour
+        self.min = min
         self.mon = mon
         self.year = year
 
@@ -201,11 +220,13 @@ class Item(_BaseSubject):
     """Item class.
 
     Attributes.
+        name (str): a item name.
+        note (str, optional): a short description.
     """
-    def __init__(self, name: str, note: str="nothing"):
+    def __init__(self, name: str, note: str=""):
         """
         Args:
-            name (str): item's name.
+            name (str): a item name.
             note (str, optional): a short description.
         """
         super().__init__(name, note)
@@ -216,28 +237,51 @@ class Master(_BaseSubject):
 
     Attributes:
     """
-    def __init__(self, name, note="nothing"):
+    def __init__(self, name, note=""):
+        """
+        Args:
+            name (str): a master name.
+            note (str, optional): a short description.
+        """
         super().__init__(name, note)
 
-    def comment(self, comment_: str, obj: _BaseSubject=None, note: str="nothing"):
-        return Action(self, ActType.TAG, Behavior.NONE, comment_, obj, tag_str_of(TagType.COMMENT), note)
+    def comment(self, comment_: str):
+        """
+        Args:
+            comment_ (str): a comment.
+        """
+        return Action(self, ActType.TAG, Behavior.NONE, None, comment_, tag_str_of(TagType.COMMENT))
 
-    def story(self, *args: Action, lang: LangType=LangType.JPN, note: str="nothing"):
-        return ActionGroup(name="_story", lang=lang, note=note, *args)
+    def story(self, title: str, *args: _BaseAction, lang: LangType=LangType.JPN, note: str=""):
+        """
+        Args:
+            title (str): a story title.
+            *args (:tuple:obj:`_BaseAction`): a story actions.
+            lang (:enum:`LangType`): a story language type.
+            note (str, optional): a short description.
+        """
+        tmp = (self.title(title),) + args
+        return ActionGroup(name="_story", lang=lang, note=note, *tmp)
 
-    def title(self, title_: str, note: str="nothing"):
-        return Action(self, ActType.TAG, Behavior.NONE, title_, None, tag_str_of(TagType.TITLE), note)
+    def title(self, title_: str):
+        """
+        Args:
+            title_ (str): a story title inserted.
+        """
+        return Action(self, ActType.TAG, Behavior.NONE, None, title_, tag_str_of(TagType.TITLE))
 
 
 class Stage(_BaseSubject):
     """Stage class.
 
     Attributes:
+        name (str): a stage name.
+        note (str): a short description.
     """
-    def __init__(self, name: str, note: str="nothing"):
+    def __init__(self, name: str, note: str=""):
         """
         Args:
-            name (str): stage's name.
+            name (str): a stage name.
             note (str, optional): a short description.
         """
         super().__init__(name, note)
@@ -247,12 +291,17 @@ class Word(_BaseSubject):
     """Word class.
 
     Attributes.
+        name (str): a word title.
+        info (str): a information about the word.
+        note (str): a short description.
     """
-    def __init__(self, name: str, note: str="nothing"):
+    def __init__(self, name: str, info: str="", note: str=""):
         """
         Args:
             name (str): a word title.
+            info (str, optional): a information.
             note (str, optional): a short description.
         """
         super().__init__(name, note)
+        self.info = info
 

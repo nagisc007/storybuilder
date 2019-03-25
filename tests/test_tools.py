@@ -20,15 +20,15 @@ class BasicMethodTest(unittest.TestCase):
         self.taro = Person("Taro", 17, "male", "student", "me")
         self.hanako = Person("Hanako", 17, "female", "student", "me")
         self.story = self.sm.story(
-                self.sm.title("Taro and Hanako"),
-                self.hanako.come("in room").desc("a cute girl come in"),
+                "Taro and Hanako",
+                self.hanako.come(info="in room").desc("a cute girl come in"),
                 self.taro.tell("wow", self.hanako).desc("Nice to meet you"),
                 self.hanako.tell("like").negative().desc("I'm not fine"),
                 lang=LangType.ENG,
                 )
         self.story_j = self.sm.story(
-                self.sm.title("太郎と花子"),
-                self.hanako.come("部屋").desc("可愛い少女"),
+                "太郎と花子",
+                self.hanako.come(info="部屋").desc("可愛い少女"),
                 self.taro.tell("ああ").desc("よう"),
                 self.hanako.tell("好き").negative().desc("全然")
                 )
@@ -68,35 +68,35 @@ class BasicMethodTest(unittest.TestCase):
 
     def test__story_data_converted(self):
         self.assertEqual(tools._story_data_converted(self.story, True, False),
-                ["# Taro and Hanako", "Hanako  :来る       - /in room",
-                     "Taro    :台詞       - Hanako/「wow」",
-                    "Hanako  :台詞 not   - /「like」"])
+                ["# Taro and Hanako\n", "Hanako  :来る()    /in room",
+                     "Taro    :台詞(Hanako)/ \"wow\" ",
+                    "Hanako  :~~台詞~~()/ \"like\" "])
 
 
     def test__story_converted_as_action(self):
         self.assertEqual(tools._story_converted_as_action(self.story, False),
-                ["# Taro and Hanako", "Hanako  :来る       - /in room",
-                    "Taro    :台詞       - Hanako/「wow」",
-                    "Hanako  :台詞 not   - /「like」"])
+                ["# Taro and Hanako\n", "Hanako  :来る()    /in room",
+                    "Taro    :台詞(Hanako)/ \"wow\" ",
+                    "Hanako  :~~台詞~~()/ \"like\" "])
 
 
     def test__story_converted_as_action_jpn(self):
         self.assertEqual(tools._story_converted_as_action(self.story_j, False),
-                ["# 太郎と花子", "Hanako　　:来る　　　　　　 - /部屋",
-                    "Taro　　　　:台詞　　　　　　 - /「ああ」",
-                    "Hanako　　:台詞ない　　　　 - /「好き」"])
+                ["# 太郎と花子\n", "Hanako:来る()　　/部屋",
+                    "Taro　　:台詞()　　/「ああ」",
+                    "Hanako:~~台詞~~()/「好き」"])
 
 
     def test__story_converted_as_action_in_group(self):
         self.assertEqual(tools._story_converted_as_action_in_group(self.story, 1, False),
-                ["# Taro and Hanako", "Hanako  :来る       - /in room",
-                    "Taro    :台詞       - Hanako/「wow」",
-                    "Hanako  :台詞 not   - /「like」"])
+                ["# Taro and Hanako\n", "Hanako  :来る()    /in room",
+                    "Taro    :台詞(Hanako)/ \"wow\" ",
+                    "Hanako  :~~台詞~~()/ \"like\" "])
 
 
     def test__story_converted_as_description(self):
         self.assertEqual(tools._story_converted_as_description(self.story, False),
-                ["# Taro and Hanako",
+                ["# Taro and Hanako\n",
                     " a cute girl come in. ",
                     ' "Nice to meet you" ',
                     ' "I\'m not fine" '])
@@ -104,7 +104,7 @@ class BasicMethodTest(unittest.TestCase):
 
     def test__story_converted_as_description_in_group(self):
         self.assertEqual(tools._story_converted_as_description_in_group(self.story, 1, False),
-                ["# Taro and Hanako",
+                ["# Taro and Hanako\n",
                     " a cute girl come in. ",
                     ' "Nice to meet you" ',
                     ' "I\'m not fine" '])

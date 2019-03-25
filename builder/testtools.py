@@ -7,24 +7,37 @@ from .acttypes import LangType
 from .behavior import behavior_str_of
 from .base import Action, ActionGroup, Stage, DayTime
 from .person import Person
+from .commons import behavior_with_np_of, object_name_of, subject_name_of
 
 
-def is_all_actions(test_case: unittest.TestCase, acts: ActionGroup) -> bool:
-    '''Check all action and action group.
+def contains_the_word(story: ActionGroup, target: Action) -> bool:
+    '''Check if the word in the story by an ation.
     '''
-    test_case.assertIsInstance(acts, ActionGroup)
-    return _is_actiongroup_all_actions(test_case, acts)
+    return _contains_the_word_in_group(story, target)
 
 
-def _is_actiongroup_all_actions(test_case: unittest.TestCase, group: ActionGroup) -> bool:
-    for a in group.actions:
-        if isinstance(a, ActionGroup):
-            if not _is_actiongroup_all_actions(test_case, a):
-                return False
-        else:
-            if not isinstance(a, Action):
-                return False
+def followed_all_flags(test_case: unittest.TestCase, story: ActionGroup) -> bool:
+    '''Check if all flags and deflags.
+    '''
+    flags = set(_flags_gathered_in_group(story))
+    deflags = set(_flags_gathered_in_group(story, False))
+    result = flags & deflags
+    if len(result) != len(flags):
+        test_case.fail("Unsolved flags or deflags: {}".format((flags | deflags) - result))
+        return False
     return True
+
+
+def has_a_daytime(story: ActionGroup) -> bool:
+    '''Check if a day time in the story.
+    '''
+    return _has_a_daytime_in_group(story)
+
+
+def has_a_stage(story: ActionGroup) -> bool:
+    '''Check if a stage in the story.
+    '''
+    return _has_a_stage_in_group(story)
 
 
 def has_basic_infos(test_case: unittest.TestCase, story: ActionGroup,
@@ -50,16 +63,75 @@ def has_basic_infos(test_case: unittest.TestCase, story: ActionGroup,
     return True
 
 
-def followed_all_flags(test_case: unittest.TestCase, story: ActionGroup) -> bool:
-    '''Check all flags and deflags.
+def has_outline_infos(test_case: unittest.TestCase, story: ActionGroup,
+        what_act: Action, why_act: Action, how_act: Action, res_act: Action) -> bool:
+    '''Check if the story has outline informations.
     '''
-    flags = set(_flags_gathered_in_group(story))
-    deflags = set(_flags_gathered_in_group(story, False))
-    result = flags & deflags
-    if len(result) != len(flags):
-        test_case.fail("Unsolved flags or deflags: {}".format((flags | deflags) - result))
-        return False
+    ERR_MSG = "is not exists!"
+    # what
+    if not _contains_the_word_in_group(story, what_act):
+        test_case.fail("{}'s purpose {}/{}:{} {}".format(subject_name_of(what_act),
+            behavior_with_np_of(what_act),
+            object_name_of(what_act),
+            what_act.info, ERR_MSG))
+    # why
+    if not _contains_the_word_in_group(story, why_act):
+        test_case.fail("{}'s reason {}/{}:{} {}".format(subject_name_of(why_act),
+            behavior_str_of(why_act),
+            object_name_of(why_act),
+            why_act.info, ERR_MSG))
+    # how
+    if not _contains_the_word_in_group(story, how_act):
+        test_case.fail("{}'s process {}/{}:{} {}".format(subject_name_of(how_act),
+            behavior_str_of(how_act),
+            object_name_of(how_act),
+            how_act.info, ERR_MSG))
+    # result
+    if not _contains_the_word_in_group(story, res_act):
+        test_case.fail("{}'s result {}/{}:{} {}".format(subject_name_of(res_act),
+            behavior_str_of(res_act),
+            object_name_of(res_act),
+            res_act.info, ERR_MSG))
+
     return True
+
+
+def has_the_name(story: ActionGroup, target: Person) -> bool:
+    '''Check if the name in the story.
+    '''
+    return _has_the_name_in_group(story, target)
+
+
+def has_the_action(story: ActionGroup, target: Action) -> bool:
+    '''Check if the word in the story.
+    '''
+    return _has_the_action_in_group(story, target)
+
+
+def is_all_actions(story: ActionGroup) -> bool:
+    '''Check if the story is all of an action and an action group.
+    '''
+    return _is_actiongroup_all_actions(story)
+
+
+# private functions
+def _contains_the_word(act: Action, target: Action) -> bool:
+    return isinstance(act, Action) and isinstance(target, Action) \
+            and _is_near_eq_actions(act, target) \
+            and target.info in act.info
+
+
+def _contains_the_word_in_group(group: ActionGroup, target: Action) -> bool:
+    if isinstance(group, ActionGroup):
+        for a in group.actions:
+            if isinstance(a, ActionGroup):
+                if _contains_the_word_in_group(a, target):
+                    return True
+            else:
+                if _contains_the_word(a, target):
+                    return True
+    else:
+        return _contains_the_word(group, target)
 
 
 def _flags_gathered_in_group(group: ActionGroup, is_flag: bool=True) -> list:
@@ -79,34 +151,8 @@ def _flag_gatherd(act: Action, is_flag: bool) ->str:
         return act.deflag or ""
 
 
-def _has_the_name_in_group(group: ActionGroup, target: Person) -> bool:
-    for a in group.actions:
-        if isinstance(a, ActionGroup):
-            if _has_the_name_in_group(a, target):
-                return True
-        else:
-            if _has_the_name(a, target):
-                return True
-    return False
-
-
-def _has_the_name(act: Action, target: Person) -> bool:
-    return act.subject.name == target.name
-
-
-def _has_a_stage_in_group(group: ActionGroup) -> bool:
-    for a in group.actions:
-        if isinstance(a, ActionGroup):
-            if _has_a_stage_in_group(a):
-                return True
-        else:
-            if _has_a_stage(a):
-                return True
-    return False
-
-
-def _has_a_stage(act: Action) -> bool:
-    return isinstance(act.subject, Stage)
+def _has_a_daytime(act: Action) -> bool:
+    return isinstance(act.subject, DayTime)
 
 
 def _has_a_daytime_in_group(group: ActionGroup) -> bool:
@@ -120,64 +166,79 @@ def _has_a_daytime_in_group(group: ActionGroup) -> bool:
     return False
 
 
-def _has_a_daytime(act: Action) -> bool:
-    return isinstance(act.subject, DayTime)
+def _has_a_stage(act: Action) -> bool:
+    return isinstance(act.subject, Stage)
 
 
-def has_outline_infos(test_case: unittest.TestCase, story: ActionGroup,
-        what_act: Action, why_act: Action, how_act: Action, res_act: Action) -> bool:
-    ERR_MSG = "is not exists!"
-    # what
-    if not _has_the_word_in_group(story, what_act):
-        test_case.fail("{}'s purpose {}{}{}/{} {}".format(what_act.subject.name, what_act.action, _behavior_str_with_negative_if(what_act, story.lang),
-            _passive_str_if(what_act), _object_if(what_act), ERR_MSG))
-    # why
-    if not _has_the_word_in_group(story, why_act):
-        test_case.fail("{}'s reason {}{}{}/{} {}".format(why_act.subject.name, why_act.action, _behavior_str_with_negative_if(why_act, story.lang),
-            _passive_str_if(why_act), _object_if(why_Act), ERR_MSG))
-    # how
-    if not _has_the_word_in_group(story, how_act):
-        test_case.fail("{}'s process {}{}{}/{} {}".format(how_act.subject.name, how_act.action, _behavior_str_with_negative_if(how_act, story.lang),
-            _passive_str_if(how_act), _object_if(how_act), ERR_MSG))
-    # result
-    if not _has_the_word_in_group(story, res_act):
-        test_case.fail("{}'s result {}{}{}/{} {}".format(res_act.subject.name, res_act.action, _behavior_str_with_negative_if(res_act, story.lang),
-            _passive_str_if(res_act), _object_if(res_act), ERR_MSG))
-
-    return True
-
-
-def _has_the_word_in_group(group: ActionGroup, act: Action) -> bool:
+def _has_a_stage_in_group(group: ActionGroup) -> bool:
     for a in group.actions:
         if isinstance(a, ActionGroup):
-            if _has_the_word_in_group(a, act):
+            if _has_a_stage_in_group(a):
                 return True
         else:
-            if _has_the_word(a, act):
+            if _has_a_stage(a):
                 return True
     return False
 
 
-def _has_the_word(act: Action, comp_act: Action) -> bool:
-    return _has_the_name(act, comp_act.subject) \
-            and act.behavior == comp_act.behavior and act.is_passive == comp_act.is_passive \
-            and _eq_action_object(act, comp_act) \
-            and comp_act.action in act.action
+def _has_the_action(act: Action, target: Action) -> bool:
+    return isinstance(act, Action) and isinstance(target, Action) \
+            and act.act_type == target.act_type \
+            and act.behavior == target.behavior \
+            and act.info == target.info \
+            and act.is_negative == target.is_negative \
+            and act.is_passive == target.is_passive \
+            and subject_name_of(act) == subject_name_of(target)
 
-def _behavior_str_with_negative_if(act: Action, lang: LangType) -> str:
-    return behavior_str_of(act.behavior) + "{}".format("ない" if lang == LangType.JPN else " not") if act.is_negative else behavior_str_of(act.behavior)
 
-
-def _eq_action_object(act: Action, comp_act: Action) -> bool:
-    if act.object:
-        return comp_act.object and act.object.name == comp_act.object.name
+def _has_the_action_in_group(group: ActionGroup, target: Action) -> bool:
+    if isinstance(group, ActionGroup):
+        for a in group.actions:
+            if isinstance(a, ActionGroup):
+                if _has_the_action_in_group(a, target):
+                    return True
+            else:
+                if _has_the_action(a, target):
+                    return True
     else:
+        return _has_the_action(group, target)
+
+
+def _has_the_name(act: Action, target: Person) -> bool:
+    return subject_name_of(act) == target.name
+
+
+def _has_the_name_in_group(group: ActionGroup, target: Person) -> bool:
+    if isinstance(group, ActionGroup):
+        for a in group.actions:
+            if isinstance(a, ActionGroup):
+                if _has_the_name_in_group(a, target):
+                    return True
+            else:
+                if _has_the_name(a, target):
+                    return True
+    return _has_the_name(group, target)
+
+
+def _is_actiongroup_all_actions(group: ActionGroup) -> bool:
+    if isinstance(group, ActionGroup):
+        for a in group.actions:
+            if isinstance(a, ActionGroup):
+                if not _is_actiongroup_all_actions(a):
+                    return False
+            else:
+                if not isinstance(a, Action):
+                    return False
         return True
+    else:
+        return isinstance(a, Action)
 
 
-def _passive_str_if(act: Action) -> str:
-    return "（受）" if act.is_passive else ""
+def _is_near_eq_actions(a: Action, b: Action) -> bool:
+    return a.act_type == b.act_type \
+            and a.behavior == b.behavior \
+            and a.is_negative == b.is_negative \
+            and a.is_passive == b.is_passive \
+            and subject_name_of(a) == subject_name_of(b) \
+            and object_name_of(a) == object_name_of(b)
 
-
-def _object_if(act: Action) -> str:
-    return act.object.name if act.object else ""

@@ -3,1094 +3,1093 @@
 """
 from .base import _BaseSubject, _BasePerson
 from .behavior import Behavior
-from .behavior import behavior_str_of
 
 
 class Person(_BasePerson):
     """Character class.
 
     Attributes:
-        selfcall (str, optioanl): a subject called himself.
+        selfcall (str): a subject called himself.
     """
-    def __init__(self, name:str, age: int, sex: str, job: str, selfcall: str="私", note: str="nothing"):
+    DEF_ACT = "-"
+    DEF_NOTE = "nothing"
+    DEF_SELFCALL = "私"
+    def __init__(self, name:str, age: int, sex: str, job: str, selfcall: str=DEF_SELFCALL, note: str=""):
         super().__init__(name, age, sex, job, note)
         self.selfcall = selfcall
 
-    DEF_ACT = "-"
-    DEF_NOTE = "nothing"
-
     # basic actions
-    def accept(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.ACCEPT, obj, behavior_str_of(Behavior.ACCEPT), note)
+    def accept(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.ACCEPT, obj, info, note)
 
-    def acquire(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.ACQUIRE, obj, behavior_str_of(Behavior.ACQUIRE), note)
+    def acquire(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.ACQUIRE, obj, info, note)
 
-    def add(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.ADD, obj, behavior_str_of(Behavior.ADD), note)
+    def add(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.ADD, obj, info, note)
 
-    def advise(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.ADVISE, obj, behavior_str_of(Behavior.ADVISE), note)
+    def advise(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.ADVISE, obj, info, note)
 
-    def agree(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.AGREE, obj, behavior_str_of(Behavior.AGREE), note)
+    def agree(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.AGREE, obj, info, note)
 
-    def aim(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.AIM, obj, behavior_str_of(Behavior.AIM), note)
+    def aim(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.AIM, obj, info, note)
 
-    def angry(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.ANGRY, obj, behavior_str_of(Behavior.ANGRY), note)
+    def angry(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.ANGRY, obj, info, note)
 
-    def answer(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.ANSWER, obj, behavior_str_of(Behavior.ANSWER), note)
+    def answer(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.ANSWER, obj, info, note)
 
-    def appear(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.APPEAR, obj, behavior_str_of(Behavior.APPEAR), note)
+    def appear(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.APPEAR, obj, info, note)
 
-    def apply(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.APPLY, obj, behavior_str_of(Behavior.APPLY), note)
+    def apply(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.APPLY, obj, info, note)
 
-    def arrive(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.ARRIVE, obj, behavior_str_of(Behavior.ARRIVE), note)
+    def arrive(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.ARRIVE, obj, info, note)
 
-    def ask(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.ASK, obj, behavior_str_of(Behavior.ASK), note)
+    def ask(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.ASK, obj, info, note)
 
-    def attack(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.ATTACK, obj, behavior_str_of(Behavior.ATTACK), note)
+    def attack(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.ATTACK, obj, info, note)
 
-    def be(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.BE, obj, behavior_str_of(Behavior.BE), note)
+    def be(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.BE, obj, info, note)
 
-    def become(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.BECOME, obj, behavior_str_of(Behavior.BECOME), note)
+    def become(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.BECOME, obj, info, note)
 
-    def begin(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.BEGIN, obj, behavior_str_of(Behavior.BEGIN), note)
+    def begin(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.BEGIN, obj, info, note)
 
-    def believe(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.BELIEVE, obj, behavior_str_of(Behavior.BELIEVE), note)
+    def believe(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.BELIEVE, obj, info, note)
 
-    def bet(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.BET, obj, behavior_str_of(Behavior.BET), note)
+    def bet(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.BET, obj, info, note)
 
-    def bind(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.BIND, obj, behavior_str_of(Behavior.BIND), note)
+    def bind(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.BIND, obj, info, note)
 
-    def borrow(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.BORROW, obj, behavior_str_of(Behavior.BORROW), note)
+    def borrow(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.BORROW, obj, info, note)
 
-    def breaks(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.BREAK, obj, behavior_str_of(Behavior.BREAK), note)
+    def breaks(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.BREAK, obj, info, note)
 
-    def breathe(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.BREATHE, obj, behavior_str_of(Behavior.BREATHE), note)
+    def breathe(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.BREATHE, obj, info, note)
 
-    def brow(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.BROW, obj, behavior_str_of(Behavior.BROW), note)
+    def brow(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.BROW, obj, info, note)
 
-    def build(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.BUILD, obj, behavior_str_of(Behavior.BUILD), note)
+    def build(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.BUILD, obj, info, note)
 
-    def burn(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.BURN, obj, behavior_str_of(Behavior.BURN), note)
+    def burn(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.BURN, obj, info, note)
 
-    def burst(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.BURST, obj, behavior_str_of(Behavior.BURST), note)
+    def burst(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.BURST, obj, info, note)
 
-    def bury(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.BURY, obj, behavior_str_of(Behavior.BURY), note)
+    def bury(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.BURY, obj, info, note)
 
-    def buy(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.BUY, obj, behavior_str_of(Behavior.BUY), note)
+    def buy(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.BUY, obj, info, note)
 
-    def calculate(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CALCULATE, obj, behavior_str_of(Behavior.CALCULATE), note)
+    def calculate(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CALCULATE, obj, info, note)
 
-    def call(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CALL, obj, behavior_str_of(Behavior.CALL), note)
+    def call(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CALL, obj, info, note)
 
-    def care(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CARE, obj, behavior_str_of(Behavior.CARE), note)
+    def care(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CARE, obj, info, note)
 
-    def carry(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CARRY, obj, behavior_str_of(Behavior.CARRY), note)
+    def carry(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CARRY, obj, info, note)
 
-    def catch(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CATCH, obj, behavior_str_of(Behavior.CATCH), note)
+    def catch(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CATCH, obj, info, note)
 
-    def change(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CHANGE, obj, behavior_str_of(Behavior.CHANGE), note)
+    def change(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CHANGE, obj, info, note)
 
-    def charm(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CHARM, obj, behavior_str_of(Behavior.CHARM), note)
+    def charm(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CHARM, obj, info, note)
 
-    def check(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CHECK, obj, behavior_str_of(Behavior.CHECK), note)
+    def check(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CHECK, obj, info, note)
 
-    def cheer(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CHEER, obj, behavior_str_of(Behavior.CHEER), note)
+    def cheer(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CHEER, obj, info, note)
 
-    def choose(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CHOOSE, obj, behavior_str_of(Behavior.CHOOSE), note)
+    def choose(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CHOOSE, obj, info, note)
 
-    def clean(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CLEAN, obj, behavior_str_of(Behavior.CLEAN), note)
+    def clean(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CLEAN, obj, info, note)
 
-    def click(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CLICK, obj, behavior_str_of(Behavior.CLICK), note)
+    def click(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CLICK, obj, info, note)
 
-    def climb(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CLIMB, obj, behavior_str_of(Behavior.CLIMB), note)
+    def climb(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CLIMB, obj, info, note)
 
-    def close(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CLOSE, obj, behavior_str_of(Behavior.CLOSE), note)
+    def close(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CLOSE, obj, info, note)
 
-    def clothe(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CLOTHE, obj, behavior_str_of(Behavior.CLOTHE), note)
+    def clothe(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CLOTHE, obj, info, note)
 
-    def coach(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.COACH, obj, behavior_str_of(Behavior.COACH), note)
+    def coach(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.COACH, obj, info, note)
 
-    def come(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.COME, obj, behavior_str_of(Behavior.COME), note)
+    def come(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.COME, obj, info, note)
     
-    def command(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.COMMAND, obj, behavior_str_of(Behavior.COMMAND), note)
+    def command(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.COMMAND, obj, info, note)
 
-    def compare(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.COMPARE, obj, behavior_str_of(Behavior.COMPARE), note)
+    def compare(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.COMPARE, obj, info, note)
 
-    def complete(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.COMPLETE, obj, behavior_str_of(Behavior.COMPLETE), note)
+    def complete(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.COMPLETE, obj, info, note)
 
-    def confess(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CONFESS, obj, behavior_str_of(Behavior.CONFESS), note)
+    def confess(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CONFESS, obj, info, note)
 
-    def confuse(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CONFUSE, obj, behavior_str_of(Behavior.CONFUSE), note)
+    def confuse(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CONFUSE, obj, info, note)
 
-    def contact(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CONTACT, obj, behavior_str_of(Behavior.CONTACT), note)
+    def contact(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CONTACT, obj, info, note)
 
-    def continues(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CONTINUE, obj, behavior_str_of(Behavior.CONTINUE), note)
+    def continues(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CONTINUE, obj, info, note)
 
-    def cooperate(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.COOPERATE, obj, behavior_str_of(Behavior.COOPERATE), note)
+    def cooperate(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.COOPERATE, obj, info, note)
 
-    def cough(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.COUGH, obj, behavior_str_of(Behavior.COUGH), note)
+    def cough(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.COUGH, obj, info, note)
 
-    def cook(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.COOK, obj, behavior_str_of(Behavior.COOK), note)
+    def cook(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.COOK, obj, info, note)
 
-    def create(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CREATE, obj, behavior_str_of(Behavior.CREATE), note)
+    def create(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CREATE, obj, info, note)
 
-    def cry(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CRY, obj, behavior_str_of(Behavior.CRY), note)
+    def cry(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CRY, obj, info, note)
 
-    def cut(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.CUT, obj, behavior_str_of(Behavior.CUT), note)
+    def cut(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.CUT, obj, info, note)
 
-    def dance(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DANCE, obj, behavior_str_of(Behavior.DANCE), note)
+    def dance(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DANCE, obj, info, note)
 
-    def deal(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DEAL, obj, behavior_str_of(Behavior.DEAL), note)
+    def deal(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DEAL, obj, info, note)
 
-    def define(self ,action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DEFINE, obj, behavior_str_of(Behavior.DEFINE), note)
+    def define(self ,action: str, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DEFINE, obj, info, note)
 
-    def die(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DIE, obj, behavior_str_of(Behavior.DIE), note)
+    def die(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DIE, obj, info, note)
 
-    def dig(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DIG, obj, behavior_str_of(Behavior.DIG), note)
+    def dig(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DIG, obj, info, note)
 
-    def disappear(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DISAPPEAR, obj, behavior_str_of(Behavior.DISAPPEAR), note)
+    def disappear(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DISAPPEAR, obj, info, note)
 
-    def disapprove(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DISAPPROVE, obj, behavior_str_of(Behavior.DISAPPROVE), note)
+    def disapprove(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DISAPPROVE, obj, info, note)
 
-    def dislike(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DISLIKE, obj, behavior_str_of(Behavior.DISLIKE), note)
+    def dislike(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DISLIKE, obj, info, note)
 
-    def dispel(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DISPEL, obj, behavior_str_of(Behavior.DISPEL), note)
+    def dispel(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DISPEL, obj, info, note)
 
-    def display(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DISPLAY, obj, behavior_str_of(Behavior.DISPLAY), note)
+    def display(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DISPLAY, obj, info, note)
 
-    def dive(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DIVE, obj, behavior_str_of(Behavior.DIVE), note)
+    def dive(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DIVE, obj, info, note)
 
-    def do(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DO, obj, behavior_str_of(Behavior.DO), note)
+    def do(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DO, obj, info, note)
 
-    def doubt(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DOUBT, obj, behavior_str_of(Behavior.DOUBT), note)
+    def doubt(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DOUBT, obj, info, note)
 
-    def draw(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DRAW, obj, behavior_str_of(Behavior.DRAW), note)
+    def draw(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DRAW, obj, info, note)
 
-    def dream(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DREAM, obj, behavior_str_of(Behavior.DREAM), note)
+    def dream(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DREAM, obj, info, note)
 
-    def dress(self ,action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DRESS, obj, behavior_str_of(Behavior.DRESS), note)
+    def dress(self , obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DRESS, obj, info, note)
 
-    def drink(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DRINK, obj, behavior_str_of(Behavior.DRINK), note)
+    def drink(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DRINK, obj, info, note)
 
-    def drive(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DRIVE, obj, behavior_str_of(Behavior.DRIVE), note)
+    def drive(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DRIVE, obj, info, note)
 
-    def drop(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DROP, obj, behavior_str_of(Behavior.DROP), note)
+    def drop(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DROP, obj, info, note)
 
-    def dry(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.DRY, obj, behavior_str_of(Behavior.DRY), note)
+    def dry(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.DRY, obj, info, note)
 
-    def earn(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.EARN, obj, behavior_str_of(Behavior.EARN), note)
+    def earn(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.EARN, obj, info, note)
 
-    def eat(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.EAT, obj, behavior_str_of(Behavior.EAT), note)
+    def eat(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.EAT, obj, info, note)
 
-    def educate(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.EDUCATE, obj, behavior_str_of(Behavior.EDUCATE), note)
+    def educate(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.EDUCATE, obj, info, note)
 
-    def email(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.EMAIL, obj, behavior_str_of(Behavior.EMAIL), note)
+    def email(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.EMAIL, obj, info, note)
 
-    def employ(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.EMPLOY, obj, behavior_str_of(Behavior.EMPLOY), note)
+    def employ(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.EMPLOY, obj, info, note)
 
-    def engage(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.ENGAGE, obj, behavior_str_of(Behavior.ENGAGE), note)
+    def engage(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.ENGAGE, obj, info, note)
 
-    def enjoy(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.ENJOY, obj, behavior_str_of(Behavior.ENJOY), note)
+    def enjoy(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.ENJOY, obj, info, note)
 
-    def enter(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.ENTER, obj, behavior_str_of(Behavior.ENTER), note)
+    def enter(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.ENTER, obj, info, note)
 
-    def envy(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.ENVY, obj, behavior_str_of(Behavior.ENVY), note)
+    def envy(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.ENVY, obj, info, note)
 
-    def equip(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.EQUIP, obj, behavior_str_of(Behavior.EQUIP), note)
+    def equip(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.EQUIP, obj, info, note)
 
-    def exchange(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.EXCHANGE, obj, behavior_str_of(Behavior.EXCHANGE), note)
+    def exchange(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.EXCHANGE, obj, info, note)
 
-    def examine(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.EXAMINE, obj, behavior_str_of(Behavior.EXAMINE), note)
+    def examine(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.EXAMINE, obj, info, note)
 
-    def excite(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.EXCITE, obj, behavior_str_of(Behavior.EXCITE), note)
+    def excite(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.EXCITE, obj, info, note)
 
-    def explore(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.EXPLORE, obj, behavior_str_of(Behavior.EXPLORE), note)
+    def explore(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.EXPLORE, obj, info, note)
 
-    def face(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FACE, obj, behavior_str_of(Behavior.FACE), note)
+    def face(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FACE, obj, info, note)
 
-    def fail(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FAIL, obj, behavior_str_of(Behavior.FAIL), note)
+    def fail(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FAIL, obj, info, note)
 
-    def fall(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FALL, obj, behavior_str_of(Behavior.FALL), note)
+    def fall(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FALL, obj, info, note)
 
-    def feel(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FEEL, obj, behavior_str_of(Behavior.FEEL), note)
+    def feel(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FEEL, obj, info, note)
 
-    def fib(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FIB, obj, behavior_str_of(Behavior.FIB), note)
+    def fib(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FIB, obj, info, note)
 
-    def find(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FIND, obj, behavior_str_of(Behavior.FIND), note)
+    def find(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FIND, obj, info, note)
 
-    def fight(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FIGHT, obj, behavior_str_of(Behavior.FIGHT), note)
+    def fight(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FIGHT, obj, info, note)
 
-    def fill(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FILL, obj, behavior_str_of(Behavior.FILL), note)
+    def fill(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FILL, obj, info, note)
 
-    def finish(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FINISH, obj, behavior_str_of(Behavior.FINISH), note)
+    def finish(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FINISH, obj, info, note)
 
-    def fire(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FIRE, obj, behavior_str_of(Behavior.FIRE), note)
+    def fire(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FIRE, obj, info, note)
 
-    def firejob(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FIREJOB, obj, behavior_str_of(Behavior.FIREJOB, note))
+    def firejob(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FIREJOB, obj, info, note)
 
-    def flash(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FLASH, obj, behavior_str_of(Behavior.FLASH), note)
+    def flash(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FLASH, obj, info, note)
 
-    def float(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FLOAT, obj, behavior_str_of(Behavior.FLOAT), note)
+    def float(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FLOAT, obj, info, note)
 
-    def fly(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FLY, obj, behavior_str_of(Behavior.FLY), note)
+    def fly(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FLY, obj, info, note)
 
-    def follow(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FOLLOW, obj, behavior_str_of(Behavior.FOLLOW), note)
+    def follow(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FOLLOW, obj, info, note)
 
-    def forget(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FORGET, obj, behavior_str_of(Behavior.FORGET), note)
+    def forget(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FORGET, obj, info, note)
 
-    def forgive(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FORGIVE, obj, behavior_str_of(Behavior.FORGIVE), note)
+    def forgive(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FORGIVE, obj, info, note)
 
-    def freeze(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FREEZE, obj, behavior_str_of(Behavior.FREEZE), note)
+    def freeze(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FREEZE, obj, info, note)
 
-    def fry(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.FRY, obj, behavior_str_of(Behavior.FRY), note)
+    def fry(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.FRY, obj, info, note)
 
-    def gather(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.GATHER, obj, behavior_str_of(Behavior.GATHER), note)
+    def gather(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.GATHER, obj, info, note)
 
-    def gaze(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.GAZE, obj, behavior_str_of(Behavior.GAZE), note)
+    def gaze(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.GAZE, obj, info, note)
 
-    def give(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.GIVE, obj, behavior_str_of(Behavior.GIVE), note)
+    def give(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.GIVE, obj, info, note)
 
-    def glad(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.GLAD, obj, behavior_str_of(Behavior.GLAD), note)
+    def glad(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.GLAD, obj, info, note)
 
-    def go(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.GO, obj, behavior_str_of(Behavior.GO), note)
+    def go(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.GO, obj, info, note)
 
-    def graduate(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.GRADUATE, obj, behavior_str_of(Behavior.GRADUATE), note)
+    def graduate(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.GRADUATE, obj, info, note)
 
-    def greet(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.GREET, obj, behavior_str_of(Behavior.GREET), note)
+    def greet(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.GREET, obj, info, note)
 
-    def growl(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.GROWL, obj, behavior_str_of(Behavior.GROWL), note)
+    def growl(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.GROWL, obj, info, note)
 
-    def guard(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.GUARD, obj, behavior_str_of(Behavior.GUARD), note)
+    def guard(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.GUARD, obj, info, note)
 
-    def guide(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.GUIDE, obj, behavior_str_of(Behavior.GUIDE), note)
+    def guide(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.GUIDE, obj, info, note)
 
-    def hand(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HAND, obj, behavior_str_of(Behavior.HAND), note)
+    def hand(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HAND, obj, info, note)
 
-    def handle(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HANDLE, obj, behavior_str_of(Behavior.HANDLE), note)
+    def handle(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HANDLE, obj, info, note)
 
-    def hang(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HANG, obj, behavior_str_of(Behavior.HANG), note)
+    def hang(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HANG, obj, info, note)
 
-    def happen(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HAPPEN, obj, behavior_str_of(Behavior.HAPPEN), note)
+    def happen(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HAPPEN, obj, info, note)
 
-    def happy(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HAPPY, obj, behavior_str_of(Behavior.HAPPY), note)
+    def happy(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HAPPY, obj, info, note)
 
-    def hate(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HATE, obj, behavior_str_of(Behavior.HATE), note)
+    def hate(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HATE, obj, info, note)
 
-    def have(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HAVE, obj, behavior_str_of(Behavior.HAVE), note)
+    def have(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HAVE, obj, info, note)
 
-    def heal(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HEAL, obj, behavior_str_of(Behavior.HEAL), note)
+    def heal(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HEAL, obj, info, note)
 
-    def hear(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HEAR, obj, behavior_str_of(Behavior.HEAR), note)
+    def hear(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HEAR, obj, info, note)
 
-    def help(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HELP, obj, behavior_str_of(Behavior.HELP), note)
+    def help(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HELP, obj, info, note)
 
-    def hide(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HIDE, obj, behavior_str_of(Behavior.HIDE), note)
+    def hide(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HIDE, obj, info, note)
 
-    def hire(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HIRE, obj, behavior_str_of(Behavior.HIRE), note)
+    def hire(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HIRE, obj, info, note)
 
-    def hit(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HIT, obj, behavior_str_of(Behavior.HIT), note)
+    def hit(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HIT, obj, info, note)
 
-    def hold(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HOLD, obj, behavior_str_of(Behavior.HOLD), note)
+    def hold(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HOLD, obj, info, note)
 
-    def hope(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HOPE, obj, behavior_str_of(Behavior.HOPE), note)
+    def hope(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HOPE, obj, info, note)
 
-    def hug(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HUG, obj, behavior_str_of(Behavior.HUG), note)
+    def hug(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HUG, obj, info, note)
 
-    def hunt(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HUNT, obj, behavior_str_of(Behavior.HUNT), note)
+    def hunt(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HUNT, obj, info, note)
 
-    def hurry(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HURRY, obj, behavior_str_of(Behavior.HURRY), note)
+    def hurry(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HURRY, obj, info, note)
 
-    def hurt(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.HURT, obj, behavior_str_of(Behavior.HURT), note)
+    def hurt(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.HURT, obj, info, note)
 
-    def ignore(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.IGNORE, obj, behavior_str_of(Behavior.IGNORE), note)
+    def ignore(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.IGNORE, obj, info, note)
 
-    def imagine(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.IMAGINE, obj, behavior_str_of(Behavior.IMAGINE), note)
+    def imagine(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.IMAGINE, obj, info, note)
 
-    def injure(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.INJURE, obj, behavior_str_of(Behavior.INJURE), note)
+    def injure(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.INJURE, obj, info, note)
 
-    def instrument(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.INSTRUMENT, obj, behavior_str_of(Behavior.INSTRUMENT), note)
+    def instrument(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.INSTRUMENT, obj, info, note)
 
-    def introduce(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.INTRODUCE, obj, behavior_str_of(Behavior.INTRODUCE), note)
+    def introduce(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.INTRODUCE, obj, info, note)
 
-    def invest(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.INVEST, obj, behavior_str_of(Behavior.INVEST), note)
+    def invest(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.INVEST, obj, info, note)
 
-    def investigate(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.INVESTIGATE, obj, behavior_str_of(Behavior.INVESTIGATE), note)
+    def investigate(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.INVESTIGATE, obj, info, note)
 
-    def invite(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.INVITE, obj, behavior_str_of(Behavior.INVITE), note)
+    def invite(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.INVITE, obj, info, note)
 
-    def jog(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.JOG, obj, behavior_str_of(Behavior.JOG), note)
+    def jog(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.JOG, obj, info, note)
 
-    def join(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.JOIN, obj, behavior_str_of(Behavior.JOIN), note)
+    def join(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.JOIN, obj, info, note)
 
-    def judge(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.JUDGE, obj, behavior_str_of(Behavior.JUDGE), note)
+    def judge(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.JUDGE, obj, info, note)
 
-    def jump(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.JUMP, obj, behavior_str_of(Behavior.JUMP), note)
+    def jump(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.JUMP, obj, info, note)
 
-    def keep(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.KEEP, obj, behavior_str_of(Behavior.KEEP), note)
+    def keep(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.KEEP, obj, info, note)
 
-    def keyboard(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.KEYBOARD, obj, behavior_str_of(Behavior.KEYBOARD), note)
+    def keyboard(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.KEYBOARD, obj, info, note)
 
-    def kick(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.KICK, obj, behavior_str_of(Behavior.KICK), note)
+    def kick(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.KICK, obj, info, note)
 
-    def kill(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.KILL, obj, behavior_str_of(Behavior.KILL), note)
+    def kill(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.KILL, obj, info, note)
 
-    def kiss(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.KISS, obj, behavior_str_of(Behavior.KISS), note)
+    def kiss(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.KISS, obj, info, note)
 
-    def knit(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.KNIT, obj, behavior_str_of(Behavior.KNIT), note)
+    def knit(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.KNIT, obj, info, note)
 
-    def knock(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.KNOCK, obj, behavior_str_of(Behavior.KNOCK), note)
+    def knock(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.KNOCK, obj, info, note)
 
-    def know(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.KNOW, obj, behavior_str_of(Behavior.KNOW), note)
+    def know(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.KNOW, obj, info, note)
 
-    def laugh(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.LAUGH, obj, behavior_str_of(Behavior.LAUGH), note)
+    def laugh(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.LAUGH, obj, info, note)
 
-    def lay(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.LAY, obj, behavior_str_of(Behavior.LAY), note)
+    def lay(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.LAY, obj, info, note)
 
-    def learn(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.LEARN, obj, behavior_str_of(Behavior.LEARN), note)
+    def learn(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.LEARN, obj, info, note)
 
-    def leave(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.LEAVE, obj, behavior_str_of(Behavior.LEAVE), note)
+    def leave(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.LEAVE, obj, info, note)
 
-    def let(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.LET, obj, behavior_str_of(Behavior.LET), note)
+    def let(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.LET, obj, info, note)
 
-    def lie(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.LIE, obj, behavior_str_of(Behavior.LIE), note)
+    def lie(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.LIE, obj, info, note)
 
-    def life(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.LIFE, obj, behavior_str_of(Behavior.LIFE), note)
+    def life(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.LIFE, obj, info, note)
 
-    def light(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.LIGHT, obj, behavior_str_of(Behavior.LIGHT), note)
+    def light(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.LIGHT, obj, info, note)
 
-    def listen(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.LISTEN, obj, behavior_str_of(Behavior.LISTEN), note)
+    def listen(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.LISTEN, obj, info, note)
 
-    def live(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.LIVE, obj, behavior_str_of(Behavior.LIVE), note)
+    def live(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.LIVE, obj, info, note)
 
-    def look(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.LOOK, obj, behavior_str_of(Behavior.LOOK), note)
+    def look(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.LOOK, obj, info, note)
 
-    def lookdown(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.LOOKDOWN, obj, behavior_str_of(Behavior.LOOKDOWN), note)
+    def lookdown(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.LOOKDOWN, obj, info, note)
 
-    def lock(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.LOCK, obj, behavior_str_of(Behavior.LOCK), note)
+    def lock(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.LOCK, obj, info, note)
 
-    def lose(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.LOSE, obj, behavior_str_of(Behavior.LOSE), note)
+    def lose(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.LOSE, obj, info, note)
 
-    def love(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.LOVE, obj, behavior_str_of(Behavior.LOVE), note)
+    def love(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.LOVE, obj, info, note)
     
-    def make(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MAKE, obj, behavior_str_of(Behavior.MAKE), note)
+    def make(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MAKE, obj, info, note)
 
-    def makeup(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MAKEUP, obj, behavior_str_of(Behavior.MAKEUP), note)
+    def makeup(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MAKEUP, obj, info, note)
 
-    def manage(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MANAGE, obj, behavior_str_of(Behavior.MANAGE), note)
+    def manage(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MANAGE, obj, info, note)
 
-    def manufacture(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MANUFACTURE, obj, behavior_str_of(Behavior.MANUFACTURE), note)
+    def manufacture(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MANUFACTURE, obj, info, note)
 
-    def maon(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MAON, obj, behavior_str_of(Behavior.MAON), note)
+    def maon(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MAON, obj, info, note)
 
-    def mark(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MARK, obj, behavior_str_of(Behavior.MARK), note)
+    def mark(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MARK, obj, info, note)
 
-    def marry(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MARRY, obj, behavior_str_of(Behavior.MARRY), note)
+    def marry(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MARRY, obj, info, note)
 
-    def master(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MASTER, obj, behavior_str_of(Behavior.MASTER), note)
+    def master(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MASTER, obj, info, note)
 
-    def measure(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MEASURE, obj, behavior_str_of(Behavior.MEASURE), note)
+    def measure(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MEASURE, obj, info, note)
 
-    def meet(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MEET, obj, behavior_str_of(Behavior.MEET), note)
+    def meet(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MEET, obj, info, note)
 
-    def melt(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MELT, obj, behavior_str_of(Behavior.MELT), note)
+    def melt(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MELT, obj, info, note)
 
-    def mean(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MEAN, obj, behavior_str_of(Behavior.MEAN), note)
+    def mean(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MEAN, obj, info, note)
 
-    def memo(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MEMO, obj, behavior_str_of(Behavior.MEMO), note)
+    def memo(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MEMO, obj, info, note)
 
-    def miss(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MISS, obj, behavior_str_of(Behavior.MISS), note)
+    def miss(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MISS, obj, info, note)
 
-    def mix(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MIX, obj, behavior_str_of(Behavior.MIX), note)
+    def mix(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MIX, obj, info, note)
 
-    def modify(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MODIFY, obj, behavior_str_of(Behavior.MODIFY), note)
+    def modify(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MODIFY, obj, info, note)
 
-    def move(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MOVE, obj, behavior_str_of(Behavior.MOVE), note)
+    def move(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MOVE, obj, info, note)
 
-    def must(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.MUST, obj, behavior_str_of(Behavior.MUST), note)
+    def must(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.MUST, obj, info, note)
 
-    def need(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.NEED, obj, behavior_str_of(Behavior.NEED), note)
+    def need(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.NEED, obj, info, note)
 
-    def notice(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.NOTICE, obj, behavior_str_of(Behavior.NOTICE), note)
+    def notice(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.NOTICE, obj, info, note)
 
-    def obtain(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.OBTAIN, obj, behavior_str_of(Behavior.OBTAIN), note)
+    def obtain(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.OBTAIN, obj, info, note)
 
-    def occur(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.OCCUR, obj, behavior_str_of(Behavior.OCCUR), note)
+    def occur(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.OCCUR, obj, info, note)
 
-    def open(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.OPEN, obj, behavior_str_of(Behavior.OPEN), note)
+    def open(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.OPEN, obj, info, note)
 
-    def oppose(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.OPPOSE, obj, behavior_str_of(Behavior.OPPOSE), note)
+    def oppose(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.OPPOSE, obj, info, note)
 
-    def overcome(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.OVERCOME, obj, behavior_str_of(Behavior.OVERCOME), note)
+    def overcome(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.OVERCOME, obj, info, note)
 
-    def overflow(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.OVERFLOW, obj, behavior_str_of(Behavior.OVERFLOW), note)
+    def overflow(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.OVERFLOW, obj, info, note)
 
-    def overlook(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.OVERLOOK, obj, behavior_str_of(Behavior.OVERLOOK), note)
+    def overlook(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.OVERLOOK, obj, info, note)
 
-    def own(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.OWN, obj, behavior_str_of(Behavior.OWN), note)
+    def own(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.OWN, obj, info, note)
 
-    def pack(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PACK, obj, behavior_str_of(Behavior.PACK), note)
+    def pack(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PACK, obj, info, note)
 
-    def paint(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PAINT, obj, behavior_str_of(Behavior.PAINT), note)
+    def paint(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PAINT, obj, info, note)
 
-    def passes(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PASS, obj, behavior_str_of(Behavior.PASS), note)
+    def passes(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PASS, obj, info, note)
 
-    def pause(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PAUSE, obj, behavior_str_of(Behavior.PAUSE), note)
+    def pause(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PAUSE, obj, info, note)
 
-    def pay(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PAY, obj, behavior_str_of(Behavior.PAY), note)
+    def pay(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PAY, obj, info, note)
 
-    def phone(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PHONE, obj, behavior_str_of(Behavior.PHONE), note)
+    def phone(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PHONE, obj, info, note)
 
-    def play(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PLAY, obj, behavior_str_of(Behavior.PLAY), note)
+    def play(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PLAY, obj, info, note)
 
-    def plunge(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PLUNGE, obj, behavior_str_of(Behavior.PLUNGE), note)
+    def plunge(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PLUNGE, obj, info, note)
 
-    def pray(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PRAY, obj, behavior_str_of(Behavior.PRAY), note)
+    def pray(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PRAY, obj, info, note)
 
-    def practice(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PRACTICE, obj, behavior_str_of(Behavior.PRACTICE), note)
+    def practice(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PRACTICE, obj, info, note)
 
-    def press(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PRESS, obj, behavior_str_of(Behavior.PRESS), note)
+    def press(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PRESS, obj, info, note)
 
-    def print(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PRINT, obj, behavior_str_of(Behavior.PRINT), note)
+    def print(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PRINT, obj, info, note)
 
-    def promise(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PROMISE, obj, behavior_str_of(Behavior.PROMISE), note)
+    def promise(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PROMISE, obj, info, note)
 
-    def publish(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PUBLISH, obj, behavior_str_of(Behavior.PUBLISH), note)
+    def publish(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PUBLISH, obj, info, note)
 
-    def pull(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PULL, obj, behavior_str_of(Behavior.PULL), note)
+    def pull(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PULL, obj, info, note)
 
-    def push(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PUSH, obj, behavior_str_of(Behavior.PUSH), note)
+    def push(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PUSH, obj, info, note)
 
-    def put(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PUT, obj, behavior_str_of(Behavior.PUT), note)
+    def put(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PUT, obj, info, note)
 
-    def punch(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PUNCH, obj, behavior_str_of(Behavior.PUNCH), note)
+    def punch(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PUNCH, obj, info, note)
 
-    def puzzle(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.PUZZLE, obj, behavior_str_of(Behavior.PUZZLE), note)
+    def puzzle(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.PUZZLE, obj, info, note)
 
-    def reach(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.REACH, obj, behavior_str_of(Behavior.REACH), note)
+    def reach(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.REACH, obj, info, note)
 
-    def react(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.REACT, obj, behavior_str_of(Behavior.REACT), note)
+    def react(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.REACT, obj, info, note)
 
-    def read(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.READ, obj, behavior_str_of(Behavior.READ), note)
+    def read(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.READ, obj, info, note)
 
-    def realize(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.REALIZE, obj, behavior_str_of(Behavior.REALIZE), note)
+    def realize(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.REALIZE, obj, info, note)
 
-    def receive(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.RECEIVE, obj, behavior_str_of(Behavior.RECEIVE), note)
+    def receive(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.RECEIVE, obj, info, note)
 
-    def recommend(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.RECOMMEND, obj, behavior_str_of(Behavior.RECOMMEND), note)
+    def recommend(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.RECOMMEND, obj, info, note)
 
-    def reflect(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.REFLECT, obj, behavior_str_of(Behavior.REFLECT), note)
+    def reflect(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.REFLECT, obj, info, note)
 
-    def refresh(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.REFRESH, obj, behavior_str_of(Behavior.REFRESH), note)
+    def refresh(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.REFRESH, obj, info, note)
 
-    def regard(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.REGARD, obj, behavior_str_of(Behavior.REGARD), note)
+    def regard(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.REGARD, obj, info, note)
 
-    def regret(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.REGRET, obj, behavior_str_of(Behavior.REGRET), note)
+    def regret(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.REGRET, obj, info, note)
 
-    def release(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.RELEASE, obj, behavior_str_of(Behavior.RELEASE), note)
+    def release(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.RELEASE, obj, info, note)
 
-    def remember(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.REMEMBER, obj, behavior_str_of(Behavior.REMEMBER), note)
+    def remember(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.REMEMBER, obj, info, note)
 
-    def rent(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.RENT, obj, behavior_str_of(Behavior.RENT), note)
+    def rent(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.RENT, obj, info, note)
 
-    def reply(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.REPLY, obj, behavior_str_of(Behavior.REPLY), note)
+    def reply(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.REPLY, obj, info, note)
 
-    def rescue(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.RESCUE, obj, behavior_str_of(Behavior.RESCUE), note)
+    def rescue(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.RESCUE, obj, info, note)
     
-    def rest(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.REST, obj, behavior_str_of(Behavior.REST), note)
+    def rest(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.REST, obj, info, note)
 
-    def returns(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.RETURN, obj, behavior_str_of(Behavior.RETURN), note)
+    def returns(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.RETURN, obj, info, note)
 
-    def review(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.REVIEW, obj, behavior_str_of(Behavior.REVIEW), note)
+    def review(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.REVIEW, obj, info, note)
 
-    def ride(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.RIDE, obj, behavior_str_of(Behavior.RIDE), note)
+    def ride(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.RIDE, obj, info, note)
 
-    def ring(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.RING, obj, behavior_str_of(Behavior.RING), note)
+    def ring(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.RING, obj, info, note)
 
-    def rise(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.RISE, obj, behavior_str_of(Behavior.RISE), note)
+    def rise(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.RISE, obj, info, note)
 
-    def rob(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.ROB, obj, behavior_str_of(Behavior.ROB), note)
+    def rob(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.ROB, obj, info, note)
 
-    def rock(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.ROCK, obj, behavior_str_of(Behavior.ROCK), note)
+    def rock(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.ROCK, obj, info, note)
 
-    def roll(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.ROLL, obj, behavior_str_of(Behavior.ROLL), note)
+    def roll(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.ROLL, obj, info, note)
 
-    def rub(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.RUB, obj, behavior_str_of(Behavior.RUB), note)
+    def rub(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.RUB, obj, info, note)
 
-    def runs(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.RUN, obj, behavior_str_of(Behavior.RUN), note)
+    def runs(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.RUN, obj, info, note)
 
-    def sacrifice(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SACRIFICE, obj, behavior_str_of(Behavior.SACRIFICE), note)
+    def sacrifice(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SACRIFICE, obj, info, note)
 
-    def sad(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SAD, obj, behavior_str_of(Behavior.SAD), note)
+    def sad(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SAD, obj, info, note)
 
-    def save(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SAVE, obj, behavior_str_of(Behavior.SAVE), note)
+    def save(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SAVE, obj, info, note)
 
-    def say(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SAY, obj, behavior_str_of(Behavior.SAY), note)
+    def say(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SAY, obj, info, note)
 
-    def scare(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SCARE, obj, behavior_str_of(Behavior.SCARE), note)
+    def scare(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SCARE, obj, info, note)
 
-    def scratch(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SCRATCH, obj, behavior_str_of(Behavior.SCRATCH), note)
+    def scratch(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SCRATCH, obj, info, note)
 
-    def scream(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SCREAM, obj, behavior_str_of(Behavior.SCREAM), note)
+    def scream(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SCREAM, obj, info, note)
 
-    def search(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SEARCH, obj, behavior_str_of(Behavior.SEARCH), note)
+    def search(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SEARCH, obj, info, note)
 
-    def seat(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SEAT, obj, behavior_str_of(Behavior.SEAT), note)
+    def seat(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SEAT, obj, info, note)
 
-    def see(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SEE, obj, behavior_str_of(Behavior.SEE), note)
+    def see(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SEE, obj, info, note)
 
-    def seek(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SEEK, obj, behavior_str_of(Behavior.SEEK), note)
+    def seek(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SEEK, obj, info, note)
 
-    def seem(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SEEM, obj, behavior_str_of(Behavior.SEEM), note)
+    def seem(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SEEM, obj, info, note)
 
-    def sell(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SELL, obj, behavior_str_of(Behavior.SELL), note)
+    def sell(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SELL, obj, info, note)
 
-    def send(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SEND, obj, behavior_str_of(Behavior.SEND), note)
+    def send(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SEND, obj, info, note)
 
-    def separate(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SEPARATE, obj, behavior_str_of(Behavior.SEPARATE), note)
+    def separate(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SEPARATE, obj, info, note)
 
-    def set(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SET, obj, behavior_str_of(Behavior.SET), note)
+    def set(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SET, obj, info, note)
 
-    def shake(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SHAKE, obj, behavior_str_of(Behavior.SHAKE), note)
+    def shake(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SHAKE, obj, info, note)
 
-    def share(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SHARE, obj, behavior_str_of(Behavior.SHARE), note)
+    def share(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SHARE, obj, info, note)
 
-    def shine(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SHINE, obj, behavior_str_of(Behavior.SHINE), note)
+    def shine(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SHINE, obj, info, note)
 
-    def shock(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SHOCK, obj, behavior_str_of(Behavior.SHOCK), note)
+    def shock(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SHOCK, obj, info, note)
 
-    def shoot(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SHOOT, obj, behavior_str_of(Behavior.SHOOT), note)
+    def shoot(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SHOOT, obj, info, note)
 
-    def show(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SHOW, obj, behavior_str_of(Behavior.SHOW), note)
+    def show(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SHOW, obj, info, note)
 
-    def sigh(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SIGH, obj, behavior_str_of(Behavior.SIGH), note)
+    def sigh(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SIGH, obj, info, note)
 
-    def sign(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SIGN, obj, behavior_str_of(Behavior.SIGN), note)
+    def sign(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SIGN, obj, info, note)
 
-    def sing(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SING, obj, behavior_str_of(Behavior.SING), note)
+    def sing(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SING, obj, info, note)
 
-    def sink(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SINK, obj, behavior_str_of(Behavior.SINK), note)
+    def sink(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SINK, obj, info, note)
 
-    def sit(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SIT, obj, behavior_str_of(Behavior.SIT), note)
+    def sit(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SIT, obj, info, note)
 
-    def skate(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SKATE, obj, behavior_str_of(Behavior.SKATE), note)
+    def skate(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SKATE, obj, info, note)
 
-    def sleep(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SLEEP, obj, behavior_str_of(Behavior.SLEEP), note)
+    def sleep(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SLEEP, obj, info, note)
 
-    def slice(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SLICE, obj, behavior_str_of(Behavior.SLICE), note)
+    def slice(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SLICE, obj, info, note)
 
-    def slide(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SLIDE, obj, behavior_str_of(Behavior.SLIDE), note)
+    def slide(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SLIDE, obj, info, note)
 
-    def slip(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SLIP, obj, behavior_str_of(Behavior.SLIP), note)
+    def slip(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SLIP, obj, info, note)
 
-    def slobber(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SLOBBER, obj, behavior_str_of(Behavior.SLOBBER), note)
+    def slobber(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SLOBBER, obj, info, note)
 
-    def smell(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SMELL, obj, behavior_str_of(Behavior.SMELL), note)
+    def smell(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SMELL, obj, info, note)
 
-    def smile(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SMILE, obj, behavior_str_of(Behavior.SMILE), note)
+    def smile(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SMILE, obj, info, note)
 
-    def smoke(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SMOKE, obj, behavior_str_of(Behavior.SMOKE), note)
+    def smoke(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SMOKE, obj, info, note)
 
-    def solve(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SOLVE, obj, behavior_str_of(Behavior.SOLVE), note)
+    def solve(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SOLVE, obj, info, note)
 
-    def sound(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SOUND, obj, behavior_str_of(Behavior.SOUND), note)
+    def sound(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SOUND, obj, info, note)
 
-    def speak(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SPEAK, obj, behavior_str_of(Behavior.SPEAK), note)
+    def speak(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SPEAK, obj, info, note)
 
-    def spend(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SPEND, obj, behavior_str_of(Behavior.SPEND), note)
+    def spend(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SPEND, obj, info, note)
 
-    def spill(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SPILL, obj, behavior_str_of(Behavior.SPILL), note)
+    def spill(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SPILL, obj, info, note)
 
-    def spin(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SPIN, obj, behavior_str_of(Behavior.SPIN), note)
+    def spin(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SPIN, obj, info, note)
 
-    def split(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SPLIT, obj, behavior_str_of(Behavior.SPLIT), note)
+    def split(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SPLIT, obj, info, note)
 
-    def spread(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SPREAD, obj, behavior_str_of(Behavior.SPREAD), note)
+    def spread(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SPREAD, obj, info, note)
 
-    def squeeze(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SQUEEZE, obj, behavior_str_of(Behavior.SQUEEZE), note)
+    def squeeze(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SQUEEZE, obj, info, note)
 
-    def stand(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.STAND, obj, behavior_str_of(Behavior.STAND), note)
+    def stand(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.STAND, obj, info, note)
 
-    def stare(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.STARE, obj, behavior_str_of(Behavior.STARE), note)
+    def stare(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.STARE, obj, info, note)
 
-    def start(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.START, obj, behavior_str_of(Behavior.START), note)
+    def start(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.START, obj, info, note)
 
-    def steal(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.STEAL, obj, behavior_str_of(Behavior.STEAL), note)
+    def steal(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.STEAL, obj, info, note)
 
-    def stick(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.STICK, obj, behavior_str_of(Behavior.STICK), note)
+    def stick(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.STICK, obj, info, note)
 
-    def stop(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.STOP, obj, behavior_str_of(Behavior.STOP), note)
+    def stop(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.STOP, obj, info, note)
 
-    def store(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.STORE, obj, behavior_str_of(Behavior.STORE), note)
+    def store(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.STORE, obj, info, note)
 
-    def study(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.STUDY, obj, behavior_str_of(Behavior.STUDY), note)
+    def study(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.STUDY, obj, info, note)
 
-    def succeed(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SUCCEED, obj, behavior_str_of(Behavior.SUCCEED), note)
+    def succeed(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SUCCEED, obj, info, note)
 
-    def suggest(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SUGGEST, obj, behavior_str_of(Behavior.SUGGEST), note)
+    def suggest(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SUGGEST, obj, info, note)
 
-    def supply(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SUPPLY, obj, behavior_str_of(Behavior.SUPPLY), note)
+    def supply(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SUPPLY, obj, info, note)
 
-    def support(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SUPPORT, obj, behavior_str_of(Behavior.SUPPORT), note)
+    def support(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SUPPORT, obj, info, note)
 
-    def suppose(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SUPPOSE, obj, behavior_str_of(Behavior.SUPPOSE), note)
+    def suppose(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SUPPOSE, obj, info, note)
 
-    def surprise(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SURPRISE, obj, behavior_str_of(Behavior.SURPRISE), note)
+    def surprise(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SURPRISE, obj, info, note)
 
-    def surround(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SURROUND, obj, behavior_str_of(Behavior.SURROUND), note)
+    def surround(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SURROUND, obj, info, note)
 
-    def survive(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SURVIVE, obj, behavior_str_of(Behavior.SURVIVE), note)
+    def survive(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SURVIVE, obj, info, note)
 
-    def swim(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SWIM, obj, behavior_str_of(Behavior.SWIM), note)
+    def swim(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SWIM, obj, info, note)
 
-    def swing(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SWING, obj, behavior_str_of(Behavior.SWING), note)
+    def swing(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SWING, obj, info, note)
 
-    def sword(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.SWORD, obj, behavior_str_of(Behavior.SWORD), note)
+    def sword(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.SWORD, obj, info, note)
 
-    def take(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.TAKE, obj, behavior_str_of(Behavior.TAKE), note)
+    def take(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.TAKE, obj, info, note)
 
-    def talk(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.TALK, obj, behavior_str_of(Behavior.TALK), note)
+    def talk(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.TALK, obj, info, note)
 
-    def tap(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.TAP, obj, behavior_str_of(Behavior.TAP), note)
+    def tap(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.TAP, obj, info, note)
 
-    def teach(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.TEACH, obj, behavior_str_of(Behavior.TEACH), note)
+    def teach(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.TEACH, obj, info, note)
 
-    def thank(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.THANK, obj, behavior_str_of(Behavior.THANK), note)
+    def thank(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.THANK, obj, info, note)
 
-    def think(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.THINK, obj, behavior_str_of(Behavior.THINK), note)
+    def think(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.THINK, obj, info, note)
 
-    def throw(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.THROW, obj, behavior_str_of(Behavior.THROW), note)
+    def throw(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.THROW, obj, info, note)
 
-    def tie(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.TIE, obj, behavior_str_of(Behavior.TIE), note)
+    def tie(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.TIE, obj, info, note)
 
-    def toss(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.TOSS, obj, behavior_str_of(Behavior.TOSS), note)
+    def toss(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.TOSS, obj, info, note)
 
-    def touch(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.TOUCH, obj, behavior_str_of(Behavior.TOUCH), note)
+    def touch(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.TOUCH, obj, info, note)
 
-    def train(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.TRAIN, obj, behavior_str_of(Behavior.TRAIN), note)
+    def train(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.TRAIN, obj, info, note)
 
-    def transfer(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.TRANSFER, obj, behavior_str_of(Behavior.TRANSFER), note)
+    def transfer(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.TRANSFER, obj, info, note)
 
-    def transform(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.TRANSFORM, obj, behavior_str_of(Behavior.TRANSFORM), note)
+    def transform(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.TRANSFORM, obj, info, note)
 
-    def travel(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.TRAVEL, obj, behavior_str_of(Behavior.TRAVEL), note)
+    def travel(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.TRAVEL, obj, info, note)
 
-    def trip(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.TRIP, obj, behavior_str_of(Behavior.TRIP), note)
+    def trip(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.TRIP, obj, info, note)
 
-    def tries(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.TRY, obj, behavior_str_of(Behavior.TRY), note)
+    def tries(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.TRY, obj, info, note)
 
-    def trust(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.TRUST, obj, behavior_str_of(Behavior.TRUST), note)
+    def trust(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.TRUST, obj, info, note)
 
-    def turn(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.TURN, obj, behavior_str_of(Behavior.TURN), note)
+    def turn(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.TURN, obj, info, note)
 
-    def twist(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.TWIST, obj, behavior_str_of(Behavior.TWIST), note)
+    def twist(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.TWIST, obj, info, note)
 
-    def understand(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.UNDERSTAND, obj, behavior_str_of(Behavior.UNDERSTAND), note)
+    def understand(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.UNDERSTAND, obj, info, note)
 
-    def unite(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.UNITE, obj, behavior_str_of(Behavior.UNITE), note)
+    def unite(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.UNITE, obj, info, note)
 
-    def unlock(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.UNLOCK, obj, behavior_str_of(Behavior.UNLOCK), note)
+    def unlock(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.UNLOCK, obj, info, note)
 
-    def use(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.USE, obj, behavior_str_of(Behavior.USE), note)
+    def use(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.USE, obj, info, note)
 
-    def vanish(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.VANISH, obj, behavior_str_of(Behavior.VANISH), note)
+    def vanish(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.VANISH, obj, info, note)
 
-    def visit(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.VISIT, obj, behavior_str_of(Behavior.VISIT), note)
+    def visit(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.VISIT, obj, info, note)
 
-    def wait(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WAIT, obj, behavior_str_of(Behavior.WAIT), note)
+    def wait(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WAIT, obj, info, note)
 
-    def wake(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WAKE, obj, behavior_str_of(Behavior.WAKE), note)
+    def wake(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WAKE, obj, info, note)
 
-    def walk(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WALK, obj, behavior_str_of(Behavior.WALK), note)
+    def walk(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WALK, obj, info, note)
 
-    def want(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WANT, obj, behavior_str_of(Behavior.WANT), note)
+    def want(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WANT, obj, info, note)
 
-    def warm(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WARM, obj, behavior_str_of(Behavior.WARM), note)
+    def warm(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WARM, obj, info, note)
 
-    def waste(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WASTE, obj, behavior_str_of(Behavior.WASTE), note)
+    def waste(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WASTE, obj, info, note)
 
-    def watch(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WATCH, obj, behavior_str_of(Behavior.WATCH), note)
+    def watch(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WATCH, obj, info, note)
 
-    def wave(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WAVE, obj, behavior_str_of(Behavior.WAVE), note)
+    def wave(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WAVE, obj, info, note)
 
-    def wear(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WEAR, obj, behavior_str_of(Behavior.WEAR), note)
+    def wear(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WEAR, obj, info, note)
 
-    def weigh(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WEIGH, obj, behavior_str_of(Behavior.WEIGH), note)
+    def weigh(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WEIGH, obj, info, note)
 
-    def welcome(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WELCOME, obj, behavior_str_of(Behavior.WELCOME), note)
+    def welcome(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WELCOME, obj, info, note)
 
-    def whisper(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WHISPER, obj, behavior_str_of(Behavior.WHISPER), note)
+    def whisper(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WHISPER, obj, info, note)
 
-    def wind(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WIND, obj, behavior_str_of(Behavior.WIND), note)
+    def wind(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WIND, obj, info, note)
 
-    def wipe(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WIPE, obj, behavior_str_of(Behavior.WIPE), note)
+    def wipe(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WIPE, obj, info, note)
 
-    def wish(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WISH, obj, behavior_str_of(Behavior.WISH), note)
+    def wish(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WISH, obj, info, note)
 
-    def wonder(self, action: str, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WONDER, obj, behavior_str_of(Behavior.WONDER), note)
+    def wonder(self, obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WONDER, obj, info, note)
 
-    def work(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WORK, obj, behavior_str_of(Behavior.WORK), note)
+    def work(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WORK, obj, info, note)
 
-    def worry(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WORRY, obj, behavior_str_of(Behavior.WORRY), note)
+    def worry(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WORRY, obj, info, note)
 
-    def wry(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WRY, obj, behavior_str_of(Behavior.WRY), note)
+    def wry(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WRY, obj, info, note)
 
-    def write(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.WRITE, obj, behavior_str_of(Behavior.WRITE), note)
+    def write(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.WRITE, obj, info, note)
 
-    def yell(self, action: str=DEF_ACT, obj: _BaseSubject=None, note: str=DEF_NOTE):
-        return self.act(action, Behavior.YELL, obj, behavior_str_of(Behavior.YELL), note)
+    def yell(self,  obj: _BaseSubject=None, info: str="", note: str=""):
+        return self.act(Behavior.YELL, obj, info, note)
 

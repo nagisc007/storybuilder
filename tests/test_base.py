@@ -2,7 +2,6 @@
 """Test for base.py
 """
 import unittest
-
 from builder.acttypes import ActType, TagType
 from builder.acttypes import tag_str_of
 from builder.behavior import Behavior
@@ -34,7 +33,7 @@ class BaseSubjectTest(unittest.TestCase):
         self.assertEqual(self.body.note, "a test note")
 
     def test_explain(self):
-        acted = self.body.explain("a test", "this is a test")
+        acted = self.body.explain("a test", note="this is a test")
         self.assertIsInstance(acted, Action)
 
 
@@ -43,16 +42,15 @@ class ActionTest(unittest.TestCase):
     def setUp(self):
         self.sub = _BaseSubject("Taro", "a test subject")
         self.body = Action(self.sub,
-                ActType.ACT, Behavior.ACT, "testing", None, "test", "a test note")
+                ActType.ACT, Behavior.ACT, None, "testing", "a test note")
 
     def test_attributes(self):
         self.assertIsInstance(self.body.subject, _BaseSubject)
         self.assertEqual(self.body.act_type, ActType.ACT)
         self.assertEqual(self.body.behavior, Behavior.ACT)
         self.assertEqual(self.body.description, "")
-        self.assertEqual(self.body.action, "testing")
+        self.assertEqual(self.body.info, "testing")
         self.assertEqual(self.body.note, "a test note")
-        self.assertEqual(self.body.name, "test")
         self.assertEqual(self.body.object, None)
         self.assertEqual(self.body.flag, "")
         self.assertEqual(self.body.deflag, "")
@@ -92,7 +90,9 @@ class ActionGroupTest(unittest.TestCase):
         self.taro = _BasePerson("Taro", 17, "male", "student", "a man")
 
     def test_attributes(self):
-        group = ActionGroup(self.taro.tell("wow"),self.taro.explain("the man"),
+        group = ActionGroup(
+                self.taro.tell(info="wow"),
+                self.taro.explain(info="the man"),
                 name="test group", note="test note")
         self.assertIsInstance(group, ActionGroup)
         self.assertEqual(group.name, "test group")
@@ -116,11 +116,10 @@ class BasePersonTest(unittest.TestCase):
         self.assertEqual(self.body.note, "a man")
 
     def test_act(self):
-        acted = self.body.act("testing", Behavior.TEST, None, "test", "a test act")
+        acted = self.body.act(Behavior.TEST, None, "testing", "a test act")
         self.assertIsInstance(acted, Action)
-        self.assertEqual(acted.action, "testing")
+        self.assertEqual(acted.info, "testing")
         self.assertEqual(acted.note, "a test act")
-        self.assertEqual(acted.name, "test")
         self.assertEqual(acted.act_type, ActType.ACT)
         self.assertEqual(acted.behavior, Behavior.TEST)
         self.assertEqual(acted.object, None)
@@ -128,7 +127,7 @@ class BasePersonTest(unittest.TestCase):
     def test_tell(self):
         told = self.body.tell("I am Taro", note="Taro's voice")
         self.assertIsInstance(told, Action)
-        self.assertEqual(told.action, "I am Taro")
+        self.assertEqual(told.info, "I am Taro")
         self.assertEqual(told.note, "Taro's voice")
         self.assertEqual(told.act_type, ActType.TELL)
         self.assertEqual(told.behavior, Behavior.TELL)
@@ -159,12 +158,13 @@ class ItemTest(unittest.TestCase):
 class DayTimeTest(unittest.TestCase):
 
     def setUp(self):
-        self.body = DayTime("test day", 10, 5, 2019, 12, "a sunny day")
+        self.body = DayTime("test day", 10, 5, 2019, 12, 30, "a sunny day")
 
     def test_attributes(self):
         self.assertIsInstance(self.body, DayTime)
         self.assertEqual(self.body.name, "test day")
         self.assertEqual(self.body.mon, 10)
+        self.assertEqual(self.body.min, 30)
         self.assertEqual(self.body.day, 5)
         self.assertEqual(self.body.year, 2019)
         self.assertEqual(self.body.hour, 12)
@@ -182,31 +182,29 @@ class MasterTest(unittest.TestCase):
         self.assertEqual(self.body.note, "a test")
     
     def test_comment(self):
-        acted = self.body.comment("a test comment", note="this is a test")
+        acted = self.body.comment("a test comment")
         self.assertIsInstance(acted, Action)
         self.assertEqual(acted.act_type, ActType.TAG)
-        self.assertEqual(acted.action, "a test comment")
+        self.assertEqual(acted.info, "a test comment")
         self.assertEqual(acted.behavior, Behavior.NONE)
         self.assertEqual(acted.description, "")
-        self.assertEqual(acted.name, tag_str_of(TagType.COMMENT))
-        self.assertEqual(acted.note, "this is a test")
         self.assertEqual(acted.subject, self.body)
         self.assertEqual(acted.object, None)
 
     def test_title(self):
-        acted = self.body.title("a test title", "this is a title")
+        acted = self.body.title("a test title")
         self.assertIsInstance(acted, Action)
         self.assertEqual(acted.act_type, ActType.TAG)
-        self.assertEqual(acted.action, "a test title")
+        self.assertEqual(acted.info, "a test title")
         self.assertEqual(acted.behavior, Behavior.NONE)
         self.assertEqual(acted.description, "")
-        self.assertEqual(acted.name, tag_str_of(TagType.TITLE))
-        self.assertEqual(acted.note, "this is a title")
         self.assertEqual(acted.subject, self.body)
 
     def test_story(self):
         taro = _BasePerson("Taro", 17, "male", "student")
-        acted = self.body.story(taro.tell("a test"), taro.explain("a man"),
+        acted = self.body.story(
+                taro.tell("a test"),
+                taro.explain("a man"),
                 note="test story")
         self.assertIsInstance(acted, ActionGroup)
         self.assertEqual(acted.name, "_story")
@@ -219,9 +217,10 @@ class MasterTest(unittest.TestCase):
 class WordTest(unittest.TestCase):
 
     def setUp(self):
-        self.body = Word("Test", "a test word")
+        self.body = Word("Test", "a test word", "note is an empty")
 
     def test_attributes(self):
         self.assertIsInstance(self.body, Word)
         self.assertEqual(self.body.name, "Test")
-        self.assertEqual(self.body.note, "a test word")
+        self.assertEqual(self.body.info, "a test word")
+        self.assertEqual(self.body.note, "note is an empty")

@@ -8,7 +8,7 @@ import argparse
 from .acttypes import ActType, TagType, LangType
 from .acttypes import tag_str_of
 from .base import Action, ActionGroup
-from .behavior import behavior_str_of
+from .commons import behavior_with_np_of, dialogue_from_description_if, dialogue_from_info, object_name_of, sentence_from, subject_name_of
 
 
 # output
@@ -70,17 +70,83 @@ def output_story(story: ActionGroup, filename: str, is_action_data: bool=False, 
                 is_debug)
 
 
-def _story_data_converted(story: ActionGroup, is_action_data: bool, is_debug: bool) -> list:
-    '''Story data converter.
-    
-    Args:
-        story (:obj:`ActionGroup`): a story action group.
-        is_action_data (bool, optional): if True, output as an action data.
-        is_debug (bool, optional): if True, use a debug mode.
-    Returns:
-        :list:str: strings list as a story.
-    '''
-    return  _story_converted_as_action(story, is_debug) if is_action_data else _story_converted_as_description(story, is_debug)
+# private functions
+def _action_str_by_tag(act: Action, level: int) -> str:
+    if act.note == tag_str_of(TagType.COMMENT):
+        return "<!-- {} -->".format(act.info)
+    elif act.note == tag_str_of(TagType.TITLE):
+        return "{} {}\n".format("#" * level, act.info)
+    else:
+        return ""
+
+
+def _action_str_by_type(act: Action, lang: LangType, level: int, is_debug: bool) -> str:
+    if act.act_type == ActType.ACT:
+        if lang == LangType.JPN:
+            return "{:\u3000<6s}:{:\u3000<6s}/{}{}{}".format(subject_name_of(act),
+                    _behavior_with_obj(act),
+                    act.info, _flag_info_if(act), _note_info_if(act))
+        else:
+            return "{:8}:{:8}/{}{}{}".format(act.subject.name,
+                    _behavior_with_obj(act),
+                    act.info, _flag_info_if(act), _note_info_if(act))
+    elif act.act_type == ActType.EXPLAIN:
+        if lang == LangType.JPN:
+            return "{:\u3000<6s}:{:\u3000<6s}/{}{}{}".format(act.subject.name,
+                    _behavior_with_obj(act),
+                    act.info, _flag_info_if(act), _note_info_if(act))
+        else:
+            return "{:8}:{:8}/{}{}{}".format(act.subject.name,
+                    _behavior_with_obj(act),
+                    act.info, _flag_info_if(act), _note_info_if(act))
+    elif act.act_type == ActType.TAG:
+        return _action_str_by_tag(act, level)
+    elif act.act_type == ActType.TELL:
+        if lang == LangType.JPN:
+            return "{:\u3000<6s}:{:\u3000<6s}/{}{}{}".format(act.subject.name,
+                    _behavior_with_obj(act),
+                    dialogue_from_info(act, lang), _flag_info_if(act), _note_info_if(act))
+        else:
+            return "{:8}:{:8}/{}{}{}".format(act.subject.name,
+                    _behavior_with_obj(act),
+                    dialogue_from_info(act, lang), _flag_info_if(act), _note_info_if(act))
+    elif act.act_type == ActType.TEST and is_debug:
+        if lang == LangType.JPN:
+            return "> {:\u3000<6s}:{:\u3000<6s}/{}{}{}".format(act.subject.name,
+                    _behavior_with_obj(act),
+                    act.info, _flag_info_if(act), _note_info_if(act))
+        else:
+            return "> {:8}:{:8}{}/{}{}{}".format(act.subject.name,
+                    _behavior_with_obj(act),
+                    act.info, _flag_info_if(act), _note_info_if(act))
+    else:
+        return ""
+
+
+def _behavior_with_obj(act: Action) -> str:
+    return "{}({})".format(behavior_with_np_of(act), object_name_of(act))
+
+
+def _description_str_by_tag(act: Action, level: int, is_debug: bool) -> str:
+    if act.note == tag_str_of(TagType.COMMENT):
+        return ""
+    elif act.note == tag_str_of(TagType.TITLE):
+        return "{} {}\n".format("#" * level, act.description if act.description else act.info)
+    else:
+        return ""
+
+
+def _description_str_by_type(act: Action, lang: LangType, level: int, is_debug: bool) -> str:
+    if act.act_type in (ActType.ACT, ActType.EXPLAIN):
+        return sentence_from(act, lang)
+    elif act.act_type == ActType.TELL:
+        return dialogue_from_description_if(act, lang)
+    elif act.act_type == ActType.TAG:
+        return _description_str_by_tag(act, level, is_debug)
+    elif act.act_type == ActType.TEST and is_debug:
+        return "> {}".format(act.description if act.description else act.info)
+    else:
+        return ""
 
 
 def _output_story_to_console(story: list, is_debug: bool):
@@ -108,56 +174,16 @@ def _story_converted_as_action(story: ActionGroup, is_debug: bool) -> list:
 
 def _story_converted_as_action_in_group(group: ActionGroup, level: int, is_debug: bool) -> list:
     tmp = []
-    for a in group.actions:
-        if isinstance(a, ActionGroup):
-            tmp.extend(_story_converted_as_action_in_group(a, level + 1, is_debug))
-        else:
-            tmp.append(_action_str_by_type(a, group.lang, level, is_debug))
+    if isinstance(group, ActionGroup):
+        for a in group.actions:
+            if isinstance(a, ActionGroup):
+                tmp.extend(_story_converted_as_action_in_group(a, level + 1, is_debug))
+            else:
+                tmp.append(_action_str_by_type(a, group.lang, level, is_debug))
+    else:
+        tmp.append(_action_str_by_type(group, group.lang, level, is_debug))
     return tmp
 
-
-def _action_str_by_type(act: Action, lang: LangType, level: int, is_debug: bool) -> str:
-    if act.act_type == ActType.ACT:
-        if lang == LangType.JPN:
-            return "{:\u3000<8s}:{:\u3000<8s}{} - {}/{}{}{}".format(act.subject.name, _behavior_str_with_negative_if(act, lang),
-                    _is_passivemode(act.is_passive), _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
-        else:
-            return "{:8}:{:8}{} - {}/{}{}{}".format(act.subject.name, _behavior_str_with_negative_if(act, lang),
-                    _is_passivemode(act.is_passive), _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
-    elif act.act_type == ActType.EXPLAIN:
-        if lang == LangType.JPN:
-            return "{:\u3000<8s}:{:\u3000<8s}{} - {}/{}{}{}".format(act.subject.name, _behavior_str_with_negative_if(act, lang),
-                    _is_passivemode(act.is_passive), _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
-        else:
-            return "{:8}:{:8}{} - {}/{}{}{}".format(act.subject.name, _behavior_str_with_negative_if(act, lang),
-                    _is_passivemode(act.is_passive), _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
-    elif act.act_type == ActType.TAG:
-        return _action_str_by_tag(act, level)
-    elif act.act_type == ActType.TELL:
-        if lang == LangType.JPN:
-            return "{:\u3000<8s}:{:\u3000<8s}{} - {}/「{}」{}{}".format(act.subject.name, _behavior_str_with_negative_if(act, lang),
-                    _is_passivemode(act.is_passive), _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
-        else:
-            return "{:8}:{:8}{} - {}/「{}」{}{}".format(act.subject.name, _behavior_str_with_negative_if(act, lang),
-                    _is_passivemode(act.is_passive), _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
-    elif act.act_type == ActType.TEST and is_debug:
-        if lang == LangType.JPN:
-            return "> {:\u3000<8s}:{:\u3000<8s}{} - {}/{}{}{}".format(act.subject.name, _behavior_str_with_negative_if(act, lang),
-                    _is_passivemode(act.is_passive), _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
-        else:
-            return "> {:8}:{:8}{} - {}/{}{}{}".format(act.subject.name, _behavior_str_with_negative_if(act, lang),
-                    _is_passivemode(act.is_passive), _obj_name_if(act), act.action, _flag_info_if(act), _note_info_if(act))
-    else:
-        return ""
-
-
-def _action_str_by_tag(act: Action, level: int) -> str:
-    if act.name == tag_str_of(TagType.COMMENT):
-        return "<!-- {} -->".format(act.action)
-    elif act.name == tag_str_of(TagType.TITLE):
-        return "{} {}".format("#" * level, act.action)
-    else:
-        return ""
 
 
 def _story_converted_as_description(story: ActionGroup, is_debug: bool):
@@ -174,55 +200,17 @@ def _story_converted_as_description_in_group(group: ActionGroup, level: int, is_
     return tmp
 
 
-def _description_str_by_type(act: Action, lang: LangType, level: int, is_debug: bool) -> str:
-    if act.act_type in (ActType.ACT, ActType.EXPLAIN):
-        return "{}{}{}".format(_paragraphtop_by_lang(lang), act.description, _period_by_lang(lang))
-    elif act.act_type == ActType.TELL:
-        return "{}{}{}".format(_double_quatation_by_lang(lang), act.description, _double_quatation_by_lang(lang, False))
-    elif act.act_type == ActType.TAG:
-        return _description_str_by_tag(act, level, is_debug)
-    elif act.act_type == ActType.TEST and is_debug:
-        return "> {}".format(act.description if act.description else act.action)
-    else:
-        return ""
-
-
-def _description_str_by_tag(act: Action, level: int, is_debug: bool) -> str:
-    if act.name == tag_str_of(TagType.COMMENT):
-        return ""
-    elif act.name == tag_str_of(TagType.TITLE):
-        return "{} {}".format("#" * level, act.description if act.description else act.action)
-    else:
-        return ""
-
-def _period_by_lang(lang: LangType) -> str:
-    return "。" if lang == LangType.JPN else ". "
-
-
-def _comma_by_lang(lang: LangType) -> str:
-    return "、" if lang == LangType.JPN else ", "
-
-
-def _paragraphtop_by_lang(lang: LangType) -> str:
-    return "　" if lang == LangType.JPN else " "
-
-
-def _double_quatation_by_lang(lang: LangType, is_top: bool=True) -> str:
-    if is_top:
-        return "「" if lang == LangType.JPN else ' "'
-    else:
-        return "」" if lang == LangType.JPN else '" '
-
-def _behavior_str_with_negative_if(act: Action, lang: LangType) -> str:
-    return behavior_str_of(act.behavior) + "{}".format("ない" if lang == LangType.JPN else " not") if act.is_negative else behavior_str_of(act.behavior)
-
-
-def _is_passivemode(mode: bool) -> str:
-    return "(P)" if mode else ""
-
-
-def _obj_name_if(act: Action) -> str:
-    return act.object.name if act.object else ""
+def _story_data_converted(story: ActionGroup, is_action_data: bool, is_debug: bool) -> list:
+    '''Story data converter.
+    
+    Args:
+        story (:obj:`ActionGroup`): a story action group.
+        is_action_data (bool, optional): if True, output as an action data.
+        is_debug (bool, optional): if True, use a debug mode.
+    Returns:
+        :list:str: strings list as a story.
+    '''
+    return  _story_converted_as_action(story, is_debug) if is_action_data else _story_converted_as_description(story, is_debug)
 
 
 def _note_info_if(act: Action) -> str:
