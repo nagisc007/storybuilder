@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.0.6] - 2019-03-25
+### Added
+- New action group (scene, combi)
+- negative mode
+- action flags and deflags
+### Changed
+- output an action format
+### Fixed
+- error message without an action info
+- error message without an object name
+
 ## [0.0.5] - 2019-03-19
 ### Added
 - Word class
@@ -70,7 +81,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Example story as usage.
 - Output story as markdown.
 
-[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.0.5...HEAD
+[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.0.6...HEAD
+[0.0.6]: https://github.com/nagisc007/storybuilder/releases/v0.0.6
 [0.0.5]: https://github.com/nagisc007/storybuilder/releases/v0.0.5
 [0.0.4]: https://github.com/nagisc007/storybuilder/releases/v0.0.4
 [0.0.3]: https://github.com/nagisc007/storybuilder/releases/v0.0.3
