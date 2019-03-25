@@ -135,16 +135,21 @@ def _contains_the_word_in_group(group: ActionGroup, target: Action) -> bool:
 
 
 def _flags_gathered_in_group(group: ActionGroup, is_flag: bool=True) -> list:
-    tmp = []
-    for a in group.actions:
-        if isinstance(a, ActionGroup):
-            tmp.extend(_flags_gathered_in_group(a, is_flag))
-        else:
-            tmp.append(_flag_gatherd(a, is_flag))
-    return tmp
+    if isinstance(group, ActionGroup):
+        tmp = []
+        for a in group.actions:
+            if isinstance(a, ActionGroup):
+                tmp.extend(_flags_gathered_in_group(a, is_flag))
+            else:
+                tmp.append(_flag_gatherd(a, is_flag))
+        return tmp
+    else:
+        return [_flag_gatherd(group, is_flag)]
 
 
 def _flag_gatherd(act: Action, is_flag: bool) ->str:
+    if not isinstance(act, Action):
+        return ""
     if is_flag:
         return act.flag or ""
     else:
@@ -152,33 +157,40 @@ def _flag_gatherd(act: Action, is_flag: bool) ->str:
 
 
 def _has_a_daytime(act: Action) -> bool:
-    return isinstance(act.subject, DayTime)
+    return isinstance(act, Action) and isinstance(act.subject, DayTime)
 
 
 def _has_a_daytime_in_group(group: ActionGroup) -> bool:
-    for a in group.actions:
-        if isinstance(a, ActionGroup):
-            if _has_a_daytime_in_group(a):
-                return True
+    if isinstance(group, ActionGroup):
+        for a in group.actions:
+            if isinstance(a, ActionGroup):
+                if _has_a_daytime_in_group(a):
+                    return True
+            else:
+                if _has_a_daytime(a):
+                    return True
         else:
-            if _has_a_daytime(a):
-                return True
-    return False
+            return False
+    else:
+        return _has_a_daytime(group)
 
 
 def _has_a_stage(act: Action) -> bool:
-    return isinstance(act.subject, Stage)
+    return isinstance(act, Action) and isinstance(act.subject, Stage)
 
 
 def _has_a_stage_in_group(group: ActionGroup) -> bool:
-    for a in group.actions:
-        if isinstance(a, ActionGroup):
-            if _has_a_stage_in_group(a):
-                return True
+    if isinstance(group, ActionGroup):
+        for a in group.actions:
+            if isinstance(a, ActionGroup):
+                if _has_a_stage_in_group(a):
+                    return True
+            else:
+                if _has_a_stage(a):
+                    return True
         else:
-            if _has_a_stage(a):
-                return True
-    return False
+            return False
+    return _has_a_stage(group)
 
 
 def _has_the_action(act: Action, target: Action) -> bool:
@@ -200,12 +212,15 @@ def _has_the_action_in_group(group: ActionGroup, target: Action) -> bool:
             else:
                 if _has_the_action(a, target):
                     return True
+        else:
+            return False
     else:
         return _has_the_action(group, target)
 
 
 def _has_the_name(act: Action, target: Person) -> bool:
-    return subject_name_of(act) == target.name
+    return isinstance(act, Action) and isinstance(target, Person) \
+            and subject_name_of(act) == target.name
 
 
 def _has_the_name_in_group(group: ActionGroup, target: Person) -> bool:
@@ -217,6 +232,8 @@ def _has_the_name_in_group(group: ActionGroup, target: Person) -> bool:
             else:
                 if _has_the_name(a, target):
                     return True
+        else:
+            return False
     return _has_the_name(group, target)
 
 
