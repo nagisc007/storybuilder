@@ -18,6 +18,10 @@ def behavior_with_np_of(act: Action) -> str:
     return "{}{}{}".format(tmp_head, behavior_str_of(act.behavior), tmp_tail)
 
 
+def description_if(act: Action) -> str:
+    return act.description if act.description else act.info
+
+
 def dialogue_from_description(act: Action, lang: LangType) -> str:
     return "「」".format(act.description) if lang == LangType.JPN else ' "{}" '.format(act.description)
 

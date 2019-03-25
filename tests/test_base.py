@@ -2,8 +2,8 @@
 """Test for base.py
 """
 import unittest
-from builder.acttypes import ActType, TagType
-from builder.acttypes import tag_str_of
+from builder.acttypes import ActType, GroupType, TagType
+from builder.acttypes import group_name_of, tag_str_of
 from builder.behavior import Behavior
 from builder.base import _BaseAction, _BaseSubject, Action, ActionGroup
 from builder.base import _BasePerson, Stage, Item, DayTime, Word
@@ -93,9 +93,10 @@ class ActionGroupTest(unittest.TestCase):
         group = ActionGroup(
                 self.taro.tell(info="wow"),
                 self.taro.explain(info="the man"),
-                name="test group", note="test note")
+                group_type=GroupType.COMBI, note="test note")
         self.assertIsInstance(group, ActionGroup)
-        self.assertEqual(group.name, "test group")
+        self.assertEqual(group.name, ActionGroup.CLS_NAME)
+        self.assertEqual(group.group_type, GroupType.COMBI)
         self.assertEqual(group.note, "test note")
         self.assertEqual(len(group.actions), 2)
         for a in group.actions:
@@ -207,7 +208,7 @@ class MasterTest(unittest.TestCase):
                 taro.explain("a man"),
                 note="test story")
         self.assertIsInstance(acted, ActionGroup)
-        self.assertEqual(acted.name, "_story")
+        self.assertEqual(acted.group_type, GroupType.STORY)
         self.assertEqual(acted.note, "test story")
         self.assertEqual(len(acted.actions), 2)
         for a in acted.actions:

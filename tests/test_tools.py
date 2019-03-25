@@ -88,7 +88,7 @@ class BasicMethodTest(unittest.TestCase):
 
 
     def test__story_converted_as_action_in_group(self):
-        self.assertEqual(tools._story_converted_as_action_in_group(self.story, 1, False),
+        self.assertEqual(tools._story_converted_as_action_in_group(self.story, self.story.group_type, 1, False),
                 ["# Taro and Hanako\n", "Hanako  :来る()    /in room",
                     "Taro    :台詞(Hanako)/ \"wow\" ",
                     "Hanako  :~~台詞~~()/ \"like\" "])
@@ -103,7 +103,7 @@ class BasicMethodTest(unittest.TestCase):
 
 
     def test__story_converted_as_description_in_group(self):
-        self.assertEqual(tools._story_converted_as_description_in_group(self.story, 1, False),
+        self.assertEqual(tools._story_converted_as_description_in_group(self.story, self.story.group_type, 1, False),
                 ["# Taro and Hanako\n",
                     " a cute girl come in. ",
                     ' "Nice to meet you" ',

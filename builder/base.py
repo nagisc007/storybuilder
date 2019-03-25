@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Module to build a story.
 """
-from .acttypes import ActType, TagType, LangType
-from .acttypes import tag_str_of
+from .acttypes import ActType, GroupType, TagType, LangType
+from .acttypes import group_name_of, tag_str_of
 from .behavior import Behavior
 from .behavior import behavior_str_of
 
@@ -168,21 +168,22 @@ class ActionGroup(_BaseAction):
 
     Attributes:
         actions (:tuple:obj:`Action`): action lists.
+        group_type (:enum:`GroupType`): a group type.
         lang (:enum:`LangType`): a language type.
-        name (str): a group name.
         note (str): a short description.
     """
     CLS_NAME = "_actiongroup"
-    def __init__(self, *args: Action, lang: LangType=LangType.JPN, name: str=CLS_NAME, note: str=""):
+    def __init__(self, *args: Action, group_type: GroupType, lang: LangType=LangType.JPN, note: str=""):
         """
         Args:
             *args (:tuple:obj:`Action`): actions
+            group_type (:enum:`GroupType`): a group type.
             lang (:enum:`LangType`): a language type.
-            name (str, optional): an action group name.
             note (str, optional): a short description.
         """
-        super().__init__(name, note)
+        super().__init__(ActionGroup.CLS_NAME, note)
         self.actions = args
+        self.group_type = group_type
         self.lang = lang
 
 
@@ -245,12 +246,32 @@ class Master(_BaseSubject):
         """
         super().__init__(name, note)
 
+    def combine(self, *args: _BaseAction, lang: LangType.JPN, note: str=""):
+        """
+        Args:
+            *args (:tuple:obj:`_BaseAction`): a combined actions.
+            lang (:enum:`LangType`): a language type.
+            note (str, optional): a short description.
+        """
+        return ActionGroup(lang=lang, group_type=GroupType.COMBI, note=note, *args)
+
     def comment(self, comment_: str):
         """
         Args:
             comment_ (str): a comment.
         """
         return Action(self, ActType.TAG, Behavior.NONE, None, comment_, tag_str_of(TagType.COMMENT))
+
+    def scene(self, title: str, *args: _BaseAction, lang: LangType.JPN, note: str=""):
+        """
+        Args:
+            title (str): a scene title.
+            *args (:tuple:obj:`_BaseAction`): a scene actions.
+            lang (:enum:`LangType`): a scene language type.
+            note (str, optional): a short description.
+        """
+        tmp = (self.title(title),) + args
+        return ActionGroup(lang=lang, group_type=GroupType.SCENE, note=note, *tmp)
 
     def story(self, title: str, *args: _BaseAction, lang: LangType=LangType.JPN, note: str=""):
         """
@@ -261,7 +282,7 @@ class Master(_BaseSubject):
             note (str, optional): a short description.
         """
         tmp = (self.title(title),) + args
-        return ActionGroup(name="_story", lang=lang, note=note, *tmp)
+        return ActionGroup(lang=lang, group_type=GroupType.STORY, note=note, *tmp)
 
     def title(self, title_: str):
         """
