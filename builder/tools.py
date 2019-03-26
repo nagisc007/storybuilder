@@ -89,26 +89,26 @@ def _action_str_by_type(act: Action, lang: LangType, group_type: GroupType, leve
     if act.act_type == ActType.ACT:
         if lang == LangType.JPN:
             return "{}{:\u3000<6s}:{:\u3000<6s}/{}{}{}".format(
-                    _list_head_inserted(level),
+                    _list_head_inserted(group_type),
                     subject_name_of(act),
                     _behavior_with_obj(act),
                     act.info, _flag_info_if(act), _note_info_if(act))
         else:
             return "{}{:8}:{:8}/{}{}{}".format(
-                    _list_head_inserted(level),
+                    _list_head_inserted(group_type),
                     act.subject.name,
                     _behavior_with_obj(act),
                     act.info, _flag_info_if(act), _note_info_if(act))
     elif act.act_type == ActType.EXPLAIN:
         if lang == LangType.JPN:
             return "{}{:\u3000<6s}:{:\u3000<6s}/{}{}{}".format(
-                    _list_head_inserted(level),
+                    _list_head_inserted(group_type),
                     act.subject.name,
                     _behavior_with_obj(act),
                     act.info, _flag_info_if(act), _note_info_if(act))
         else:
             return "{}{:8}:{:8}/{}{}{}".format(
-                    _list_head_inserted(level),
+                    _list_head_inserted(group_type),
                     act.subject.name,
                     _behavior_with_obj(act),
                     act.info, _flag_info_if(act), _note_info_if(act))
@@ -117,13 +117,13 @@ def _action_str_by_type(act: Action, lang: LangType, group_type: GroupType, leve
     elif act.act_type == ActType.TELL:
         if lang == LangType.JPN:
             return "{}{:\u3000<6s}:{:\u3000<6s}/{}{}{}".format(
-                    _list_head_inserted(level),
+                    _list_head_inserted(group_type),
                     act.subject.name,
                     _behavior_with_obj(act),
                     dialogue_from_info(act, lang), _flag_info_if(act), _note_info_if(act))
         else:
             return "{}{:8}:{:8}/{}{}{}".format(
-                    _list_head_inserted(level),
+                    _list_head_inserted(group_type),
                     act.subject.name,
                     _behavior_with_obj(act),
                     dialogue_from_info(act, lang), _flag_info_if(act), _note_info_if(act))
@@ -171,8 +171,13 @@ def _description_str_by_type(act: Action, lang: LangType, group_type: GroupType,
         return ""
 
 
-def _list_head_inserted(level: int) -> str:
-    return "    " * (level - 1) + "- "
+def _list_head_inserted(group_type: GroupType) -> str:
+    if group_type == GroupType.COMBI:
+        return "    " * 2 + "- "
+    elif group_type == GroupType.SCENE:
+        return "    " * 1 + "- "
+    else:
+        return "- "
 
 
 def _output_story_to_console(story: list, is_debug: bool):
