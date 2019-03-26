@@ -262,7 +262,7 @@ class Master(_BaseSubject):
         """
         return Action(self, ActType.TAG, Behavior.NONE, None, comment_, tag_str_of(TagType.COMMENT))
 
-    def scene(self, title: str, *args: _BaseAction, lang: LangType.JPN, note: str=""):
+    def scene(self, title: str, *args: _BaseAction, lang: LangType=LangType.JPN, note: str=""):
         """
         Args:
             title (str): a scene title.
@@ -270,7 +270,11 @@ class Master(_BaseSubject):
             lang (:enum:`LangType`): a scene language type.
             note (str, optional): a short description.
         """
-        tmp = (self.title(title),) + args
+        tmp = ()
+        if isinstance(title, str):
+            tmp = (self.title(title),) + args
+        else:
+            tmp = (title,) + args
         return ActionGroup(lang=lang, group_type=GroupType.SCENE, note=note, *tmp)
 
     def story(self, title: str, *args: _BaseAction, lang: LangType=LangType.JPN, note: str=""):
@@ -281,7 +285,11 @@ class Master(_BaseSubject):
             lang (:enum:`LangType`): a story language type.
             note (str, optional): a short description.
         """
-        tmp = (self.title(title),) + args
+        tmp = ()
+        if isinstance(title, str):
+            tmp = (self.title(title),) + args
+        else:
+            tmp = (title,) + args
         return ActionGroup(lang=lang, group_type=GroupType.STORY, note=note, *tmp)
 
     def title(self, title_: str):

@@ -201,6 +201,17 @@ class MasterTest(unittest.TestCase):
         self.assertEqual(acted.description, "")
         self.assertEqual(acted.subject, self.body)
 
+    def test_scene(self):
+        taro = _BasePerson("Taro", 17, "male", "student")
+        acted = self.body.scene("test scene",
+                taro.tell("a test"),
+                taro.explain("a man"),
+                )
+        self.assertIsInstance(acted, ActionGroup)
+        self.assertEqual(acted.group_type, GroupType.SCENE)
+        self.assertEqual(len(acted.actions), 3)
+        self.assertEqual(acted.actions[0].info, "test scene")
+
     def test_story(self):
         taro = _BasePerson("Taro", 17, "male", "student")
         acted = self.body.story(
