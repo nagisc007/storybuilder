@@ -47,20 +47,25 @@ def has_basic_infos(test_case: unittest.TestCase, story: ActionGroup,
     Basic informations are Who, Whom, When, Where
     '''
     ERR_MSG = "is not exists!"
+    is_succeeded = True
     # who
     if not _has_the_name_in_group(story, hero):
         test_case.fail("Hero {} {}".format(hero.name, ERR_MSG))
+        is_succeeded = False
     # whom
     if not _has_the_name_in_group(story, rival):
         test_case.fail("Rival {} {}".format(rival.name, ERR_MSG))
+        is_succeeded = False
     # when
     if not _has_a_daytime_in_group(story):
         test_case.fail("DayTime {}".format(ERR_MSG))
+        is_succeeded = False
     # where
     if not _has_a_stage_in_group(story):
         test_case.fail("Stage {}".format(ERR_MSG))
+        is_succeeded = False
 
-    return True
+    return is_succeeded
 
 
 def has_outline_infos(test_case: unittest.TestCase, story: ActionGroup,
