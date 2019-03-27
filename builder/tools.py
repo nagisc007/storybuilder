@@ -8,7 +8,7 @@ import argparse
 from .acttypes import ActType, GroupType, TagType, LangType
 from .acttypes import tag_str_of
 from .base import Action, ActionGroup
-from .commons import behavior_with_np_of, description_if, dialogue_from_description_if, dialogue_from_info, object_name_of, sentence_from, subject_name_of
+from .commons import behavior_with_np_of, descriptions_if, dialogue_from_description_if, dialogue_from_info, object_name_of, sentence_from, subject_name_of
 
 
 # output
@@ -144,14 +144,14 @@ def _behavior_with_obj(act: Action) -> str:
     return "{}({})".format(behavior_with_np_of(act), object_name_of(act))
 
 
-def _description_str_by_tag(act: Action, group_type: GroupType, level: int, is_debug: bool) -> str:
+def _description_str_by_tag(act: Action, lang: LangType, group_type: GroupType, level: int, is_debug: bool) -> str:
     if act.note == tag_str_of(TagType.COMMENT):
         return ""
     elif act.note == tag_str_of(TagType.TITLE):
         if group_type == GroupType.STORY:
-            return "{} {}\n".format("#" * level, description_if(act))
+            return "{} {}\n".format("#" * level, descriptions_if(act, lang))
         elif group_type == GroupType.SCENE:
-            return "**{}**".format(description_if(act))
+            return "**{}**".format(descriptions_if(act, lang))
         else:
             return ""
     else:
@@ -164,7 +164,7 @@ def _description_str_by_type(act: Action, lang: LangType, group_type: GroupType,
     elif act.act_type == ActType.TELL:
         return dialogue_from_description_if(act, lang)
     elif act.act_type == ActType.TAG:
-        return _description_str_by_tag(act, group_type, level, is_debug)
+        return _description_str_by_tag(act, lang, group_type, level, is_debug)
     elif act.act_type == ActType.TEST and is_debug:
         return "> {}".format(act.description if act.description else act.info)
     else:

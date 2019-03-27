@@ -94,7 +94,7 @@ class Action(_BaseAction):
     Attributes:
         act_type (:enum:`ActType`): an action category type.
         behavior (:enum:`Behavior`): a behavior type of this action.
-        description (str): a description of this action.
+        descriptions (:tuple:str): descriptions of this action.
         flag (str): a story flag to associate this action.
         deflag (str): a story deflag to associate this action.
         info (str): a information of the action.
@@ -127,7 +127,7 @@ class Action(_BaseAction):
         self.act_type = act_type
         self.behavior = behavior
         self.deflag = ""
-        self.description = ""
+        self.descriptions = ()
         self.flag = ""
         self.info = info
         self.is_negative = False
@@ -136,8 +136,8 @@ class Action(_BaseAction):
         self.subject = Action.assert_subject(subject)
         
 
-    def desc(self, desc_: str):
-        self.description = desc_
+    def desc(self, *args):
+        self.descriptions = args
         return self
 
     def negative(self):

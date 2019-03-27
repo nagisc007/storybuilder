@@ -48,7 +48,7 @@ class ActionTest(unittest.TestCase):
         self.assertIsInstance(self.body.subject, _BaseSubject)
         self.assertEqual(self.body.act_type, ActType.ACT)
         self.assertEqual(self.body.behavior, Behavior.ACT)
-        self.assertEqual(self.body.description, "")
+        self.assertEqual(self.body.descriptions, ())
         self.assertEqual(self.body.info, "testing")
         self.assertEqual(self.body.note, "a test note")
         self.assertEqual(self.body.object, None)
@@ -58,10 +58,10 @@ class ActionTest(unittest.TestCase):
         self.assertEqual(self.body.is_passive, False)
 
     def test_desc(self):
-        self.assertFalse(self.body.description)
+        self.assertFalse(self.body.descriptions)
         self.body.desc("this is a test")
-        self.assertIsInstance(self.body.description, str)
-        self.assertEqual(self.body.description, "this is a test")
+        self.assertIsInstance(self.body.descriptions, tuple)
+        self.assertEqual(self.body.descriptions, ("this is a test",))
 
     def test_negative(self):
         self.assertFalse(self.body.is_negative)
@@ -188,7 +188,7 @@ class MasterTest(unittest.TestCase):
         self.assertEqual(acted.act_type, ActType.TAG)
         self.assertEqual(acted.info, "a test comment")
         self.assertEqual(acted.behavior, Behavior.NONE)
-        self.assertEqual(acted.description, "")
+        self.assertEqual(acted.descriptions, ())
         self.assertEqual(acted.subject, self.body)
         self.assertEqual(acted.object, None)
 
@@ -198,7 +198,7 @@ class MasterTest(unittest.TestCase):
         self.assertEqual(acted.act_type, ActType.TAG)
         self.assertEqual(acted.info, "a test title")
         self.assertEqual(acted.behavior, Behavior.NONE)
-        self.assertEqual(acted.description, "")
+        self.assertEqual(acted.descriptions, ())
         self.assertEqual(acted.subject, self.body)
 
     def test_scene(self):

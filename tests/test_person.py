@@ -30,7 +30,7 @@ class PersonTest(unittest.TestCase):
         self.assertEqual(acted.act_type, ActType.ACT)
         self.assertEqual(acted.info, "a box")
         self.assertEqual(acted.behavior, Behavior.ACQUIRE)
-        self.assertEqual(acted.description, "")
+        self.assertEqual(acted.descriptions, ())
         self.assertEqual(acted.note, "a testing")
         self.assertEqual(acted.object, None)
 
@@ -40,6 +40,6 @@ class PersonTest(unittest.TestCase):
         self.assertEqual(acted.act_type, ActType.ACT)
         self.assertEqual(acted.info, "his girl friend")
         self.assertEqual(acted.behavior, Behavior.REMEMBER)
-        self.assertEqual(acted.description, "")
+        self.assertEqual(acted.descriptions, ())
         self.assertEqual(acted.note, "a cute girl")
         self.assertEqual(acted.object, None)

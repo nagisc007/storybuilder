@@ -18,16 +18,24 @@ def behavior_with_np_of(act: Action) -> str:
     return "{}{}{}".format(tmp_head, behavior_str_of(act.behavior), tmp_tail)
 
 
-def description_if(act: Action) -> str:
-    return act.description if act.description else act.info
+def comma_of(lang: LangType) -> str:
+    return "、" if lang == LangType.JPN else ", "
+
+
+def description_str_from(act: Action, lang: LangType) -> str:
+    return comma_of(lang).join(act.descriptions)
+
+
+def descriptions_if(act: Action, lang: LangType) -> str:
+    return description_str_from(act, lang)if act.descriptions else act.info
 
 
 def dialogue_from_description(act: Action, lang: LangType) -> str:
-    return "「」".format(act.description) if lang == LangType.JPN else ' "{}" '.format(act.description)
+    return "「」".format(description_str_from(act, lang)) if lang == LangType.JPN else ' "{}" '.format(description_str_from(act, lang))
 
 
 def dialogue_from_description_if(act: Action, lang: LangType) -> str:
-    return dialogue_from_description(act, lang) if act.description else dialogue_from_info(act, lang)
+    return dialogue_from_description(act, lang) if act.descriptions else dialogue_from_info(act, lang)
 
 
 def dialogue_from_info(act: Action, lang: LangType) -> str:
@@ -39,7 +47,7 @@ def object_name_of(act: Action) -> str:
 
 
 def sentence_from(act: Action, lang: LangType) -> str:
-    return "　{}。".format(act.description) if lang == LangType.JPN else " {}. ".format(act.description)
+    return "　{}。".format(description_str_from(act, lang)) if lang == LangType.JPN else " {}. ".format(description_str_from(act, lang))
 
 
 def subject_name_of(act: Action) -> str:
