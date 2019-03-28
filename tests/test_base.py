@@ -56,6 +56,7 @@ class ActionTest(unittest.TestCase):
         self.assertEqual(self.body.deflag, "")
         self.assertEqual(self.body.is_negative, False)
         self.assertEqual(self.body.is_passive, False)
+        self.assertEqual(self.body.priority, 5)
 
     def test_desc(self):
         self.assertFalse(self.body.descriptions)
@@ -82,6 +83,13 @@ class ActionTest(unittest.TestCase):
         self.assertEqual(self.body.deflag, "")
         self.body.set_deflag("test")
         self.assertEqual(self.body.deflag, "test")
+
+    def test_priority(self):
+        data_set = [(x, x) for x in range(1, 10)]
+        for p1, p2 in data_set:
+            with self.subTest(p1=p1, p2=p2):
+                self.body.set_priority(p1)
+                self.assertEqual(self.body.priority, p2)
 
 
 class ActionGroupTest(unittest.TestCase):

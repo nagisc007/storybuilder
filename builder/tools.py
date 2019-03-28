@@ -25,7 +25,7 @@ def build_to_story(story: ActionGroup):
     FILE_NAME = "story"
     options = options_parsed()
     file_name = options.filename if options.filename else FILE_NAME
-    return output_story(story, file_name, options.action, options.build, options.debug)
+    return output_story(story, file_name, options.action, options.build, options.priority, options.debug)
 
 
 def options_parsed():
@@ -41,6 +41,7 @@ def options_parsed():
     parser.add_argument('-d', '--debug', help="with debug mode", action='store_true')
     parser.add_argument('-i', '--info', help="display with informations", action='store_true')
     parser.add_argument('-f', '--filename', help="advanced output file name")
+    parser.add_argument('-p', '--priority', help="output an action filtered priorities", type=int, default=5)
 
     # get result
     args = parser.parse_args()
@@ -48,7 +49,9 @@ def options_parsed():
     return (args)
 
 
-def output_story(story: ActionGroup, filename: str, is_action_data: bool=False, is_out_as_file: bool=False, is_debug: bool=False):
+def output_story(story: ActionGroup, filename: str, is_action_data: bool=False,
+        is_out_as_file: bool=False, pri_filter: int=Action.MIN_PRIORITY,
+        is_debug: bool=False):
     '''Output a story.
 
     Args:
@@ -56,17 +59,18 @@ def output_story(story: ActionGroup, filename: str, is_action_data: bool=False, 
         filename (str): a filename.
         is_action_data (bool, optional): if True, output as an action data.
         is_out_as_file (bool, optional): if True, output to a markdown file.
+        pri_filter (int, optional): the number has filtered to output an action.
         is_debug (bool, optional): if True, use a debug mode.
     Returns:
         True: if complete to success, otherwise False.
     '''
     if is_out_as_file:
         return _output_story_to_file(
-                _story_data_converted(story, is_action_data, is_debug),
+                _story_data_converted(story, is_action_data, pri_filter, is_debug),
                 filename, is_action_data, is_debug)
     else:
         return _output_story_to_console(
-                _story_data_converted(story, is_action_data, is_debug),
+                _story_data_converted(story, is_action_data, pri_filter, is_debug),
                 is_debug)
 
 
@@ -85,7 +89,10 @@ def _action_str_by_tag(act: Action, group_type: GroupType, level: int) -> str:
         return ""
 
 
-def _action_str_by_type(act: Action, lang: LangType, group_type: GroupType, level: int, is_debug: bool) -> str:
+def _action_str_by_type(act: Action, lang: LangType, group_type: GroupType, level: int,
+        pri_filter: int, is_debug: bool) -> str:
+    if pri_filter > act.priority:
+        return ""
     if act.act_type == ActType.ACT:
         if lang == LangType.JPN:
             return "{}{:\u3000<6s}:{:\u3000<6s}/{}{}{}".format(
@@ -199,20 +206,27 @@ def _output_story_to_file(story: list, filename: str, is_action_data: bool, is_d
     return True
 
 
-def _story_converted_as_action(story: ActionGroup, is_debug: bool) -> list:
-    return _story_converted_as_action_in_group(story, story.group_type, 1, is_debug)
+def _story_converted_as_action(story: ActionGroup, pri_filter: int, is_debug: bool) -> list:
+    '''
+    Args:
+        story (:obj:`ActionGroup`): a story action group.
+        pri_filter (int): a number filtered an action.
+        is_debug (bool): if True, with a debug mode.
+    '''
+    return _story_converted_as_action_in_group(story, story.group_type, 1, pri_filter, is_debug)
 
 
-def _story_converted_as_action_in_group(group: ActionGroup, group_type: GroupType, level: int, is_debug: bool) -> list:
+def _story_converted_as_action_in_group(group: ActionGroup, group_type: GroupType,
+        level: int, pri_filter: int, is_debug: bool) -> list:
     tmp = []
     if isinstance(group, ActionGroup):
         for a in group.actions:
             if isinstance(a, ActionGroup):
-                tmp.extend(_story_converted_as_action_in_group(a, a.group_type, level + 1, is_debug))
+                tmp.extend(_story_converted_as_action_in_group(a, a.group_type, level + 1, pri_filter, is_debug))
             else:
-                tmp.append(_action_str_by_type(a, group.lang, group.group_type, level, is_debug))
+                tmp.append(_action_str_by_type(a, group.lang, group.group_type, level, pri_filter, is_debug))
     else:
-        tmp.append(_action_str_by_type(group, group.lang, group.group_type, level, is_debug))
+        tmp.append(_action_str_by_type(group, group.lang, group.group_type, level, pri_filter, is_debug))
     return tmp
 
 
@@ -231,17 +245,18 @@ def _story_converted_as_description_in_group(group: ActionGroup, group_type: Gro
     return tmp
 
 
-def _story_data_converted(story: ActionGroup, is_action_data: bool, is_debug: bool) -> list:
+def _story_data_converted(story: ActionGroup, is_action_data: bool, pri_filter: int, is_debug: bool) -> list:
     '''Story data converter.
     
     Args:
         story (:obj:`ActionGroup`): a story action group.
-        is_action_data (bool, optional): if True, output as an action data.
-        is_debug (bool, optional): if True, use a debug mode.
+        is_action_data (bool): if True, output as an action data.
+        pri_filter (int): the number filtered an action.
+        is_debug (bool): if True, use a debug mode.
     Returns:
         :list:str: strings list as a story.
     '''
-    return  _story_converted_as_action(story, is_debug) if is_action_data else _story_converted_as_description(story, is_debug)
+    return  _story_converted_as_action(story, pri_filter, is_debug) if is_action_data else _story_converted_as_description(story, is_debug)
 
 
 def _note_info_if(act: Action) -> str:

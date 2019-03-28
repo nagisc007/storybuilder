@@ -102,6 +102,7 @@ class Action(_BaseAction):
         is_passive (bool): if True is a passive mode.
         note (str): a short description.
         object (:obj:`_BaseSubject`): a object of this action.
+        priority (:int): a action priotiry.
         subject (:obj:`_BaseSubject`): a subject of this action.
     """
     @classmethod
@@ -112,6 +113,9 @@ class Action(_BaseAction):
         return target
 
     CLS_NAME = "_action"
+    DEFAULT_PRIORITY = 5
+    MAX_PRIORITY = 10
+    MIN_PRIORITY = 0
 
     def __init__(self, subject: _BaseSubject, act_type: ActType, behavior: Behavior,
             object_: _BaseSubject, info: str, note: str):
@@ -133,6 +137,7 @@ class Action(_BaseAction):
         self.is_negative = False
         self.is_passive = False
         self.object = Action.assert_subject(object_)
+        self.priority = Action.DEFAULT_PRIORITY
         self.subject = Action.assert_subject(subject)
         
 
@@ -160,6 +165,10 @@ class Action(_BaseAction):
     def set_deflag(self, deflag_str: str):
         if self.deflag: return self
         self.deflag = deflag_str
+        return self
+
+    def set_priority(self, pri: int):
+        self.priority = pri
         return self
 
 
