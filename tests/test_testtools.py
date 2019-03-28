@@ -25,7 +25,7 @@ class BasicMethodTest(unittest.TestCase):
                 self.hanako.come(info="in class"),
                 self.taro.lose(info="love").set_deflag("taro"),
                 self.taro.meet(info="a cute girl").set_deflag(1),
-                self.hanako.fall(self.taro, "love").negative(),
+                self.hanako.fall(self.taro, info="love").negative(),
                 )
 
     def test_is_all_actions(self):
@@ -38,7 +38,7 @@ class BasicMethodTest(unittest.TestCase):
         what_act = self.taro.tell(info="Boring")
         why_act = self.taro.lose(info="love")
         how_act = self.taro.meet(info="girl")
-        res_act = self.hanako.fall(self.taro, "love").negative()
+        res_act = self.hanako.fall(self.taro, info="love").negative()
         self.assertTrue(testtools.has_outline_infos(self, self.story,
             what_act, why_act, how_act, res_act))
 

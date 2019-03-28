@@ -35,14 +35,15 @@ class _BaseSubject(object):
         self.name = name
         self.note = note
 
-    def explain(self, info: str, obj=None, note: str=""):
+    def explain(self, info: str, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None, note: str=""):
         """
         Args:
             info (str): a information.
-            obj (:obj:`_BaseSubject`, optional): a object of this action.
+            to (:obj:`_BaseSubject`, optional): a person.
+            of (:obj:`_BaseSubject`, optional): a other object.
             note (str, optional): a short description.
         """
-        return Action(self, ActType.EXPLAIN, Behavior.EXPLAIN, obj, info, note)
+        return Action(self, ActType.EXPLAIN, Behavior.EXPLAIN, (a, about, asa, at, by, fo, frm, of, on, to, wth), info, note)
 
 
 class _BasePerson(_BaseSubject):
@@ -64,19 +65,19 @@ class _BasePerson(_BaseSubject):
         self.job = job
         self.sex = sex
 
-    def act(self, behaviour: Behavior, obj: _BaseSubject, info: str="", note: str=""):
+    def act(self, behaviour: Behavior, objects: tuple, info: str="", note: str=""):
         """
         Args:
             behaviour (:enum:`Behavior`): a behavior type.
-            obj (:obj:`_BaseSubject`): a object of the action.
+            objects (:tuple:obj:`_BaseSubject`): objects of the action.
             info (str, optional): a information of the action.
             note (str, optional): a short description.
         Returns:
             Act object contained a personal action.
         """
-        return Action(self, ActType.ACT, behaviour, obj, info, note)
+        return Action(self, ActType.ACT, behaviour, objects, info, note)
 
-    def tell(self, info: str, obj: _BaseSubject=None, note: str=""):
+    def tell(self, info: str, a: _BaseSubject=None, about: _BaseSubject=None, asa: _BaseSubject=None, at: _BaseSubject=None, by: _BaseSubject=None, fo: _BaseSubject=None, frm: _BaseSubject=None, of: _BaseSubject=None, on: _BaseSubject=None, to: _BaseSubject=None, wth: _BaseSubject=None, note: str=""):
         """
         Args:
             info (str): a short dialogue.
@@ -85,7 +86,7 @@ class _BasePerson(_BaseSubject):
         Returns:
             Act object contained a dialogue.
         """
-        return Action(self, ActType.TELL, Behavior.TELL, obj, info, note)
+        return Action(self, ActType.TELL, Behavior.TELL, (a, about, asa, at, by, fo, frm, of, on, to, wth), info, note)
 
 
 class Action(_BaseAction):
@@ -101,7 +102,7 @@ class Action(_BaseAction):
         is_negative (bool): if True is a negative mode.
         is_passive (bool): if True is a passive mode.
         note (str): a short description.
-        object (:obj:`_BaseSubject`): a object of this action.
+        objects (:tuple:obj:`_BaseSubject`): objects of this action.
         priority (:int): a action priotiry.
         subject (:obj:`_BaseSubject`): a subject of this action.
     """
@@ -109,8 +110,16 @@ class Action(_BaseAction):
     def assert_subject(cls, target: _BaseSubject):
         if not target:
             return None
-        assert isinstance(target, _BaseSubject), "object type {} is a mismatch!".format(type(target))
+        assert isinstance(target, _BaseSubject), "The subject type {} is a mismatch!".format(type(target))
         return target
+
+    @classmethod
+    def assert_objects(cls, targets: tuple):
+        if not targets or set(targets) == {None}:
+            return ()
+        for t in set(targets) - {None}:
+            assert isinstance(t, _BaseSubject), "The object type {} is a mismatch!".format(type(t))
+        return targets
 
     CLS_NAME = "_action"
     DEFAULT_PRIORITY = 5
@@ -118,12 +127,12 @@ class Action(_BaseAction):
     MIN_PRIORITY = 0
 
     def __init__(self, subject: _BaseSubject, act_type: ActType, behavior: Behavior,
-            object_: _BaseSubject, info: str, note: str):
+            objects: tuple, info: str, note: str):
         """
         Args:
             subject (:obj:`_BaseSubject`): action subject.
             behavior (:enum:`Behavior`): action behavior type.
-            obj (:obj:`_BaseSubject`): an action object.
+            objects (:tuple:obj:`_BaseSubject`): an action objects.
             info (str, optional): an action name.
             note (str, optional): a short description.
         """
@@ -136,7 +145,7 @@ class Action(_BaseAction):
         self.info = info
         self.is_negative = False
         self.is_passive = False
-        self.object = Action.assert_subject(object_)
+        self.objects = Action.assert_objects(objects)
         self.priority = Action.DEFAULT_PRIORITY
         self.subject = Action.assert_subject(subject)
         

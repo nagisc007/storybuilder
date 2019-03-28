@@ -4,7 +4,7 @@
 import unittest
 
 from builder.acttypes import ActType
-from builder.base import Action
+from builder.base import Action, Item
 from builder.person import Person
 from builder.behavior import Behavior
 from builder.behavior import behavior_str_of
@@ -14,6 +14,8 @@ class PersonTest(unittest.TestCase):
 
     def setUp(self):
         self.body = Person("Taro", 17, "male", "student", "me", "a man")
+        self.box = Item("Box", "a box")
+        self.doll = Item("Doll", "a substitute of a person")
 
     def test_attributes(self):
         self.assertIsInstance(self.body, Person)
@@ -32,7 +34,7 @@ class PersonTest(unittest.TestCase):
         self.assertEqual(acted.behavior, Behavior.ACQUIRE)
         self.assertEqual(acted.descriptions, ())
         self.assertEqual(acted.note, "a testing")
-        self.assertEqual(acted.object, None)
+        self.assertEqual(acted.objects, ())
 
     def test_remember(self):
         acted = self.body.remember(info="his girl friend", note="a cute girl")
@@ -42,4 +44,4 @@ class PersonTest(unittest.TestCase):
         self.assertEqual(acted.behavior, Behavior.REMEMBER)
         self.assertEqual(acted.descriptions, ())
         self.assertEqual(acted.note, "a cute girl")
-        self.assertEqual(acted.object, None)
+        self.assertEqual(acted.objects, ())

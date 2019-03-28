@@ -19,10 +19,11 @@ class BasicMethodTest(unittest.TestCase):
         self.sm = Master("test story")
         self.taro = Person("Taro", 17, "male", "student", "me")
         self.hanako = Person("Hanako", 17, "female", "student", "me")
+        self.masao = Person("Masao", 17, "male", "student", "me")
         self.story = self.sm.story(
                 "Taro and Hanako",
                 self.hanako.come(info="in room").desc("a cute girl come in"),
-                self.taro.tell("wow", self.hanako).desc("Nice to meet you"),
+                self.taro.tell("wow", to=self.hanako).desc("Nice to meet you"),
                 self.hanako.tell("like").negative().desc("I'm not fine"),
                 lang=LangType.ENG,
                 )
@@ -30,7 +31,7 @@ class BasicMethodTest(unittest.TestCase):
                 "太郎と花子",
                 self.hanako.come(info="部屋").desc("可愛い少女"),
                 self.taro.tell("ああ").desc("よう"),
-                self.hanako.tell("好き").negative().desc("全然")
+                self.hanako.tell("好き", to=self.taro, wth=self.masao).negative().desc("全然")
                 )
         self.test_file = "test_file"
 
@@ -84,7 +85,7 @@ class BasicMethodTest(unittest.TestCase):
         self.assertEqual(tools._story_converted_as_action(self.story_j, 0, False),
                 ["# 太郎と花子\n", "- Hanako:来る()　　/部屋",
                     "- Taro　　:台詞()　　/「ああ」",
-                    "- Hanako:~~台詞~~()/「好き」"])
+                    "- Hanako:~~台詞~~(Taro/Masao)/「好き」"])
 
 
     def test__story_converted_as_action_in_group(self):

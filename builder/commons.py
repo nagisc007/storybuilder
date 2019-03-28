@@ -42,8 +42,12 @@ def dialogue_from_info(act: Action, lang: LangType) -> str:
     return "「{}」".format(act.info) if lang == LangType.JPN else ' "{}" '.format(act.info)
 
 
-def object_name_of(act: Action) -> str:
-    return act.object.name if act.object and isinstance(act.object, _BaseSubject) else ""
+def object_names_of(act: Action) -> str:
+    tmp = []
+    for obj in act.objects:
+        if isinstance(obj, _BaseSubject):
+            tmp.append(obj.name)
+    return "/".join(tmp)
 
 
 def sentence_from(act: Action, lang: LangType) -> str:

@@ -51,7 +51,7 @@ class ActionTest(unittest.TestCase):
         self.assertEqual(self.body.descriptions, ())
         self.assertEqual(self.body.info, "testing")
         self.assertEqual(self.body.note, "a test note")
-        self.assertEqual(self.body.object, None)
+        self.assertEqual(self.body.objects, ())
         self.assertEqual(self.body.flag, "")
         self.assertEqual(self.body.deflag, "")
         self.assertEqual(self.body.is_negative, False)
@@ -131,7 +131,7 @@ class BasePersonTest(unittest.TestCase):
         self.assertEqual(acted.note, "a test act")
         self.assertEqual(acted.act_type, ActType.ACT)
         self.assertEqual(acted.behavior, Behavior.TEST)
-        self.assertEqual(acted.object, None)
+        self.assertEqual(acted.objects, ())
 
     def test_tell(self):
         told = self.body.tell("I am Taro", note="Taro's voice")
@@ -198,7 +198,7 @@ class MasterTest(unittest.TestCase):
         self.assertEqual(acted.behavior, Behavior.NONE)
         self.assertEqual(acted.descriptions, ())
         self.assertEqual(acted.subject, self.body)
-        self.assertEqual(acted.object, None)
+        self.assertEqual(acted.objects, ())
 
     def test_title(self):
         acted = self.body.title("a test title")

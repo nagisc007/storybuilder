@@ -8,7 +8,7 @@ import argparse
 from .acttypes import ActType, GroupType, TagType, LangType
 from .acttypes import tag_str_of
 from .base import Action, ActionGroup
-from .commons import behavior_with_np_of, descriptions_if, dialogue_from_description_if, dialogue_from_info, object_name_of, sentence_from, subject_name_of
+from .commons import behavior_with_np_of, descriptions_if, dialogue_from_description_if, dialogue_from_info, object_names_of, sentence_from, subject_name_of
 
 
 # output
@@ -148,7 +148,7 @@ def _action_str_by_type(act: Action, lang: LangType, group_type: GroupType, leve
 
 
 def _behavior_with_obj(act: Action) -> str:
-    return "{}({})".format(behavior_with_np_of(act), object_name_of(act))
+    return "{}({})".format(behavior_with_np_of(act), object_names_of(act))
 
 
 def _description_str_by_tag(act: Action, lang: LangType, group_type: GroupType, level: int, is_debug: bool) -> str:
