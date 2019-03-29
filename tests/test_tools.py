@@ -15,6 +15,10 @@ import builder.tools as tools
 
 class BasicMethodTest(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        print("\n**** TEST: tools.py ****")
+
     def setUp(self):
         self.sm = Master("test story")
         self.taro = Person("Taro", 17, "male", "student", "me")

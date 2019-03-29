@@ -6,11 +6,15 @@ from builder.acttypes import ActType, AuxVerb, GroupType, TagType
 from builder.acttypes import group_name_of, tag_str_of
 from builder.behavior import Behavior
 from builder.base import _BaseAction, _BaseSubject, Action, ActionGroup
-from builder.base import _BasePerson, Stage, Item, DayTime, Word
+from builder.base import _BasePerson, Stage, Item, DayTime, Word, Something, something
 from builder.base import Master
 
 
 class BaseActionTest(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        print("\n**** TEST: base.py ****")
 
     def setUp(self):
         self.body = _BaseAction("test act", "a test note")
@@ -237,6 +241,17 @@ class MasterTest(unittest.TestCase):
         self.assertEqual(len(acted.actions), 2)
         for a in acted.actions:
             self.assertIsInstance(a, Action)
+
+class SomethingTest(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_attributes(self):
+        test_one = something()
+        self.assertIsInstance(test_one, Something)
+        self.assertEqual(test_one.name, Something._NAME)
+        self.assertEqual(test_one.note, "")
 
 
 class WordTest(unittest.TestCase):

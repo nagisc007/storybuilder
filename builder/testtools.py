@@ -5,7 +5,7 @@ import unittest
 
 from .acttypes import LangType
 from .behavior import behavior_str_of
-from .base import Action, ActionGroup, Stage, DayTime
+from .base import Action, ActionGroup, Stage, DayTime, Something
 from .person import Person
 from .commons import behavior_with_np_of, object_names_of, subject_name_of
 
@@ -124,6 +124,13 @@ def is_all_actions(story: ActionGroup) -> bool:
 
 
 # private functions
+def _contains_something_in_objects(act: Action) -> bool:
+    for o in act.objects:
+        if isinstance(o, Something):
+            return True
+    return False
+
+
 def _contains_the_word(act: Action, target: Action) -> bool:
     return isinstance(act, Action) and isinstance(target, Action) \
             and _is_near_eq_actions(act, target) \
@@ -265,6 +272,33 @@ def _is_near_eq_actions(a: Action, b: Action) -> bool:
             and a.behavior == b.behavior \
             and a.is_negative == b.is_negative \
             and a.is_passive == b.is_passive \
-            and subject_name_of(a) == subject_name_of(b) \
-            and object_names_of(a) == object_names_of(b)
+            and _is_near_eq_at_subjects(a, b) \
+            and _is_near_eq_at_objects(a, b)
+
+
+def _is_near_eq_at_subjects(a: Action, b: Action) -> bool:
+    return isinstance(a.subject, Something) or isinstance(b.subject, Something) \
+            or subject_name_of(a) == subject_name_of(b)
+
+
+def _is_near_eq_at_objects(a: Action, b: Action) -> bool:
+    if _contains_something_in_objects(a) or _contains_something_in_objects(b):
+        a_somethings = _count_something_in_objects(a)
+        b_somethings = _count_something_in_objects(b)
+        if a_somethings > b_somethings:
+            tmp = set(b.objects) - set(a.objects)
+            return len(tmp) == a_somethings
+        else:
+            tmp = set(a.objects) - set(b.objects)
+            return len(tmp) == b_somethings
+    else:
+        return object_names_of(a) == object_names_of(b)
+
+
+def _count_something_in_objects(act: Action) -> int:
+    tmp = 0
+    for o in act.objects:
+        if isinstance(o, Something):
+            tmp += 1
+    return tmp
 

@@ -3,7 +3,7 @@
 """
 from .acttypes import LangType
 from .behavior import behavior_str_of
-from .base import Action, ActionGroup, _BaseSubject
+from .base import Action, ActionGroup, _BaseSubject, Something
 
 
 def behavior_with_np_of(act: Action) -> str:
@@ -46,7 +46,7 @@ def object_names_of(act: Action) -> str:
     tmp = []
     for obj in act.objects:
         if isinstance(obj, _BaseSubject):
-            tmp.append(obj.name)
+            tmp.append(something_name_if(obj))
     return "/".join(tmp)
 
 
@@ -55,5 +55,9 @@ def sentence_from(act: Action, lang: LangType) -> str:
 
 
 def subject_name_of(act: Action) -> str:
-    return act.subject.name if act.subject else ""
+    return something_name_if(act.subject) if act.subject else ""
+
+
+def something_name_if(obj: _BaseSubject) -> str:
+    return "何か" if isinstance(obj, Something) else obj.name
 

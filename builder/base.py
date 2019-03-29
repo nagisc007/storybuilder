@@ -347,6 +347,16 @@ class Master(_BaseSubject):
         return Action(self, ActType.TAG, Behavior.NONE, None, title_, tag_str_of(TagType.TITLE))
 
 
+class Something(_BaseSubject):
+    """Something object class.
+
+    Attributes:
+    """
+    _NAME = "_something"
+    def __init__(self):
+        super().__init__(Something._NAME, "")
+
+
 class Stage(_BaseSubject):
     """Stage class.
 
@@ -380,4 +390,9 @@ class Word(_BaseSubject):
         """
         super().__init__(name, note)
         self.info = info
+
+
+# functions
+def something() -> Something:
+    return Something()
 

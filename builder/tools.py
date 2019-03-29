@@ -103,20 +103,20 @@ def _action_str_by_type(act: Action, lang: LangType, group_type: GroupType, leve
         else:
             return "{}{:8}:{:8}/{}{}{}".format(
                     _list_head_inserted(group_type),
-                    act.subject.name,
+                    subject_name_of(act),
                     _behavior_with_obj(act),
                     act.info, _flag_info_if(act), _note_info_if(act))
     elif act.act_type == ActType.EXPLAIN:
         if lang == LangType.JPN:
             return "{}{:\u3000<6s}:{:\u3000<6s}/{}{}{}".format(
                     _list_head_inserted(group_type),
-                    act.subject.name,
+                    subject_name_of(act),
                     _behavior_with_obj(act),
                     act.info, _flag_info_if(act), _note_info_if(act))
         else:
             return "{}{:8}:{:8}/{}{}{}".format(
                     _list_head_inserted(group_type),
-                    act.subject.name,
+                    subject_name_of(act),
                     _behavior_with_obj(act),
                     act.info, _flag_info_if(act), _note_info_if(act))
     elif act.act_type == ActType.TAG:
@@ -125,22 +125,24 @@ def _action_str_by_type(act: Action, lang: LangType, group_type: GroupType, leve
         if lang == LangType.JPN:
             return "{}{:\u3000<6s}:{:\u3000<6s}/{}{}{}".format(
                     _list_head_inserted(group_type),
-                    act.subject.name,
+                    subject_name_of(act),
                     _behavior_with_obj(act),
                     dialogue_from_info(act, lang), _flag_info_if(act), _note_info_if(act))
         else:
             return "{}{:8}:{:8}/{}{}{}".format(
                     _list_head_inserted(group_type),
-                    act.subject.name,
+                    subject_name_of(act),
                     _behavior_with_obj(act),
                     dialogue_from_info(act, lang), _flag_info_if(act), _note_info_if(act))
     elif act.act_type == ActType.TEST and is_debug:
         if lang == LangType.JPN:
-            return "> {:\u3000<6s}:{:\u3000<6s}/{}{}{}".format(act.subject.name,
+            return "> {:\u3000<6s}:{:\u3000<6s}/{}{}{}".format(
+                    subject_name_of(act),
                     _behavior_with_obj(act),
                     act.info, _flag_info_if(act), _note_info_if(act))
         else:
-            return "> {:8}:{:8}{}/{}{}{}".format(act.subject.name,
+            return "> {:8}:{:8}{}/{}{}{}".format(
+                    subject_name_of(act),
                     _behavior_with_obj(act),
                     act.info, _flag_info_if(act), _note_info_if(act))
     else:
@@ -178,6 +180,15 @@ def _description_str_by_type(act: Action, lang: LangType, group_type: GroupType,
         return ""
 
 
+def _flag_info_if(act: Action) -> str:
+    tmp = ""
+    if act.flag:
+        tmp += "F(" + act.flag + ")"
+    if act.deflag:
+        tmp += "D(" + act.deflag + ")"
+    return tmp
+
+
 def _list_head_inserted(group_type: GroupType) -> str:
     if group_type == GroupType.COMBI:
         return "    " * 2 + "- "
@@ -185,6 +196,10 @@ def _list_head_inserted(group_type: GroupType) -> str:
         return "    " * 1 + "- "
     else:
         return "- "
+
+
+def _note_info_if(act: Action) -> str:
+    return "" if (act.note == "nothing" or not act.note) else ":{}".format(act.note)
 
 
 def _output_story_to_console(story: list, is_debug: bool):
@@ -258,15 +273,3 @@ def _story_data_converted(story: ActionGroup, is_action_data: bool, pri_filter: 
     '''
     return  _story_converted_as_action(story, pri_filter, is_debug) if is_action_data else _story_converted_as_description(story, is_debug)
 
-
-def _note_info_if(act: Action) -> str:
-    return "" if (act.note == "nothing" or not act.note) else ":{}".format(act.note)
-
-
-def _flag_info_if(act: Action) -> str:
-    tmp = ""
-    if act.flag:
-        tmp += "F(" + act.flag + ")"
-    if act.deflag:
-        tmp += "D(" + act.deflag + ")"
-    return tmp
