@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Module to build a story.
 """
-from .acttypes import ActType, GroupType, TagType, LangType
+from .acttypes import ActType, AuxVerb, GroupType, TagType, LangType
 from .acttypes import group_name_of, tag_str_of
 from .behavior import Behavior
 from .behavior import behavior_str_of
@@ -94,6 +94,7 @@ class Action(_BaseAction):
 
     Attributes:
         act_type (:enum:`ActType`): an action category type.
+        aux_verb (:enum:`AuxVerb`): an auxiliary verb.
         behavior (:enum:`Behavior`): a behavior type of this action.
         descriptions (:tuple:str): descriptions of this action.
         flag (str): a story flag to associate this action.
@@ -138,6 +139,7 @@ class Action(_BaseAction):
         """
         super().__init__(Action.CLS_NAME, note)
         self.act_type = act_type
+        self.aux_verb = AuxVerb.NONE
         self.behavior = behavior
         self.deflag = ""
         self.descriptions = ()
@@ -148,10 +150,21 @@ class Action(_BaseAction):
         self.objects = Action.assert_objects(objects)
         self.priority = Action.DEFAULT_PRIORITY
         self.subject = Action.assert_subject(subject)
-        
+
+    def can(self):
+        self.aux_verb = AuxVerb.CAN
+        return self
 
     def desc(self, *args):
         self.descriptions = args
+        return self
+
+    def may(self):
+        self.aux_verb = AuxVerb.MAY
+        return self
+
+    def must(self):
+        self.aux_verb = AuxVerb.MUST
         return self
 
     def negative(self):
@@ -178,6 +191,22 @@ class Action(_BaseAction):
 
     def set_priority(self, pri: int):
         self.priority = pri
+        return self
+
+    def should(self):
+        self.aux_verb = AuxVerb.SHOULD
+        return self
+
+    def think(self):
+        self.aux_verb = AuxVerb.THINK
+        return self
+
+    def want(self):
+        self.aux_verb = AuxVerb.WANT
+        return self
+
+    def will(self):
+        self.aux_verb = AuxVerb.WILL
         return self
 
 

@@ -2,7 +2,7 @@
 """Test for base.py
 """
 import unittest
-from builder.acttypes import ActType, GroupType, TagType
+from builder.acttypes import ActType, AuxVerb, GroupType, TagType
 from builder.acttypes import group_name_of, tag_str_of
 from builder.behavior import Behavior
 from builder.base import _BaseAction, _BaseSubject, Action, ActionGroup
@@ -90,6 +90,11 @@ class ActionTest(unittest.TestCase):
             with self.subTest(p1=p1, p2=p2):
                 self.body.set_priority(p1)
                 self.assertEqual(self.body.priority, p2)
+
+    def test_auxverb(self):
+        self.assertEquals(self.body.aux_verb, AuxVerb.NONE)
+        self.body.can()
+        self.assertEqual(self.body.aux_verb, AuxVerb.CAN)
 
 
 class ActionGroupTest(unittest.TestCase):

@@ -14,6 +14,19 @@ class ActType(Enum):
     TEST = auto() # test type
 
 
+class AuxVerb(Enum):
+    """Auxiliary verb type enum.
+    """
+    NONE = auto()
+    CAN = auto()
+    MAY = auto()
+    MUST = auto()
+    SHOULD = auto()
+    THINK = auto()
+    WANT = auto()
+    WILL = auto()
+
+
 class GroupType(Enum):
     """Action group type enum.
     """
@@ -36,6 +49,20 @@ class TagType(Enum):
     TITLE = auto()
     COMMENT = auto()
     HR = auto()
+
+
+# functions
+def auxverb_of(auxv: AuxVerb) -> str:
+    return {
+            AuxVerb.CAN: "can",
+            AuxVerb.MAY: "may",
+            AuxVerb.MUST: "must",
+            AuxVerb.NONE: "",
+            AuxVerb.SHOULD: "should",
+            AuxVerb.THINK: "think",
+            AuxVerb.WANT: "want",
+            AuxVerb.WILL: "will",
+            }[auxv]
 
 
 def group_name_of(group: GroupType) -> str:

@@ -595,9 +595,6 @@ class Person(_BasePerson):
     def move(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None, info: str="", note: str=""):
         return self.act(Behavior.MOVE, (a, about, asa, at, by, fo, frm, of, on, to, wth), info, note)
 
-    def must(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None, info: str="", note: str=""):
-        return self.act(Behavior.MUST, (a, about, asa, at, by, fo, frm, of, on, to, wth), info, note)
-
     def need(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None, info: str="", note: str=""):
         return self.act(Behavior.NEED, (a, about, asa, at, by, fo, frm, of, on, to, wth), info, note)
 
@@ -970,7 +967,7 @@ class Person(_BasePerson):
     def thank(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None, info: str="", note: str=""):
         return self.act(Behavior.THANK, (a, about, asa, at, by, fo, frm, of, on, to, wth), info, note)
 
-    def think(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None, info: str="", note: str=""):
+    def thinkof(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None, info: str="", note: str=""):
         return self.act(Behavior.THINK, (a, about, asa, at, by, fo, frm, of, on, to, wth), info, note)
 
     def throw(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None, info: str="", note: str=""):
@@ -1039,7 +1036,7 @@ class Person(_BasePerson):
     def walk(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None, info: str="", note: str=""):
         return self.act(Behavior.WALK, (a, about, asa, at, by, fo, frm, of, on, to, wth), info, note)
 
-    def want(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None, info: str="", note: str=""):
+    def wantto(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None, info: str="", note: str=""):
         return self.act(Behavior.WANT, (a, about, asa, at, by, fo, frm, of, on, to, wth), info, note)
 
     def warm(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None, info: str="", note: str=""):
