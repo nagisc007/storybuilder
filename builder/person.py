@@ -9,14 +9,18 @@ class Person(_BasePerson):
     """Character class.
 
     Attributes:
+        parent (:obj:`_BasePerson`): a parent.
         selfcall (str): a subject called himself.
     """
-    DEF_ACT = "-"
-    DEF_NOTE = "nothing"
     DEF_SELFCALL = "私"
-    def __init__(self, name:str, age: int, sex: str, job: str, selfcall: str=DEF_SELFCALL, note: str=""):
-        super().__init__(name, age, sex, job, note)
+    
+    def __init__(self, name: str, age: int, sex: str, job: str, selfcall: str=DEF_SELFCALL, parent: _BasePerson=None, note: str=""):
+        super().__init__(name, age, sex, job, parent, note)
         self.selfcall = selfcall
+
+    # methods
+    def inherit(self, name: str, age: int, sex: str, job: str, selfcall: str=DEF_SELFCALL, note: str=""):
+        return Person(name, age, sex, job, selfcall, self, note)
 
     # basic actions
     def accept(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None, info: str="", note: str=""):

@@ -29,12 +29,21 @@ class BaseSubjectTest(unittest.TestCase):
 
 
     def setUp(self):
-        self.body = _BaseSubject("test subject", "a test note")
+        self.body = _BaseSubject("test subject", None, "a test note")
 
     def test_attributes(self):
-        self.assertIsInstance(self.body, _BaseSubject)
-        self.assertEqual(self.body.name, "test subject")
-        self.assertEqual(self.body.note, "a test note")
+        hanako = _BaseSubject("hanako")
+        data_set = [
+                (_BaseSubject("test"), "test", None, ""),
+                (_BaseSubject("test", note="a note"), "test", None, "a note"),
+                (_BaseSubject("test", hanako, "a note"), "test", hanako, "a note")
+                ]
+        for sub, name, parent, note in data_set:
+            with self.subTest(sub=sub, name=name, parent=parent, note=note):
+                self.assertIsInstance(sub, _BaseSubject)
+                self.assertEqual(sub.name, name)
+                self.assertEqual(sub.parent, parent)
+                self.assertEqual(sub.note, note)
 
     def test_explain(self):
         acted = self.body.explain("a test", note="this is a test")
@@ -96,7 +105,7 @@ class ActionTest(unittest.TestCase):
                 self.assertEqual(self.body.priority, p2)
 
     def test_auxverb(self):
-        self.assertEquals(self.body.aux_verb, AuxVerb.NONE)
+        self.assertEqual(self.body.aux_verb, AuxVerb.NONE)
         self.body.can()
         self.assertEqual(self.body.aux_verb, AuxVerb.CAN)
 
@@ -123,7 +132,7 @@ class ActionGroupTest(unittest.TestCase):
 class BasePersonTest(unittest.TestCase):
 
     def setUp(self):
-        self.body = _BasePerson("Taro", 17, "male", "student", "a man")
+        self.body = _BasePerson("Taro", 17, "male", "student", note="a man")
 
     def test_attributes(self):
         self.assertIsInstance(self.body, _BasePerson)
@@ -154,7 +163,7 @@ class BasePersonTest(unittest.TestCase):
 class StageTest(unittest.TestCase):
 
     def setUp(self):
-        self.body = Stage("test stage", "a test stage")
+        self.body = Stage("test stage", note="a test stage")
 
     def test_attributes(self):
         self.assertIsInstance(self.body, Stage)
@@ -165,7 +174,7 @@ class StageTest(unittest.TestCase):
 class ItemTest(unittest.TestCase):
 
     def setUp(self):
-        self.body = Item("test item", "a test item")
+        self.body = Item("test item", note="a test item")
 
     def test_attributes(self):
         self.assertIsInstance(self.body, Item)
@@ -176,7 +185,7 @@ class ItemTest(unittest.TestCase):
 class DayTimeTest(unittest.TestCase):
 
     def setUp(self):
-        self.body = DayTime("test day", 10, 5, 2019, 12, 30, "a sunny day")
+        self.body = DayTime("test day", 10, 5, 2019, 12, 30, note="a sunny day")
 
     def test_attributes(self):
         self.assertIsInstance(self.body, DayTime)
@@ -257,7 +266,7 @@ class SomethingTest(unittest.TestCase):
 class WordTest(unittest.TestCase):
 
     def setUp(self):
-        self.body = Word("Test", "a test word", "note is an empty")
+        self.body = Word("Test", "a test word", note="note is an empty")
 
     def test_attributes(self):
         self.assertIsInstance(self.body, Word)

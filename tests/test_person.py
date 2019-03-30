@@ -17,7 +17,7 @@ class PersonTest(unittest.TestCase):
         print("\n**** TEST: person.py ****")
 
     def setUp(self):
-        self.body = Person("Taro", 17, "male", "student", "me", "a man")
+        self.body = Person("Taro", 17, "male", "student", "me", note="a man")
         self.box = Item("Box", "a box")
         self.doll = Item("Doll", "a substitute of a person")
 
