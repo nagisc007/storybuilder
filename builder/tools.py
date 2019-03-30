@@ -40,23 +40,23 @@ class StoryDB(dict):
             self.__setitem__(key, data)
 
     def append_chara(self, key, chara):
-        data = Person(*chara)
+        data = chara if isinstance(chara, Person) else Person(*chara)
         self._setattr_with_prefix_if('p_', key, data)
 
     def append_day(self, key, day):
-        data = DayTime(*day)
+        data = day if isinstance(day, DayTime) else DayTime(*day)
         self._setattr_with_prefix_if('d_', key, data)
 
     def append_item(self, key, item):
-        data = Item(*item)
+        data = item if isinstance(item, Item) else Item(*item)
         self._setattr_with_prefix_if('i_', key, data)
 
     def append_stage(self, key, stage):
-        data = Stage(*stage)
+        data = stage if isinstance(stage, Stage) else Stage(*stage)
         self._setattr_with_prefix_if('s_', key, data)
 
     def append_word(self, key, word):
-        data = Word(*word)
+        data = word if isinstance(word, Word) else Word(*word)
         self._setattr_with_prefix_if('w_', key, data)
 
 

@@ -69,6 +69,12 @@ class BasicClassTest(unittest.TestCase):
         self.assertEqual(self.db.t.info, "a test")
         self.assertEqual(self.db.t.note, "")
 
+    def test_attr_append_word_using_cls(self):
+        self.db.append_word("w", Word("word"))
+        self.assertEqual(self.db.w.name, "word")
+        self.assertEqual(self.db.w.info, "")
+        self.assertEqual(self.db.w.note, "")
+
 
 class BasicMethodTest(unittest.TestCase):
 
