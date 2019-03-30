@@ -32,7 +32,7 @@ class BasicMethodTest(unittest.TestCase):
 
     def test_something_name_if(self):
         data_set = [
-                (_BaseSubject("test taro"), "test taro"),
+                (_BaseSubject("test taro", "", ""), "test taro"),
                 (Something(), "何か")
                 ]
         for obj, expected in data_set:

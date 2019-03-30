@@ -23,17 +23,20 @@ class _BaseSubject(object):
     """Base subject class.
 
     Attributes:
+        info (str): a information.
         name (str): a name of this subject.
         note (str, optional): a short description.
         parent (:obj:`_BaseSubject`): a parent subject.
     """
-    def __init__(self, name: str, parent=None, note:str =""):
+    def __init__(self, name: str, info: str, note: str, parent=None):
         """
         Args:
             name (str): the name or title.
+            info (str): a information.
+            note (str): a short description.
             parent (:obj:`_BaseSubject`): a parent subject.
-            note (str, optional): a short description.
         """
+        self.info = info
         self.name = name
         self.note = note
         self.parent = parent
@@ -42,19 +45,18 @@ class _BaseSubject(object):
         """
         Args:
             info (str): a information.
-            to (:obj:`_BaseSubject`, optional): a person.
-            of (:obj:`_BaseSubject`, optional): a other object.
             note (str, optional): a short description.
         """
         return Action(self, ActType.EXPLAIN, Behavior.EXPLAIN, (a, about, asa, at, by, fo, frm, of, on, to, wth), info, note)
 
-    def inherit(self, name: str, note: str=""):
+    def inherit(self, name: str, info: str="", note: str=""):
         """
         Args:
             name (str): a subject name.
+            info (str, optional): a information.
             note (str, optional): a short description.
         """
-        return _BaseSubject(name, self, note)
+        return _BaseSubject(name, info, note, self)
 
 
 class _BasePerson(_BaseSubject):
@@ -62,17 +64,18 @@ class _BasePerson(_BaseSubject):
 
     Attributes:
     """
-    def __init__(self, name: str, age: int, sex: str, job: str, parent: _BaseSubject=None, note: str=""):
+    def __init__(self, name: str, age: int, sex: str, job: str, info: str="", note: str="", parent: _BaseSubject=None):
         """
         Args:
             name (str): character's name
             age (int): character's age
             sex (str): character's sex
             job (str): character's job
-            parent (:obj:`_BaseSubject`): a parent person.
+            info (str, optional): a information.
             note (str, optional): a short description.
+            parent (:obj:`_BaseSubject`): a parent person.
         """
-        super().__init__(name, parent, note)
+        super().__init__(name, info, note, parent)
         self.age = age
         self.job = job
         self.sex = sex
@@ -89,16 +92,17 @@ class _BasePerson(_BaseSubject):
         """
         return Action(self, ActType.ACT, behaviour, objects, info, note)
 
-    def inherit(self, name: str, age: int, sex: str, job: str, note: str=""):
+    def inherit(self, name: str, age: int, sex: str, job: str, info: str="", note: str=""):
         """
         Args:
             name (str): a character name.
             age (int): a character age.
             sex (str): a character sex.
             job (str): a character job.
+            info (str, optional): a information.
             note (str, optional): a short description.
         """
-        return _BasePerson(name, age, sex, job, self, note)
+        return _BasePerson(name, age, sex, job, info, note, self)
 
     def tell(self, info: str, a: _BaseSubject=None, about: _BaseSubject=None, asa: _BaseSubject=None, at: _BaseSubject=None, by: _BaseSubject=None, fo: _BaseSubject=None, frm: _BaseSubject=None, of: _BaseSubject=None, on: _BaseSubject=None, to: _BaseSubject=None, wth: _BaseSubject=None, note: str=""):
         """
@@ -263,6 +267,7 @@ class DayTime(_BaseSubject):
     Attributes.
         day (int): a day number.
         hour (int): a hour number.
+        info (str): a information.
         min (int): a minute number.
         mon (int): a month number.
         name (str): a day name.
@@ -270,7 +275,7 @@ class DayTime(_BaseSubject):
         parent (:obj:`_BaseSubject`): a parent.
         year (int): a year number.
     """
-    def __init__(self, name: str, mon: int=0, day: int=0, year: int=0, hour: int=0, min: int=0, parent: _BaseSubject=None, note: str=""):
+    def __init__(self, name: str, mon: int=0, day: int=0, year: int=0, hour: int=0, min: int=0, info: str="", note: str="", parent: _BaseSubject=None):
         """
         Args:
             name (str): a day name.
@@ -279,10 +284,11 @@ class DayTime(_BaseSubject):
             year (int): a year number.
             hour (int): a hour number.
             min (int): a minute number.
-            parent (:obj:`_BaseSubject`): a parent.
+            info (str, optional): a information.
             note (str, optional): a short description.
+            parent (:obj:`_BaseSubject`): a parent.
         """
-        super().__init__(name, parent, note)
+        super().__init__(name, info, note, parent)
         self.day = day
         self.hour = hour
         self.min = min
@@ -297,29 +303,31 @@ class DayTime(_BaseSubject):
                 year if year else self.year,
                 hour if hour else self.hour,
                 min if min else self.min,
-                self,
-                note if note else self.note)
+                note if note else self.notei,
+                self)
 
 
 class Item(_BaseSubject):
     """Item class.
 
     Attributes.
+        info (str): a information.
         name (str): a item name.
         note (str, optional): a short description.
         parent (:obj:`_BaseSubject`): a parent.
     """
-    def __init__(self, name: str, parent: _BaseSubject=None, note: str=""):
+    def __init__(self, name: str, info: str="", note: str="", parent: _BaseSubject=None):
         """
         Args:
             name (str): a item name.
-            parent (:obj:`_BaseSubject`): a panret.
+            info (str, optional): a information.
             note (str, optional): a short description.
+            parent (:obj:`_BaseSubject`): a panret.
         """
-        super().__init__(name, parent, note)
+        super().__init__(name, info, note, parent)
 
-    def inherit(self, name: str, note: str=""):
-        return Item(name, self, note)
+    def inherit(self, name: str, info: str="", note: str=""):
+        return Item(name, info, note, self)
 
 
 class Master(_BaseSubject):
@@ -327,13 +335,14 @@ class Master(_BaseSubject):
 
     Attributes:
     """
-    def __init__(self, name, note=""):
+    def __init__(self, name: str, info: str="", note: str=""):
         """
         Args:
             name (str): a master name.
+            info (str, optional): a information.
             note (str, optional): a short description.
         """
-        super().__init__(name, None, note)
+        super().__init__(name, info, note, None)
 
     def combine(self, *args: _BaseAction, lang: LangType.JPN, note: str=""):
         """
@@ -396,28 +405,30 @@ class Something(_BaseSubject):
     """
     _NAME = "_something"
     def __init__(self):
-        super().__init__(Something._NAME, "")
+        super().__init__(Something._NAME, "", "")
 
 
 class Stage(_BaseSubject):
     """Stage class.
 
     Attributes:
+        info (str): a information.
         name (str): a stage name.
         note (str): a short description.
         parent (:obj:`_BaseSubject`): a parent.
     """
-    def __init__(self, name: str, parent: _BaseSubject=None, note: str=""):
+    def __init__(self, name: str, info: str="", note: str="", parent: _BaseSubject=None):
         """
         Args:
             name (str): a stage name.
-            parent (:obj:`_BaseSubject`): a parent.
+            info (str, optional): a infomation.
             note (str, optional): a short description.
+            parent (:obj:`_BaseSubject`): a parent.
         """
-        super().__init__(name, parent, note)
+        super().__init__(name, info, note, parent)
 
-    def inherit(self, name: str, note: str=""):
-        return Stage(name, self, note)
+    def inherit(self, name: str, info: str="", note: str=""):
+        return Stage(name, info, note, self)
 
 
 class Word(_BaseSubject):
@@ -429,19 +440,18 @@ class Word(_BaseSubject):
         note (str): a short description.
         parent (:obj:`_BaseSubject`): a parent.
     """
-    def __init__(self, name: str, info: str="", parent: _BaseSubject=None, note: str=""):
+    def __init__(self, name: str, info: str="", note: str="", parent: _BaseSubject=None):
         """
         Args:
             name (str): a word title.
             info (str, optional): a information.
-            parent (:obj:`_BaseSubject`): a parent.
             note (str, optional): a short description.
+            parent (:obj:`_BaseSubject`): a parent.
         """
-        super().__init__(name, parent, note)
-        self.info = info
+        super().__init__(name, info, note, parent)
 
     def inherit(self, name: str, info: str="", note: str=""):
-        return Word(name, info, self, note)
+        return Word(name, info, note, self)
 
 
 # functions

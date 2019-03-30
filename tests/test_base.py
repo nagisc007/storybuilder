@@ -32,18 +32,20 @@ class BaseSubjectTest(unittest.TestCase):
         self.body = _BaseSubject("test subject", None, "a test note")
 
     def test_attributes(self):
-        hanako = _BaseSubject("hanako")
+        hanako = _BaseSubject("hanako", "a girl", "a note")
         data_set = [
-                (_BaseSubject("test"), "test", None, ""),
-                (_BaseSubject("test", note="a note"), "test", None, "a note"),
-                (_BaseSubject("test", hanako, "a note"), "test", hanako, "a note")
+                (_BaseSubject("test", "", ""), "test", "", "", None),
+                (_BaseSubject("test", "a test", ""), "test", "a test", "", None),
+                (_BaseSubject("test", "", "a note"), "test", "", "a note", None),
+                (_BaseSubject("test", "a info", "a note", hanako), "test", "a info", "a note", hanako)
                 ]
-        for sub, name, parent, note in data_set:
-            with self.subTest(sub=sub, name=name, parent=parent, note=note):
+        for sub, name, info, note, parent in data_set:
+            with self.subTest(sub=sub, name=name, info=info, note=note, parent=parent):
                 self.assertIsInstance(sub, _BaseSubject)
                 self.assertEqual(sub.name, name)
-                self.assertEqual(sub.parent, parent)
+                self.assertEqual(sub.info, info)
                 self.assertEqual(sub.note, note)
+                self.assertEqual(sub.parent, parent)
 
     def test_explain(self):
         acted = self.body.explain("a test", note="this is a test")
@@ -53,7 +55,7 @@ class BaseSubjectTest(unittest.TestCase):
 class ActionTest(unittest.TestCase):
 
     def setUp(self):
-        self.sub = _BaseSubject("Taro", "a test subject")
+        self.sub = _BaseSubject("Taro", "a boy", "a test subject")
         self.body = Action(self.sub,
                 ActType.ACT, Behavior.ACT, None, "testing", "a test note")
 
@@ -201,11 +203,12 @@ class DayTimeTest(unittest.TestCase):
 class MasterTest(unittest.TestCase):
 
     def setUp(self):
-        self.body = Master("test story", "a test")
+        self.body = Master("test story", "a info", "a test")
 
     def test_attributes(self):
         self.assertIsInstance(self.body, Master)
         self.assertEqual(self.body.name, "test story")
+        self.assertEqual(self.body.info, "a info")
         self.assertEqual(self.body.note, "a test")
     
     def test_comment(self):

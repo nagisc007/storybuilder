@@ -7,12 +7,60 @@ import argparse
 
 from .acttypes import ActType, GroupType, TagType, LangType
 from .acttypes import tag_str_of
-from .base import Action, ActionGroup
+from .base import Action, ActionGroup, DayTime, Stage, Item, Word
 from .commons import behavior_with_np_of, descriptions_if, dialogue_from_description_if, dialogue_from_info, object_names_of, sentence_from, subject_name_of
+from .person import Person
 
 
-# output
+# classes
+class StoryDB(dict):
+    """Database for a story.
 
+    Attributes:
+    """
+    __getattr__ = dict.__getitem__
+    __setattr__ = dict.__setitem__
+
+    def __init__(self, charas: list, stages: list, days: list, items: list, words: list):
+        for c in charas:
+            self.append_chara(c[0], c[1:])
+        for s in stages:
+            self.append_stage(s[0], s[1:])
+        for d in days:
+            self.append_day(d[0], d[1:])
+        for i in items:
+            self.append_item(i[0], i[1:])
+        for w in words:
+            self.append_word(w[0], w[1:])
+
+    def _setattr_with_prefix_if(self, pref, key, data):
+        if key in self.keys():
+            self.__setitem__(pref + key, data)
+        else:
+            self.__setitem__(key, data)
+
+    def append_chara(self, key, chara):
+        data = Person(*chara)
+        self._setattr_with_prefix_if('p_', key, data)
+
+    def append_day(self, key, day):
+        data = DayTime(*day)
+        self._setattr_with_prefix_if('d_', key, data)
+
+    def append_item(self, key, item):
+        data = Item(*item)
+        self._setattr_with_prefix_if('i_', key, data)
+
+    def append_stage(self, key, stage):
+        data = Stage(*stage)
+        self._setattr_with_prefix_if('s_', key, data)
+
+    def append_word(self, key, word):
+        data = Word(*word)
+        self._setattr_with_prefix_if('w_', key, data)
+
+
+# functions
 def build_to_story(story: ActionGroup):
     '''Build a story.
 

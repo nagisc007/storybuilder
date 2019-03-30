@@ -38,6 +38,7 @@ def suite():
     suite.addTest(unittest.makeSuite(test_testtools.BasicMethodTest))
 
     # tools
+    suite.addTest(unittest.makeSuite(test_tools.BasicClassTest))
     suite.addTest(unittest.makeSuite(test_tools.BasicMethodTest))
 
     return suite

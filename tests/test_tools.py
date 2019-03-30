@@ -8,16 +8,73 @@ import sys
 from io import StringIO
 
 from builder.acttypes import LangType
-from builder.base import Master
+from builder.base import Master, Word
 from builder.person import Person
 import builder.tools as tools
+
+
+class BasicClassTest(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        print("\n**** TEST: tools.py - classes ****")
+
+    def setUp(self):
+        self.db = tools.StoryDB([], [], [], [], [])
+
+    def test_create_class(self):
+        self.assertIsInstance(self.db, tools.StoryDB)
+
+    def test_attr_append_chara(self):
+        data = [
+                ("taro", "Taro", 17, "male", "student", "me", "a man", "he is a funny"),
+                ("hanako", "Hanako", 17, "female", "student", "me", "a girl", "she is a cute"),
+                ("taro", "Kotaro", 40, "male", "lower", "me", "a parent", "he has a hige")
+                ]
+        for k, name, age, sex, job, slf, info, note in data:
+            with self.subTest(k=k, name=name, age=age, sex=sex, job=job, slf=slf, info=info, note=note):
+                self.db.append_chara(k, (name, age, sex, job, slf, info, note))
+                key = k if name != "Kotaro" else "p_taro"
+                self.assertEqual(self.db[key].name, name)
+                self.assertEqual(self.db[key].age, age)
+                self.assertEqual(self.db[key].sex, sex)
+                self.assertEqual(self.db[key].job, job)
+                self.assertEqual(self.db[key].selfcall, slf)
+                self.assertEqual(self.db[key].info, info)
+                self.assertEqual(self.db[key].note, note)
+
+    def test_attr_append_word(self):
+        data = [
+                ("w", "word", "a word", "note: word"),
+                ("t", "test", "a test", "note: test"),
+                ("w", "word2", "a word2", "note: word2")
+                ]
+        for k, name, info, note in data:
+            with self.subTest(k=k, name=name, info=info, note=note):
+                self.db.append_word(k, (name, info, note))
+                key = k if name != "word2" else "w_w"
+                self.assertEqual(self.db[key].name, name)
+                self.assertEqual(self.db[key].info, info)
+                self.assertEqual(self.db[key].note, note)
+
+    def test_attr_append_word_lacked(self):
+        data0 = ("w", "word")
+        data1 = ("t", "test", "a test")
+        self.db.append_word(data0[0], data0[1:])
+        self.db.append_word(data1[0], data1[1:])
+        self.assertEqual(self.db.w.name, "word")
+        self.assertEqual(self.db.w.info, "")
+        self.assertEqual(self.db.w.note, "")
+        self.assertEqual(self.db.t.name, "test")
+        self.assertEqual(self.db.t.info, "a test")
+        self.assertEqual(self.db.t.note, "")
 
 
 class BasicMethodTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print("\n**** TEST: tools.py ****")
+        print("\n**** TEST: tools.py - methods ****")
 
     def setUp(self):
         self.sm = Master("test story")
