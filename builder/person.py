@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Person class deined.
 """
-from .base import _BaseSubject, _BasePerson
 from .behavior import Behavior
+from .subject import _BasePerson
 
 
 class Person(_BasePerson):
@@ -14,13 +14,13 @@ class Person(_BasePerson):
     """
     DEF_SELFCALL = "私"
     
-    def __init__(self, name: str, age: int, sex: str, job: str, selfcall: str=DEF_SELFCALL, parent: _BasePerson=None, note: str=""):
-        super().__init__(name, age, sex, job, parent, note)
+    def __init__(self, name: str, age: int, sex: str, job: str, selfcall: str=DEF_SELFCALL, info: str="", note: str="", parent: _BasePerson=None):
+        super().__init__(name, age, sex, job, info, note, parent)
         self.selfcall = selfcall
 
     # methods
-    def inherit(self, name: str, age: int, sex: str, job: str, selfcall: str=DEF_SELFCALL, note: str=""):
-        return Person(name, age, sex, job, selfcall, self, note)
+    def inherit(self, name: str, age: int, sex: str, job: str, selfcall: str=DEF_SELFCALL, info: str="", note: str=""):
+        return Person(name, age, sex, job, selfcall, info, note, self)
 
     # basic actions
     def accept(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None, info: str="", note: str=""):

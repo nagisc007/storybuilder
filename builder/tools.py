@@ -5,11 +5,11 @@ from __future__ import print_function
 import os
 import argparse
 
-from .acttypes import ActType, GroupType, TagType, LangType
-from .acttypes import tag_str_of
-from .base import Action, ActionGroup, DayTime, Stage, Item, Word
+from .action import Action, ActionGroup
 from .commons import behavior_with_np_of, descriptions_if, dialogue_from_description_if, dialogue_from_info, object_names_of, sentence_from, subject_name_of
+from .enums import ActType, GroupType, TagType, LangType
 from .person import Person
+from .subject import DayTime, Item, Stage, Word
 
 
 # classes
@@ -124,9 +124,9 @@ def output_story(story: ActionGroup, filename: str, is_action_data: bool=False,
 
 # private functions
 def _action_str_by_tag(act: Action, group_type: GroupType, level: int) -> str:
-    if act.note == tag_str_of(TagType.COMMENT):
+    if act.note == str(TagType.COMMENT):
         return "<!-- {} -->".format(act.info)
-    elif act.note == tag_str_of(TagType.TITLE):
+    elif act.note == str(TagType.TITLE):
         if group_type == GroupType.STORY:
             return "{} {}\n".format("#" * level, act.info)
         elif group_type == GroupType.SCENE:
@@ -202,9 +202,9 @@ def _behavior_with_obj(act: Action) -> str:
 
 
 def _description_str_by_tag(act: Action, lang: LangType, group_type: GroupType, level: int, is_debug: bool) -> str:
-    if act.note == tag_str_of(TagType.COMMENT):
+    if act.note == str(TagType.COMMENT):
         return ""
-    elif act.note == tag_str_of(TagType.TITLE):
+    elif act.note == str(TagType.TITLE):
         if group_type == GroupType.STORY:
             return "{} {}\n".format("#" * level, descriptions_if(act, lang))
         elif group_type == GroupType.SCENE:

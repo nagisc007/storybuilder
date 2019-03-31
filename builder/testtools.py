@@ -3,11 +3,11 @@
 """
 import unittest
 
-from .acttypes import LangType
-from .behavior import behavior_str_of
-from .base import Action, ActionGroup, Stage, DayTime, Something
-from .person import Person
+from .action import Action, ActionGroup
 from .commons import behavior_with_np_of, object_names_of, subject_name_of
+from .enums import LangType
+from .person import Person
+from .subject import DayTime, Stage, Something
 
 
 def contains_the_word(story: ActionGroup, target: Action) -> bool:

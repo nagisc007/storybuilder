@@ -3,16 +3,16 @@
 """
 import unittest
 
-from builder.base import Stage, DayTime, Master, something
 from builder.person import Person
+from builder.subject import DayTime, Master, Stage, something
 import builder.testtools as testtools
 
 
-class BasicMethodTest(unittest.TestCase):
+class MethodUnitTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print("\n**** TEST: testtools.py ****")
+        print("\n**** TEST: testtools.py - methods ****")
 
     def setUp(self):
         self.taro = Person("Taro", 17, "male", "student", "me", "a man")
@@ -68,8 +68,6 @@ class BasicMethodTest(unittest.TestCase):
         data_set = [
                 (self.taro.explain("test"), self.hanako.explain("test"), False),
                 (self.taro.explain("test"), self.taro.tell("test"), True),
-                (some.explain("test"), self.taro.explain("test"), True),
-                (self.taro.explain("test"), some.explain("test"), True),
                 ]
         for a, b, expected in data_set:
             with self.subTest(a=a, b=b, expected=expected):

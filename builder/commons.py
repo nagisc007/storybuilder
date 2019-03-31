@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """Common functions for storybuilder.
 """
-from .acttypes import LangType
-from .behavior import behavior_str_of
-from .base import Action, ActionGroup, _BaseSubject, Something
+from .action import Action, ActionGroup
+from .basesubject import _BaseSubject
+from .enums import LangType
+from .subject import Something
 
 
 def behavior_with_np_of(act: Action) -> str:
@@ -15,7 +16,7 @@ def behavior_with_np_of(act: Action) -> str:
     if act.is_passive:
         tmp_head += "_"
         tmp_tail += "_"
-    return "{}{}{}".format(tmp_head, behavior_str_of(act.behavior), tmp_tail)
+    return "{}{}{}".format(tmp_head, str(act.behavior), tmp_tail)
 
 
 def comma_of(lang: LangType) -> str:
@@ -54,10 +55,10 @@ def sentence_from(act: Action, lang: LangType) -> str:
     return "　{}。".format(description_str_from(act, lang)) if lang == LangType.JPN else " {}. ".format(description_str_from(act, lang))
 
 
-def subject_name_of(act: Action) -> str:
-    return something_name_if(act.subject) if act.subject else ""
-
-
 def something_name_if(obj: _BaseSubject) -> str:
     return "何か" if isinstance(obj, Something) else obj.name
+
+
+def subject_name_of(act: Action) -> str:
+    return something_name_if(act.subject) if act.subject else ""
 

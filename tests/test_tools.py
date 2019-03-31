@@ -7,9 +7,9 @@ import os
 import sys
 from io import StringIO
 
-from builder.acttypes import LangType
-from builder.base import Master, Word
+from builder.enums import LangType
 from builder.person import Person
+from builder.subject import Master, Word
 import builder.tools as tools
 
 
