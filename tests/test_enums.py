@@ -5,11 +5,14 @@ import unittest
 from builder.enums import ActType, AuxVerb, GroupType, LangType
 
 
+_FILENAME = "enums.py"
+
+
 class EnumsTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print("\n**** TEST: enums.py - Enum ****")
+        _print_title(_FILENAME, "Enums(ActType)")
 
     def test_act_type(self):
         data = [
@@ -24,3 +27,7 @@ class EnumsTest(unittest.TestCase):
             self.assertEqual(str(act), data[idx])
             idx += 1
 
+
+# private functions
+def _print_title(fname: str, title: str):
+    print("\n**** TEST: {} - {} ****".format(fname, title))

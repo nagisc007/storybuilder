@@ -115,6 +115,7 @@ class Behavior(Enum):
     BETRAY = auto()
     BID = auto()
     BIND = auto()
+    BIRTH = auto()
     BITE = auto()
     BLAME = auto()
     BLEED = auto()
@@ -224,6 +225,7 @@ class Behavior(Enum):
     CRUSH = auto()
     CRY = auto()
     CURE = auto()
+    CURIOUS = auto()
     CURL = auto()
     CUT = auto()
     DANCE = auto()
@@ -430,6 +432,7 @@ class Behavior(Enum):
     INSTRUMENT = auto()
     INSULT = auto()
     INTEND = auto()
+    INTEREST = auto()
     INTERFERE = auto()
     INTERPRET = auto()
     INTERRUPT = auto()
@@ -591,6 +594,7 @@ class Behavior(Enum):
     PUSH = auto()
     PUT = auto()
     PUZZLE = auto()
+    QUARREL = auto()
     QUATE = auto()
     QUIT = auto()
     RAISE = auto()
@@ -635,6 +639,7 @@ class Behavior(Enum):
     REPRESENT = auto()
     REQUEST = auto()
     RESCUE = auto()
+    RESEARCH = auto()
     RESEMBLE = auto()
     RESIST = auto()
     RESOLVE = auto()
@@ -916,6 +921,7 @@ class Behavior(Enum):
                 self.BET.value: "賭ける",
                 self.BETRAY.value: "裏切る",
                 self.BID.value: "提示",
+                self.BIRTH.value: "誕生",
                 self.BIND.value: "縛る",
                 self.BITE.value: "噛む",
                 self.BLAME.value: "非難",
@@ -1025,6 +1031,7 @@ class Behavior(Enum):
                 self.CRUSH.value: "潰れる",
                 self.CRY.value: "叫ぶ",
                 self.CURE.value: "治す",
+                self.CURIOUS.value: "気になる",
                 self.CURL.value: "カール",
                 self.CUT.value: "切る",
                 self.DAMAGE.value: "損傷",
@@ -1226,6 +1233,7 @@ class Behavior(Enum):
                 self.INSTRUMENT.value: "演奏",
                 self.INSULT.value: "侮辱",
                 self.INTEND.value: "意図",
+                self.INTEREST.value: "興味",
                 self.INTERFERE.value: "干渉",
                 self.INTERPRET.value: "解釈",
                 self.INTERRUPT.value: "割り込む",
@@ -1387,6 +1395,7 @@ class Behavior(Enum):
                 self.PUSH.value: "押す",
                 self.PUT.value: "置く",
                 self.PUZZLE.value: "困らせる",
+                self.QUARREL.value: "口論",
                 self.QUATE.value: "引用",
                 self.QUIT.value: "止める",
                 self.RAISE.value: "上げる",
@@ -1430,6 +1439,7 @@ class Behavior(Enum):
                 self.REQUEST.value: "要求",
                 self.REQUIRE.value: "必要",
                 self.RESCUE.value: "救護",
+                self.RESEARCH.value: "調査",
                 self.RESEMBLE.value: "似る",
                 self.RESERVE.value: "予約",
                 self.RESIST.value: "抵抗",
@@ -1711,6 +1721,7 @@ class Behavior(Enum):
                 self.BID.value: BehavType.DEALT,
                 self.BIND.value: BehavType.DEALT,
                 self.BITE.value: BehavType.MOVED,
+                self.BIRTH.value: BehavType.DONE,
                 self.BLAME.value: BehavType.TALKED,
                 self.BLEED.value: BehavType.DONE,
                 self.BLEND.value: BehavType.COOKED,
@@ -1818,6 +1829,7 @@ class Behavior(Enum):
                 self.CRUSH.value: BehavType.DONE,
                 self.CRY.value: BehavType.TALKED,
                 self.CURE.value: BehavType.DEALT,
+                self.CURIOUS.value: BehavType.THOUGHT,
                 self.CURL.value: BehavType.EXPRESSED,
                 self.CUT.value: BehavType.DONE,
                 self.DAMAGE.value: BehavType.EXPRESSED,
@@ -2019,6 +2031,7 @@ class Behavior(Enum):
                 self.INSTRUMENT.value: BehavType.DONE,
                 self.INSULT.value: BehavType.THOUGHT,
                 self.INTEND.value: BehavType.THOUGHT,
+                self.INTEREST.value: BehavType.THOUGHT,
                 self.INTERFERE.value: BehavType.EXPRESSED,
                 self.INTERPRET.value: BehavType.THOUGHT,
                 self.INTERRUPT.value: BehavType.DEALT,
@@ -2180,6 +2193,7 @@ class Behavior(Enum):
                 self.PUSH.value: BehavType.MOVED,
                 self.PUT.value: BehavType.MOVED,
                 self.PUZZLE.value: BehavType.THOUGHT,
+                self.QUARREL.value: BehavType.TALKED,
                 self.QUATE.value: BehavType.DEALT,
                 self.QUIT.value: BehavType.DEALT,
                 self.RAISE.value: BehavType.EXPRESSED,
@@ -2223,6 +2237,7 @@ class Behavior(Enum):
                 self.REQUEST.value: BehavType.TALKED,
                 self.REQUIRE.value: BehavType.DEALT,
                 self.RESCUE.value: BehavType.DEALT,
+                self.RESEARCH.value: BehavType.DEALT,
                 self.RESEMBLE.value: BehavType.EXPRESSED,
                 self.RESERVE.value: BehavType.DEALT,
                 self.RESIST.value: BehavType.DEALT,

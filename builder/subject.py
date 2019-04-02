@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Module to build a story.
 """
-from .action import _BaseAction, Action, ActionGroup
+from .action import _BaseAction, Action, ActionGroup, TagAction
 from .basesubject import _BaseSubject
 from .behavior import Behavior
 from .enums import ActType, GroupType, LangType, TagType
@@ -11,67 +11,58 @@ class _BasePerson(_BaseSubject):
     """Basic character class.
 
     Attributes:
+        age (int): an age.
+        job (str): a job.
+        name (str): a name.
+        note (str): a short description.
+        sex (str): a sex.
     """
-    def __init__(self, name: str, age: int, sex: str, job: str, info: str="", note: str="", parent: _BaseSubject=None):
+    CLS_NAME = "_baseperson"
+    def __init__(self, name: str, age: int, sex: str, job: str, note: str="", parent: _BaseSubject=None):
         """
         Args:
             name (str): character's name
             age (int): character's age
             sex (str): character's sex
             job (str): character's job
-            info (str, optional): a information.
             note (str, optional): a short description.
             parent (:obj:`_BaseSubject`): a parent person.
         """
-        super().__init__(name, info, note, parent)
+        super().__init__(name, note, parent)
         self.age = age
         self.job = job
         self.sex = sex
 
-    def act(self, behaviour: Behavior, objects: tuple, info: str="", note: str=""):
+    def act(self, behaviour: Behavior, objects: tuple):
         """
         Args:
             behaviour (:enum:`Behavior`): a behavior type.
             objects (:tuple:obj:`_BaseSubject`): objects of the action.
-            info (str, optional): a information of the action.
-            note (str, optional): a short description.
         Returns:
             Act object contained a personal action.
         """
-        return Action(self, ActType.ACT, behaviour, objects, info, note)
+        return Action(self, ActType.ACT, behaviour, objects)
 
-    def explain(self, info: str, a: _BaseSubject=None, about: _BaseSubject=None, asa: _BaseSubject=None, at: _BaseSubject=None, by: _BaseSubject=None, fo: _BaseSubject=None, frm: _BaseSubject=None, of: _BaseSubject=None, on: _BaseSubject=None, to: _BaseSubject=None, wth: _BaseSubject=None, note: str=""):
-        """
-        Args:
-            info (str): a short dialogue.
-            note (str, optional): a short description.
-        Returns:
-            Act object contained a dialogue.
-        """
-        return Action(self, ActType.EXPLAIN, Behavior.EXPLAIN, (a, about, asa, at, by, fo, frm, of, on, to, wth), info, note)
-
-    def inherit(self, name: str, age: int, sex: str, job: str, info: str="", note: str=""):
+    def inherit(self, name: str, age: int, sex: str, job: str, note: str=""):
         """
         Args:
             name (str): a character name.
             age (int): a character age.
             sex (str): a character sex.
             job (str): a character job.
-            info (str, optional): a information.
             note (str, optional): a short description.
         """
-        return _BasePerson(name, age, sex, job, info, note, self)
+        return _BasePerson(name, age, sex, job, note, self)
 
-    def tell(self, info: str, a: _BaseSubject=None, about: _BaseSubject=None, asa: _BaseSubject=None, at: _BaseSubject=None, by: _BaseSubject=None, fo: _BaseSubject=None, frm: _BaseSubject=None, of: _BaseSubject=None, on: _BaseSubject=None, to: _BaseSubject=None, wth: _BaseSubject=None, note: str=""):
+    def tell(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None) -> Action:
         """
         Args:
             info (str): a short dialogue.
             obj (:obj:`_BaseSubject`, optional): a object of this action.
-            note (str, optional): a short description.
         Returns:
             Act object contained a dialogue.
         """
-        return Action(self, ActType.TELL, Behavior.TELL, (a, about, asa, at, by, fo, frm, of, on, to, wth), info, note)
+        return Action(self, ActType.TELL, Behavior.TELL, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
 
 
@@ -81,7 +72,6 @@ class DayTime(_BaseSubject):
     Attributes.
         day (int): a day number.
         hour (int): a hour number.
-        info (str): a information.
         min (int): a minute number.
         mon (int): a month number.
         name (str): a day name.
@@ -89,7 +79,8 @@ class DayTime(_BaseSubject):
         parent (:obj:`_BaseSubject`): a parent.
         year (int): a year number.
     """
-    def __init__(self, name: str, mon: int=0, day: int=0, year: int=0, hour: int=0, min: int=0, info: str="", note: str="", parent: _BaseSubject=None):
+    CLS_NAME = "_daytime"
+    def __init__(self, name: str, mon: int=0, day: int=0, year: int=0, hour: int=0, min: int=0, note: str="", parent: _BaseSubject=None):
         """
         Args:
             name (str): a day name.
@@ -98,26 +89,15 @@ class DayTime(_BaseSubject):
             year (int): a year number.
             hour (int): a hour number.
             min (int): a minute number.
-            info (str, optional): a information.
             note (str, optional): a short description.
             parent (:obj:`_BaseSubject`): a parent.
         """
-        super().__init__(name, info, note, parent)
+        super().__init__(name, note, parent)
         self.day = day
         self.hour = hour
         self.min = min
         self.mon = mon
         self.year = year
-
-    def explain(self, info: str, a: _BaseSubject=None, about: _BaseSubject=None, asa: _BaseSubject=None, at: _BaseSubject=None, by: _BaseSubject=None, fo: _BaseSubject=None, frm: _BaseSubject=None, of: _BaseSubject=None, on: _BaseSubject=None, to: _BaseSubject=None, wth: _BaseSubject=None, note: str=""):
-        """
-        Args:
-            info (str): a short dialogue.
-            note (str, optional): a short description.
-        Returns:
-            Act object contained a dialogue.
-        """
-        return Action(self, ActType.EXPLAIN, Behavior.EXPLAIN, (a, about, asa, at, by, fo, frm, of, on, to, wth), info, note)
 
     def inherit(self, name: str, mon: int=0, day: int=0, year: int=0, hour: int=0, min: int=0, note: str=""):
         return DayTime(
@@ -135,144 +115,123 @@ class Item(_BaseSubject):
     """Item class.
 
     Attributes.
-        info (str): a information.
         name (str): a item name.
         note (str, optional): a short description.
         parent (:obj:`_BaseSubject`): a parent.
     """
-    def __init__(self, name: str, info: str="", note: str="", parent: _BaseSubject=None):
+    CLS_NAME = "_item"
+    def __init__(self, name: str, note: str="", parent: _BaseSubject=None):
         """
         Args:
             name (str): a item name.
-            info (str, optional): a information.
             note (str, optional): a short description.
             parent (:obj:`_BaseSubject`): a panret.
         """
-        super().__init__(name, info, note, parent)
+        super().__init__(name, note, parent)
 
-    def explain(self, info: str, a: _BaseSubject=None, about: _BaseSubject=None, asa: _BaseSubject=None, at: _BaseSubject=None, by: _BaseSubject=None, fo: _BaseSubject=None, frm: _BaseSubject=None, of: _BaseSubject=None, on: _BaseSubject=None, to: _BaseSubject=None, wth: _BaseSubject=None, note: str=""):
-        """
-        Args:
-            info (str): a short dialogue.
-            note (str, optional): a short description.
-        Returns:
-            Act object contained a dialogue.
-        """
-        return Action(self, ActType.EXPLAIN, Behavior.EXPLAIN, (a, about, asa, at, by, fo, frm, of, on, to, wth), info, note)
-
-    def inherit(self, name: str, info: str="", note: str=""):
-        return Item(name, info, note, self)
+    def inherit(self, name: str, note: str=""):
+        return Item(name, note, self)
 
 
 class Master(_BaseSubject):
     """A story management class.
 
     Attributes:
+        name (str): a name.
+        note (str): a short description.
     """
-    def __init__(self, name: str, info: str="", note: str=""):
+    CLS_NAME = "_master"
+    def __init__(self, name: str, note: str=""):
         """
         Args:
             name (str): a master name.
-            info (str, optional): a information.
             note (str, optional): a short description.
         """
-        super().__init__(name, info, note, None)
+        super().__init__(name, note, None)
 
-    def combine(self, *args: _BaseAction, lang: LangType=LangType.JPN, note: str=""):
+    def _args_with_title_if(self, title: str, args: tuple) -> tuple:
+        if isinstance(title, str):
+            return (self.title(title),) + args
+        else:
+            return (title,) + args
+ 
+    def combine(self, *args: _BaseAction, lang: LangType=LangType.JPN):
         """
         Args:
             *args (:tuple:obj:`_BaseAction`): a combined actions.
             lang (:enum:`LangType`, optional): a language type.
-            note (str, optional): a short description.
         """
-        return ActionGroup(lang=lang, group_type=GroupType.COMBI, note=note, *args)
+        return ActionGroup(lang=lang, group_type=GroupType.COMBI,  *args)
 
     def comment(self, comment_: str):
         """
         Args:
             comment_ (str): a comment.
         """
-        return Action(self, ActType.TAG, Behavior.NONE, None, comment_, str(TagType.COMMENT))
+        return TagAction(TagType.COMMENT, comment_)
 
-    def scene(self, title: str, *args: _BaseAction, lang: LangType=LangType.JPN, note: str=""):
+    def hr(self):
+        """Horizontal line.
+        """
+        return TagAction(TagType.HR, "")
+
+    def scene(self, title: str, *args: _BaseAction, lang: LangType=LangType.JPN):
         """
         Args:
             title (str): a scene title.
             *args (:tuple:obj:`_BaseAction`): a scene actions.
             lang (:enum:`LangType`): a scene language type.
-            note (str, optional): a short description.
         """
-        tmp = ()
-        if isinstance(title, str):
-            tmp = (self.title(title),) + args
-        else:
-            tmp = (title,) + args
-        return ActionGroup(lang=lang, group_type=GroupType.SCENE, note=note, *tmp)
+        return ActionGroup(lang=lang, group_type=GroupType.SCENE, *self._args_with_title_if(title, args))
 
-    def story(self, title: str, *args: _BaseAction, lang: LangType=LangType.JPN, note: str=""):
+    def story(self, title: str, *args: _BaseAction, lang: LangType=LangType.JPN):
         """
         Args:
             title (str): a story title.
             *args (:tuple:obj:`_BaseAction`): a story actions.
             lang (:enum:`LangType`): a story language type.
-            note (str, optional): a short description.
         """
-        tmp = ()
-        if isinstance(title, str):
-            tmp = (self.title(title),) + args
-        else:
-            tmp = (title,) + args
-        return ActionGroup(lang=lang, group_type=GroupType.STORY, note=note, *tmp)
+        return ActionGroup(lang=lang, group_type=GroupType.STORY, *self._args_with_title_if(title, args))
 
     def title(self, title_: str):
         """
         Args:
             title_ (str): a story title inserted.
         """
-        return Action(self, ActType.TAG, Behavior.NONE, None, title_, str(TagType.TITLE))
+        return TagAction(TagType.TITLE, title_)
 
 
 class Something(_BaseSubject):
     """Something object class.
 
     Attributes:
+        (nothing)
     """
-    _NAME = "_something"
+    CLS_NAME = "_something"
     def __init__(self):
-        super().__init__(Something._NAME, "", "")
+        super().__init__(Something.CLS_NAME, "", None)
 
 
 class Stage(_BaseSubject):
     """Stage class.
 
     Attributes:
-        info (str): a information.
         name (str): a stage name.
         note (str): a short description.
         parent (:obj:`_BaseSubject`): a parent.
     """
-    def __init__(self, name: str, info: str="", note: str="", parent: _BaseSubject=None):
+    CLS_NAME = "_stage"
+    def __init__(self, name: str, note: str="", parent: _BaseSubject=None):
         """
         Args:
             name (str): a stage name.
-            info (str, optional): a infomation.
             note (str, optional): a short description.
             parent (:obj:`_BaseSubject`): a parent.
         """
-        super().__init__(name, info, note, parent)
+        super().__init__(name, note, parent)
 
-    def explain(self, info: str, a: _BaseSubject=None, about: _BaseSubject=None, asa: _BaseSubject=None, at: _BaseSubject=None, by: _BaseSubject=None, fo: _BaseSubject=None, frm: _BaseSubject=None, of: _BaseSubject=None, on: _BaseSubject=None, to: _BaseSubject=None, wth: _BaseSubject=None, note: str=""):
-        """
-        Args:
-            info (str): a short dialogue.
-            note (str, optional): a short description.
-        Returns:
-            Act object contained a dialogue.
-        """
-        return Action(self, ActType.EXPLAIN, Behavior.EXPLAIN, (a, about, asa, at, by, fo, frm, of, on, to, wth), info, note)
-
-    def inherit(self, name: str, info: str="", note: str=""):
-        return Stage(name, info, note, self)
+    def inherit(self, name: str, note: str=""):
+        return Stage(name, note, self)
 
 
 class Word(_BaseSubject):
@@ -280,32 +239,21 @@ class Word(_BaseSubject):
 
     Attributes.
         name (str): a word title.
-        info (str): a information about the word.
         note (str): a short description.
         parent (:obj:`_BaseSubject`): a parent.
     """
-    def __init__(self, name: str, info: str="", note: str="", parent: _BaseSubject=None):
+    CLS_NAME = "_word"
+    def __init__(self, name: str, note: str="", parent: _BaseSubject=None):
         """
         Args:
             name (str): a word title.
-            info (str, optional): a information.
             note (str, optional): a short description.
             parent (:obj:`_BaseSubject`): a parent.
         """
-        super().__init__(name, info, note, parent)
+        super().__init__(name, note, parent)
 
-    def explain(self, info: str, a: _BaseSubject=None, about: _BaseSubject=None, asa: _BaseSubject=None, at: _BaseSubject=None, by: _BaseSubject=None, fo: _BaseSubject=None, frm: _BaseSubject=None, of: _BaseSubject=None, on: _BaseSubject=None, to: _BaseSubject=None, wth: _BaseSubject=None, note: str=""):
-        """
-        Args:
-            info (str): a short dialogue.
-            note (str, optional): a short description.
-        Returns:
-            Act object contained a dialogue.
-        """
-        return Action(self, ActType.EXPLAIN, Behavior.EXPLAIN, (a, about, asa, at, by, fo, frm, of, on, to, wth), info, note)
-
-    def inherit(self, name: str, info: str="", note: str=""):
-        return Word(name, info, note, self)
+    def inherit(self, name: str, note: str=""):
+        return Word(name, note, self)
 
 
 # functions

@@ -2,62 +2,63 @@
 """Test for action.py
 """
 import unittest
-from builder.action import _BaseAction, Action, ActionGroup
-from builder.basesubject import _BaseSubject
-from builder.behavior import Behavior
-from builder.enums import ActType, AuxVerb, GroupType, LangType
+from builder.action import _BaseAction, Action, ActionGroup, Description, TagAction
+from builder.action import _BaseSubject
+from builder.action import Behavior
+from builder.action import ActType, AuxVerb, GroupType, LangType, TagType
+
+
+_FILENAME = "action.py"
 
 
 class BaseActionTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print("\n**** TEST: action.py - _BaseAction ****")
+        _print_title(_FILENAME, "_BaseAction")
 
     def test_attributes(self):
         data = [
-                ("test", "a note"),
-                ("", ""),
+                ("test",),
+                ("",),
                 ]
-        for name, note in data:
-            with self.subTest(name=name, note=note):
-                tmp = _BaseAction(name, note)
+        for name in data:
+            with self.subTest(name=name):
+                tmp = _BaseAction(name)
                 self.assertIsInstance(tmp, _BaseAction)
                 self.assertEqual(tmp.name, name)
-                self.assertEqual(tmp.note, note)
 
 
 class ActionTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print("\n**** TEST: action.py - Action ****")
+        _print_title(_FILENAME, "Action")
 
     def setUp(self):
-        self.taro = _BaseSubject("Taro", "a man", "he is a boy")
-        self.act0 = Action(self.taro, ActType.ACT, Behavior.ACT, (), "test0", "a test0")
+        self.taro = _BaseSubject("Taro", "a man")
+        self.act0 = Action(self.taro, ActType.ACT, Behavior.ACT, ())
 
     def test_attributes(self):
         data = [
-                (self.taro, ActType.ACT, Behavior.ACT, (), "test1", "a test"),
-                (self.taro, ActType.ACT, Behavior.ACT, (self.taro,), "test2", "a test2"),
+                (self.taro, ActType.ACT, Behavior.ACT, ()),
+                (self.taro, ActType.ACT, Behavior.ACT, (self.taro,)),
                 ]
-        for sub, act, behav, obj, info, note in data:
-            with self.subTest(sub=sub, act=act, behav=behav, obj=obj, info=info, note=note):
-                tmp = Action(sub, act, behav, obj, info, note)
+        for sub, act, behav, obj in data:
+            with self.subTest(sub=sub, act=act, behav=behav, obj=obj):
+                tmp = Action(sub, act, behav, obj)
                 self.assertIsInstance(tmp, Action)
                 self.assertEqual(tmp.subject, sub)
                 self.assertEqual(tmp.act_type, act)
                 self.assertEqual(tmp.behavior, behav)
                 self.assertEqual(tmp.objects, obj)
-                self.assertEqual(tmp.info, info)
-                self.assertEqual(tmp.note, note)
-                self.assertEqual(tmp.descriptions, ())
-                self.assertEqual(tmp.flag, "")
-                self.assertEqual(tmp.deflag, "")
-                self.assertEqual(tmp.is_negative, False)
-                self.assertEqual(tmp.is_passive, False)
-                self.assertEqual(tmp.priority, Action.DEFAULT_PRIORITY)
+                self.assertEqual(tmp.descs.data, ())
+                self.assertEqual(tmp._auxverb, AuxVerb.NONE)
+                self.assertEqual(tmp._flag, "")
+                self.assertEqual(tmp._deflag, "")
+                self.assertEqual(tmp._is_negative, False)
+                self.assertEqual(tmp._is_passive, False)
+                self.assertEqual(tmp._priority, Action.DEFAULT_PRIORITY)
 
     def test_desc(self):
         data = [
@@ -68,7 +69,8 @@ class ActionTest(unittest.TestCase):
         for d in data:
             with self.subTest(d=d):
                 self.act0.desc(*d)
-                self.assertEqual(self.act0.descriptions, d)
+                self.assertIsInstance(self.act0.descs, Description)
+                self.assertEqual(self.act0.descs.data, d)
 
     def test_negative(self):
         self.assertFalse(self.act0.is_negative)
@@ -128,32 +130,58 @@ class ActionTest(unittest.TestCase):
                     self.act0.will()
                 else:
                     self.fail("Invalid value in AuxVerb")
-                self.assertEqual(self.act0.aux_verb, v)
+                self.assertEqual(self.act0.auxverb, v)
 
 
 class ActionGroupTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print("\n**** TEST: action.py - ActionGroup ****")
+        _print_title(_FILENAME, "ActionGroup")
 
     def setUp(self):
-        self.taro = _BaseSubject("Taro", "a man", "he is a boy")
-        self.act0 = Action(self.taro, ActType.ACT, Behavior.ACT, None, "test act0", "a test0")
-        self.act1 = Action(self.taro, ActType.ACT, Behavior.ACT, None, "test act1", "a test1")
+        self.taro = _BaseSubject("Taro", "a man")
+        self.act0 = Action(self.taro, ActType.ACT, Behavior.ACT, ())
+        self.act1 = Action(self.taro, ActType.ACT, Behavior.ACT, ())
 
     def test_attributes(self):
         data = [
-                (GroupType.STORY, LangType.JPN, "test0", (self.act0,)),
-                (GroupType.STORY, LangType.JPN, "test1", (self.act0, self.act1)),
-                (GroupType.SCENE, None, "test2", (self.act0,)),
+                (GroupType.STORY, LangType.JPN, (self.act0,)),
+                (GroupType.STORY, LangType.JPN, (self.act0, self.act1)),
+                (GroupType.SCENE, None, (self.act0,)),
                 ]
-        for group, lng, note, acts in data:
-            with self.subTest(group=group, lng=lng, note=note, acts=acts):
-                tmp = ActionGroup(group_type=group, lang=lng, note=note, *acts) if lng else ActionGroup(group_type=group, note=note, *acts)
+        for group, lng, acts in data:
+            with self.subTest(group=group, lng=lng, acts=acts):
+                tmp = ActionGroup(group_type=group, lang=lng, *acts) if lng else ActionGroup(group_type=group, *acts)
                 self.assertIsInstance(tmp, ActionGroup)
                 self.assertEqual(tmp.group_type, group)
                 self.assertEqual(tmp.lang, lng if lng else LangType.JPN)
-                self.assertEqual(tmp.note, note)
                 self.assertEqual(tmp.actions, acts)
 
+
+class TagActionTest(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        _print_title(_FILENAME, "TagAction")
+
+    def test_attributes(self):
+        data = [
+                (TagType.COMMENT, "a test"),
+                (TagType.TITLE, ""),
+                ]
+
+        for tag, note in data:
+            with self.subTest(tag=tag, note=note):
+                tmp = TagAction(tag, note) if note else TagAction(tag)
+                self.assertIsInstance(tmp, TagAction)
+                self.assertEqual(tmp.act_type, ActType.TAG)
+                self.assertEqual(tmp.behavior, Behavior.NONE)
+                self.assertEqual(tmp.objects, ())
+                self.assertEqual(tmp.tag, tag)
+                self.assertEqual(tmp.note, note)
+
+
+# functions
+def _print_title(filename: str, title: str):
+    print("\n**** TEST: {} - {} ****".format(filename, str))

@@ -4,21 +4,21 @@
 import unittest
 
 from .action import Action, ActionGroup
-from .commons import behavior_with_np_of, object_names_of, subject_name_of
-from .enums import LangType
+from .basesubject import _BaseSubject, Info, Nothing
+from .commons import behavior_with_np_of, infos_of, object_names_of, objects_from_without_something, subject_name_of
 from .person import Person
-from .subject import DayTime, Stage, Something
+from .subject import DayTime, Item, Stage, Something, Word
 
 
-def contains_the_word(story: ActionGroup, target: Action) -> bool:
-    '''Check if the word in the story by an ation.
-    '''
-    return _contains_the_word_in_group(story, target)
+_ASSERT_MSG = "{} Must be {}!"
 
 
+# public functions
 def followed_all_flags(test_case: unittest.TestCase, story: ActionGroup) -> bool:
     '''Check if all flags and deflags.
     '''
+    assert isinstance(story, ActionGroup), _ASSERT_MSG.format("story", "ActionGroup")
+
     flags = set(_flags_gathered_in_group(story))
     deflags = set(_flags_gathered_in_group(story, False))
     result = flags & deflags
@@ -31,13 +31,41 @@ def followed_all_flags(test_case: unittest.TestCase, story: ActionGroup) -> bool
 def has_a_daytime(story: ActionGroup) -> bool:
     '''Check if a day time in the story.
     '''
+    assert isinstance(story, ActionGroup), _ASSERT_MSG.format("story", "ActionGroup")
+
     return _has_a_daytime_in_group(story)
+
+
+def has_a_item(story: ActionGroup) -> bool:
+    '''Check if a item in the story.
+    '''
+    assert isinstance(story, ActionGroup), _ASSERT_MSG.format("story", "ActionGroup")
+
+    return _has_a_item_in_group(story)
+
+
+def has_a_person(story: ActionGroup) -> bool:
+    '''Check if a person in the story.
+    '''
+    assert isinstance(story, ActionGroup), _ASSERT_MSG.format("story", "ActionGroup")
+
+    return _has_a_person_in_group(story)
 
 
 def has_a_stage(story: ActionGroup) -> bool:
     '''Check if a stage in the story.
     '''
+    assert isinstance(story, ActionGroup), _ASSERT_MSG.format("story", "ActionGroup")
+
     return _has_a_stage_in_group(story)
+
+
+def has_a_word(story: ActionGroup) -> bool:
+    '''Check if a word in the story.
+    '''
+    assert isinstance(story, ActionGroup), _ASSERT_MSG.format("story", "ActionGroup")
+
+    return _has_a_word_in_group(story)
 
 
 def has_basic_infos(test_case: unittest.TestCase, story: ActionGroup,
@@ -46,14 +74,18 @@ def has_basic_infos(test_case: unittest.TestCase, story: ActionGroup,
 
     Basic informations are Who, Whom, When, Where
     '''
+    assert isinstance(story, ActionGroup), _ASSERT_MSG.format("story", "ActionGroup")
+    assert isinstance(hero, Person), _ASSERT_MSG.format("hero", "Person")
+    assert isinstance(rival, Person), _ASSERT_MSG.format("rival", "Person")
+
     ERR_MSG = "is not exists!"
     is_succeeded = True
     # who
-    if not _has_the_name_in_group(story, hero):
+    if not _has_the_person_in_group(story, hero):
         test_case.fail("Hero {} {}".format(hero.name, ERR_MSG))
         is_succeeded = False
     # whom
-    if not _has_the_name_in_group(story, rival):
+    if not _has_the_person_in_group(story, rival):
         test_case.fail("Rival {} {}".format(rival.name, ERR_MSG))
         is_succeeded = False
     # when
@@ -69,236 +101,645 @@ def has_basic_infos(test_case: unittest.TestCase, story: ActionGroup,
 
 
 def has_outline_infos(test_case: unittest.TestCase, story: ActionGroup,
-        what_act: Action, why_act: Action, how_act: Action, res_act: Action) -> bool:
+        what: Action, why: Action, how: Action, result: Action,
+        is_fuzzy: bool=False) -> bool:
     '''Check if the story has outline informations.
     '''
-    ERR_MSG = "is not exists!"
-    # what
-    if not _contains_the_word_in_group(story, what_act):
-        test_case.fail("{}'s purpose {}({}):{} {}".format(
-            subject_name_of(what_act),
-            behavior_with_np_of(what_act),
-            object_names_of(what_act),
-            what_act.info, ERR_MSG))
-    # why
-    if not _contains_the_word_in_group(story, why_act):
-        test_case.fail("{}'s reason {}({}):{} {}".format(
-            subject_name_of(why_act),
-            behavior_with_np_of(why_act),
-            object_names_of(why_act),
-            why_act.info, ERR_MSG))
-    # how
-    if not _contains_the_word_in_group(story, how_act):
-        test_case.fail("{}'s process {}({}):{} {}".format(
-            subject_name_of(how_act),
-            behavior_with_np_of(how_act),
-            object_names_of(how_act),
-            how_act.info, ERR_MSG))
-    # result
-    if not _contains_the_word_in_group(story, res_act):
-        test_case.fail("{}'s result {}({}):{} {}".format(
-            subject_name_of(res_act),
-            behavior_with_np_of(res_act),
-            object_names_of(res_act),
-            res_act.info, ERR_MSG))
+    assert isinstance(test_case, unittest.TestCase)
+    assert isinstance(story, ActionGroup)
+    assert isinstance(what, Action)
+    assert isinstance(why, Action)
+    assert isinstance(how, Action)
+    assert isinstance(result, Action)
 
-    return True
+    is_succeed = True
+    if is_fuzzy:
+        if not _has_the_action_in_group_with_fuzzy(story, what): # what
+            is_succeed = _fail_message_without_target(test_case, "Purpose", what)
+        if not _has_the_action_in_group_with_fuzzy(story, why): # why
+            is_succeed = _fail_message_without_target(test_case, "Reason", why)
+        if not _has_the_action_in_group_with_fuzzy(story, how): # how
+            is_succeed = _fail_message_without_target(test_case, "Process", how)
+        if not _has_the_action_in_group_with_fuzzy(story, result): # result
+            is_succeed = _fail_message_without_target(test_case, "Result", result)
+    else:
+        if not _has_the_action_in_group(story, what): # what
+            is_succeed = _fail_message_without_target(test_case, "Purpose", what)
+        if not _has_the_action_in_group(story, why): # why
+            is_succeed = _fail_message_without_target(test_case, "Reason", why)
+        if not _has_the_action_in_group(story, how): # how
+            is_succeed = _fail_message_without_target(test_case, "Process", how)
+        if not _has_the_action_in_group(story, result): # result
+            is_succeed = _fail_message_without_target(test_case, "Result", result)
 
-
-def has_the_name(story: ActionGroup, target: Person) -> bool:
-    '''Check if the name in the story.
-    '''
-    return _has_the_name_in_group(story, target)
+    return is_succeed
 
 
 def has_the_action(story: ActionGroup, target: Action) -> bool:
+    '''Check if the action in the story.
+    '''
+    assert isinstance(story, ActionGroup), _ASSERT_MSG.format("story", "ActionGroup")
+    assert isinstance(target, Action), _ASSERT_MSG.format("target", "Action")
+
+    return _has_the_action_in_group(story, target)
+
+
+def has_the_daytime(story: ActionGroup, target: DayTime) -> bool:
+    '''Check if the daytime in the story.
+    '''
+    assert isinstance(story, ActionGroup), _ASSERT_MSG.format("story", "ActionGroup")
+    assert isinstance(target, DayTime), _ASSERT_MSG.format("target", "DayTime")
+
+    return _has_the_daytime_in_group(story, target)
+
+
+def has_the_item(story: ActionGroup, target: Item) -> bool:
+    '''Check if the item in the story.
+    '''
+    assert isinstance(story, ActionGroup), _ASSERT_MSG.format("story", "ActionGroup")
+    assert isinstance(target, Item), _ASSERT_MSG.format("target", "Item")
+
+    return _has_the_item_in_group(story, target)
+
+
+def has_the_person(story: ActionGroup, target: Person) -> bool:
+    '''Check if the person in the story.
+    '''
+    assert isinstance(story, ActionGroup), _ASSERT_MSG.format("story", "ActionGroup")
+    assert isinstance(target, Person), _ASSERT_MSG.format("target", "Person")
+
+    return _has_the_person_in_group(story, target)
+
+
+def has_the_stage(story: ActionGroup, target: Stage) -> bool:
+    '''Check if the stage in the story.
+    '''
+    assert isinstance(story, ActionGroup), _ASSERT_MSG.format("story", "ActionGroup")
+    assert isinstance(target, Stage), _ASSERT_MSG.format("target", "Stage")
+
+    return _has_the_stage_in_group(story, target)
+
+
+def has_the_word(story: ActionGroup, target: Word) -> bool:
     '''Check if the word in the story.
     '''
-    return _has_the_action_in_group(story, target)
+    assert isinstance(story, ActionGroup), _ASSERT_MSG.format("story", "ActionGroup")
+    assert isinstance(target, Word), _ASSERT_MSG.format("target", "Word")
+
+    return _has_the_word_in_group(story, target)
 
 
 def is_all_actions(story: ActionGroup) -> bool:
     '''Check if the story is all of an action and an action group.
     '''
+    assert isinstance(story, ActionGroup), _ASSERT_MSG.format("story", "ActionGroup")
+
     return _is_actiongroup_all_actions(story)
 
 
 # private functions
-def _contains_something_in_objects(act: Action) -> bool:
-    for o in act.objects:
-        if isinstance(o, Something):
-            return True
+def _count_info_in_objects(objs: tuple) -> int:
+    return len(tuple(v for v in objs if isinstance(v, Info)))
+
+
+def _count_nothing_in_objects(objs: tuple) -> int:
+    return len(tuple(v for v in objs if isinstance(v, Nothing)))
+
+
+def _count_something_in_objects(objs: tuple) -> int:
+    return len(tuple(v for v in objs if isinstance(v, Something)))
+
+
+def _fail_message_without_target(test_case: unittest.TestCase,
+        title: str, act: Action) -> bool:
+    assert isinstance(test_case, unittest.TestCase)
+    assert isinstance(title, str)
+    assert isinstance(act, Action)
+
+    ERR_MSG = "is not exists!"
+
+    test_case.fail("{} = {}({}):{} - {}".format(
+        title,
+        subject_name_of(act),
+        behavior_with_np_of(act),
+        object_names_of(act),
+        infos_of(act),
+        ERR_MSG
+        ))
+
     return False
 
 
-def _contains_the_word(act: Action, target: Action) -> bool:
-    return isinstance(act, Action) and isinstance(target, Action) \
-            and _is_near_eq_actions(act, target) \
-            and target.info in act.info
-
-
-def _contains_the_word_in_group(group: ActionGroup, target: Action) -> bool:
-    if isinstance(group, ActionGroup):
-        for a in group.actions:
-            if isinstance(a, ActionGroup):
-                if _contains_the_word_in_group(a, target):
-                    return True
-            else:
-                if _contains_the_word(a, target):
-                    return True
-    else:
-        return _contains_the_word(group, target)
+def _flag_gatherd(act: Action, is_flag: bool) ->str:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+    
+    return act.flag if is_flag else act.deflag
 
 
 def _flags_gathered_in_group(group: ActionGroup, is_flag: bool=True) -> list:
-    if isinstance(group, ActionGroup):
-        tmp = []
-        for a in group.actions:
-            if isinstance(a, ActionGroup):
-                tmp.extend(_flags_gathered_in_group(a, is_flag))
-            else:
-                tmp.append(_flag_gatherd(a, is_flag))
-        return tmp
-    else:
-        return [_flag_gatherd(group, is_flag)]
+    assert isinstance(group, ActionGroup), _ASSERT_MSG.format("group", "ActionGroup")
 
-
-def _flag_gatherd(act: Action, is_flag: bool) ->str:
-    if not isinstance(act, Action):
-        return ""
-    if is_flag:
-        return act.flag or ""
-    else:
-        return act.deflag or ""
+    tmp = []
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            tmp.extend(_flags_gathered_in_group(a, is_flag))
+        else:
+            tmp.append(_flag_gatherd(a, is_flag))
+    return tmp
 
 
 def _has_a_daytime(act: Action) -> bool:
-    return isinstance(act, Action) and isinstance(act.subject, DayTime)
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+
+    return isinstance(act.subject, DayTime) \
+            or len(tuple(v for v in act.objects if isinstance(v, DayTime))) > 0
 
 
 def _has_a_daytime_in_group(group: ActionGroup) -> bool:
-    if isinstance(group, ActionGroup):
-        for a in group.actions:
-            if isinstance(a, ActionGroup):
-                if _has_a_daytime_in_group(a):
-                    return True
-            else:
-                if _has_a_daytime(a):
-                    return True
+    assert isinstance(group, ActionGroup), _ASSERT_MSG.format("group", "ActionGroup")
+    
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_a_daytime_in_group(a):
+                return True
         else:
-            return False
+            if _has_a_daytime(a):
+                return True
     else:
-        return _has_a_daytime(group)
+        return False
+
+
+def _has_a_item(act: Action) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+
+    return isinstance(act.subject, Item) \
+            or len(tuple(v for v in act.objects if isinstance(v, Item))) > 0
+
+
+def _has_a_item_in_group(group: ActionGroup) -> bool:
+    assert isinstance(group, ActionGroup), _ASSERT_MSG.format("group", "ActionGroup")
+
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_a_item_in_group(a):
+                return True
+        else:
+            if _has_a_item(a):
+                return True
+    else:
+        return False
+
+
+def _has_a_person(act: Action) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+
+    return isinstance(act.subject, Person) \
+            or len(tuple(v for v in act.objects if isinstance(v, Person))) > 0
+
+
+def _has_a_person_in_group(group: ActionGroup) -> bool:
+    assert isinstance(group, ActionGroup), _ASSERT_MSG.format("group", "ActionGroup")
+
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_a_person_in_group(a):
+                return True
+        else:
+            if _has_a_person(a):
+                return True
+    else:
+        return False
 
 
 def _has_a_stage(act: Action) -> bool:
-    return isinstance(act, Action) and isinstance(act.subject, Stage)
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+
+    return isinstance(act.subject, Stage) \
+            or len(tuple(v for v in act.objects if isinstance(v, Stage))) > 0
 
 
 def _has_a_stage_in_group(group: ActionGroup) -> bool:
-    if isinstance(group, ActionGroup):
-        for a in group.actions:
-            if isinstance(a, ActionGroup):
-                if _has_a_stage_in_group(a):
-                    return True
-            else:
-                if _has_a_stage(a):
-                    return True
+    assert isinstance(group, ActionGroup), _ASSERT_MSG.format("group", "ActionGroup")
+
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_a_stage_in_group(a):
+                return True
         else:
-            return False
-    return _has_a_stage(group)
+            if _has_a_stage(a):
+                return True
+    else:
+        return False
 
 
-def _has_the_action(act: Action, target: Action) -> bool:
-    return isinstance(act, Action) and isinstance(target, Action) \
-            and act.act_type == target.act_type \
-            and act.behavior == target.behavior \
-            and act.info == target.info \
-            and act.is_negative == target.is_negative \
-            and act.is_passive == target.is_passive \
-            and subject_name_of(act) == subject_name_of(target)
+def _has_a_word(act: Action) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+   
+    return isinstance(act.subject, Word) \
+            or len(tuple(v for v in act.objects if isinstance(v, Word))) > 0
+
+
+def _has_a_word_in_group(group: ActionGroup) -> bool:
+    assert isinstance(group, ActionGroup), _ASSERT_MSG.format("group", "ActionGroup")
+
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_a_word_in_group(a):
+                return True
+        else:
+            if _has_a_word(a):
+                return True
+    else:
+        return False
+
+
+def _has_info_at_action(act: Action) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+
+    return isinstance(act.subject, Info) \
+            or _has_info_in_objects(act.objects)
+
+
+def _has_info_in_objects(objs: tuple) -> bool:
+    return _count_info_in_objects(objs) > 0
+
+
+def _has_nothing_at_action(act: Action) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+
+    return isinstance(act.subject, Nothing) \
+            or _has_nothing_in_objects(act.objects)
+
+
+def _has_nothing_in_objects(objs: tuple) -> bool:
+    return _count_nothing_in_objects(objs) > 0
+
+
+def _has_something_at_action(act: Action) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+
+    return isinstance(act.subject, Something) \
+            or _has_something_in_objects(act.objects)
+
+
+def _has_something_in_objects(objs: tuple) -> bool:
+    return _count_something_in_objects(objs) > 0
 
 
 def _has_the_action_in_group(group: ActionGroup, target: Action) -> bool:
-    if isinstance(group, ActionGroup):
-        for a in group.actions:
-            if isinstance(a, ActionGroup):
-                if _has_the_action_in_group(a, target):
-                    return True
-            else:
-                if _has_the_action(a, target):
-                    return True
+    assert isinstance(group, ActionGroup), _ASSERT_MSG.format("group", "ActionGroup")
+    assert isinstance(target, Action), _ASSERT_MSG.format("target", "Action")
+
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_the_action_in_group(a, target):
+                return True
         else:
-            return False
+            if _is_the_action(a, target):
+                return True
     else:
-        return _has_the_action(group, target)
+        return False
 
 
-def _has_the_name(act: Action, target: Person) -> bool:
-    return isinstance(act, Action) and isinstance(target, Person) \
-            and subject_name_of(act) == target.name
-
-
-def _has_the_name_in_group(group: ActionGroup, target: Person) -> bool:
-    if isinstance(group, ActionGroup):
-        for a in group.actions:
-            if isinstance(a, ActionGroup):
-                if _has_the_name_in_group(a, target):
-                    return True
-            else:
-                if _has_the_name(a, target):
-                    return True
+def _has_the_action_in_group_with_fuzzy(group: ActionGroup, target: Action) -> bool:
+    assert isinstance(group, ActionGroup), _ASSERT_MSG.format("group", "ActionGroup")
+    assert isinstance(target, Action), _ASSERT_MSG.format("target", "Action")
+    
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_the_action_in_group_with_fuzzy(a, target):
+                return True
         else:
-            return False
-    return _has_the_name(group, target)
+            if _near_eq_is_the_action(a, target):
+                return True
+    else:
+        return False
+
+
+def _has_the_daytime(act: Action, target: DayTime) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+    assert isinstance(target, DayTime), _ASSERT_MSG.format("target", "DayTime")
+
+    if not _has_a_daytime(act):
+        return False
+
+    if isinstance(act.subject, DayTime) and _is_the_subject(act.subject, target):
+        return True
+
+    for obj in act.objects:
+        if isinstance(obj, DayTime) and _is_the_subject(obj, target):
+            return True
+    else:
+        return False
+
+
+def _has_the_daytime_in_group(group: ActionGroup, target: DayTime) -> bool:
+    assert isinstance(group, ActionGroup), _ASSERT_MSG.format("group", "ActionGroup")
+    assert isinstance(target, DayTime), _ASSERT_MSG.format("target", "DayTime")
+
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_the_daytime_in_group(a, target):
+                return True
+        else:
+            if _has_the_daytime(a, target):
+                return True
+    else:
+        return False
+
+
+def _has_the_info(info: Info, target: Info) -> bool:
+    assert isinstance(info, Info), _ASSERT_MSG.format("info", "Info")
+    assert isinstance(target, Info), _ASSERT_MSG.format("target", "Info")
+
+    return target.note in info.note
+
+
+def _has_the_infos(objs: tuple, targets: tuple) -> bool:
+    for target in targets:
+        if isinstance(target, Info):
+            is_matched = False
+            for obj in objs:
+                if isinstance(obj, Info) and _has_the_info(obj, target):
+                    is_matched = True
+                    break
+            if not is_matched:
+                return False
+    return True
+
+
+def _has_the_item(act: Action, target: Item) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+    assert isinstance(target, Item), _ASSERT_MSG.format("target", "Item")
+
+    if not _has_a_item(act):
+        return False
+
+    if isinstance(act.subject, Item) and _is_the_subject(act.subject, target):
+        return True
+
+    for obj in act.objects:
+        if isinstance(obj, Item) and _is_the_subject(obj, target):
+            return True
+    else:
+        return False
+
+
+def _has_the_item_in_group(group: ActionGroup, target: Item) -> bool:
+    assert isinstance(group, ActionGroup), _ASSERT_MSG.format("group", "ActionGroup")
+    assert isinstance(target, Item), _ASSERT_MSG.format("target", "Item")
+
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_the_item_in_group(a, target):
+                return True
+        else:
+            if _has_the_item(a, target):
+                return True
+    else:
+        return False
+
+
+def _has_the_person(act: Action, target: Person) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+    assert isinstance(target, Person), _ASSERT_MSG.format("target", "Person")
+
+    if not _has_a_person(act):
+        return False
+
+    if isinstance(act.subject, Person) and _is_the_subject(act.subject, target):
+        return True
+
+    for obj in act.objects:
+        if isinstance(obj ,Person) and _is_the_subject(obj, target):
+            return True
+    else:
+        return False
+
+
+def _has_the_person_in_group(group: ActionGroup, target: Person) -> bool:
+    assert isinstance(group, ActionGroup), _ASSERT_MSG.format("group", "ActionGroup")
+    assert isinstance(target, Person), _ASSERT_MSG.format("target", "Person")
+
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_the_person_in_group(a, target):
+                return True
+        else:
+            if _has_the_person(a, target):
+                return True
+    else:
+        return False
+
+
+def _has_the_stage(act: Action, target: Stage) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+    assert isinstance(target, Stage), _ASSERT_MSG.format("target", "Stage")
+
+    if not _has_a_stage(act):
+        return False
+
+    if isinstance(act.subject, Stage) and _is_the_subject(act.subject, target):
+        return True
+
+    for obj in act.objects:
+        if isinstance(obj, Stage) and _is_the_subject(obj, target):
+            return True
+    else:
+        return False
+
+
+def _has_the_stage_in_group(group: ActionGroup, target: Stage) -> bool:
+    assert isinstance(group, ActionGroup), _ASSERT_MSG.format("group", "ActionGroup")
+    assert isinstance(target, Stage), _ASSERT_MSG.format("target", "Stage")
+
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_the_stage_in_group(a, target):
+                return True
+        else:
+            if _has_the_stage(a, target):
+                return True
+    else:
+        return False
+
+
+def _has_the_word(act: Action, target: Word) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+    assert isinstance(target, Word), _ASSERT_MSG.format("target", "Word")
+
+    if not _has_a_word(act):
+        return False
+
+    if isinstance(act.subject, Word) and _is_the_subject(act.subject, target):
+        return True
+
+    for obj in act.objects:
+        if isinstance(obj, Word) and _is_the_subject(obj, target):
+            return True
+    else:
+        return False
+
+
+def _has_the_word_in_group(group: ActionGroup, target: Word) -> bool:
+    assert isinstance(group, ActionGroup), _ASSERT_MSG.format("group", "ActionGroup")
+    assert isinstance(target, Word), _ASSERT_MSG.format("target", "Word")
+
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_the_word_in_group(a, target):
+                return True
+        else:
+            if _has_the_word(a, target):
+                return True
+    else:
+        return False
 
 
 def _is_actiongroup_all_actions(group: ActionGroup) -> bool:
-    if isinstance(group, ActionGroup):
-        for a in group.actions:
-            if isinstance(a, ActionGroup):
-                if not _is_actiongroup_all_actions(a):
-                    return False
-            else:
-                if not isinstance(a, Action):
-                    return False
-        return True
-    else:
-        return isinstance(a, Action)
+    assert isinstance(group, ActionGroup), _ASSERT_MSG.format("group", "ActionGroup")
 
-
-def _is_near_eq_actions(a: Action, b: Action) -> bool:
-    return a.act_type == b.act_type \
-            and a.behavior == b.behavior \
-            and a.is_negative == b.is_negative \
-            and a.is_passive == b.is_passive \
-            and _is_near_eq_at_subjects(a, b) \
-            and _is_near_eq_at_objects(a, b)
-
-
-def _is_near_eq_at_subjects(a: Action, b: Action) -> bool:
-    return isinstance(a.subject, Something) or isinstance(b.subject, Something) \
-            or subject_name_of(a) == subject_name_of(b)
-
-
-def _is_near_eq_at_objects(a: Action, b: Action) -> bool:
-    if _contains_something_in_objects(a) or _contains_something_in_objects(b):
-        a_somethings = _count_something_in_objects(a)
-        b_somethings = _count_something_in_objects(b)
-        if a_somethings > b_somethings:
-            tmp = set(b.objects) - set(a.objects)
-            return len(tmp) == a_somethings
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if not _is_actiongroup_all_actions(a):
+                return False
         else:
-            tmp = set(a.objects) - set(b.objects)
-            return len(tmp) == b_somethings
+            if not isinstance(a, Action):
+                return False
     else:
-        return object_names_of(a) == object_names_of(b)
+        return True
 
 
-def _count_something_in_objects(act: Action) -> int:
-    tmp = 0
-    for o in act.objects:
-        if isinstance(o, Something):
-            tmp += 1
-    return tmp
+def _is_the_action(act: Action, target: Action) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+    assert isinstance(target, Action), _ASSERT_MSG.format("target", "Action")
+
+    return act.act_type is target.act_type \
+            and _is_the_action_behavior(act, target) \
+            and _is_the_action_subject(act, target) \
+            and _is_the_action_objects(act, target) \
+            and _is_the_action_infos(act, target)
+
+
+def _is_the_action_behavior(act: Action, target: Action) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+    assert isinstance(target, Action), _ASSERT_MSG.format("target", "Action")
+
+    return act.behavior is target.behavior \
+            and act.auxverb is target.auxverb \
+            and act.is_negative == target.is_negative \
+            and act.is_passive == target.is_passive
+
+
+def _is_the_action_infos(act: Action, target: Action) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+    assert isinstance(target, Action), _ASSERT_MSG.format("target", "Action")
+
+    return _is_the_infos(act.objects, target.objects)
+
+
+def _is_the_action_subject(act: Action, target: Action) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+    assert isinstance(target, Action), _ASSERT_MSG.format("target", "Action")
+
+    return _is_the_subject(act.subject, target.subject)
+
+
+def _is_the_action_objects(act: Action, target: Action) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+    assert isinstance(target, Action), _ASSERT_MSG.format("target", "Action")
+
+    return _is_the_objects(act.objects, target.objects)
+
+
+def _is_the_infos(objs: tuple, targets: tuple) -> bool:
+    for target in targets:
+        if isinstance(target, Info):
+            is_matched = False
+            for obj in objs:
+                if _is_the_subject(target, obj):
+                    is_matched = True
+                    break
+            if not is_matched:
+                return False
+    return True
+
+
+def _is_the_objects(objs: tuple, targets: tuple) -> bool:
+    for target in targets:
+        if isinstance(target, Info) or isinstance(target, Nothing):
+            continue
+        is_matched = False
+        for obj in objs:
+            if _is_the_subject(target, obj):
+                is_matched = True
+                break
+        if not is_matched:
+            return False
+    return True
+
+
+def _is_the_subject(subject: _BaseSubject, target: _BaseSubject) -> bool:
+    assert isinstance(subject, _BaseSubject), _ASSERT_MSG.format("subject", "_BaseSubject")
+    assert isinstance(target, _BaseSubject), _ASSERT_MSG.format("target", "_BaseSubject")
+
+    return type(subject) == type(target) \
+            and subject.name == target.name \
+            and subject.note == target.note
+
+
+def _near_eq_is_the_action(act: Action, target: Action) -> bool:
+    assert isinstance(act, Action), _ASSERT_MSG.format("act", "Action")
+    assert isinstance(target, Action), _ASSERT_MSG.format("target", "Action")
+
+    return act.act_type is target.act_type \
+            and _is_the_action_behavior(act, target) \
+            and _near_eq_is_the_subject(act.subject, target.subject) \
+            and _near_eq_is_the_objects(act.objects, target.objects) \
+            and _near_eq_is_the_infos(act.objects, target.objects)
+
+
+def _near_eq_is_the_infos(objs: tuple, targets: tuple) -> bool:
+    if _has_something_in_objects(objs) or _has_something_in_objects(targets):
+        origins_num = _count_something_in_objects(objs) + _count_info_in_objects(objs)
+        targets_num = _count_something_in_objects(targets) + _count_info_in_objects(targets)
+        fail_count = 0
+        for target in targets:
+            if isinstance(target, Info):
+                is_matched = False
+                for obj in objs:
+                    if isinstance(obj, Info) and _has_the_info(obj, target):
+                        is_matched = True
+                        break
+                if is_matched:
+                    fail_count += 1
+
+        if origins_num > targets_num:
+            return (fail_count - (origins_num - targets_num)) <= 0
+        else:
+            return (fail_count - (targets_num - origins_num)) <= 0
+    else:
+        return _has_the_infos(objs, targets)
+
+
+def _near_eq_is_the_objects(objs: tuple, targets: tuple) -> bool:
+    if _has_something_in_objects(objs) or _has_something_in_objects(targets):
+        origins_num = _count_something_in_objects(objs) + _count_info_in_objects(objs)
+        targets_num = _count_something_in_objects(targets) + _count_info_in_objects(targets)
+        if origins_num  > targets_num:
+            tmp = objects_from_without_something(targets) - objects_from_without_something(objs)
+            return len(tmp) == (origins_num - targets_num)
+        else:
+            tmp = objects_from_without_something(objs) - objects_from_without_something(targets)
+            return len(tmp) == (targets_num - origins_num)
+    else:
+        return _is_the_objects(objs, targets)
+
+
+def _near_eq_is_the_subject(subject: _BaseSubject, target: _BaseSubject) -> bool:
+    assert isinstance(subject, _BaseSubject), _ASSERT_MSG.format("subject", "_BaseSubject")
+    assert isinstance(target, _BaseSubject), _ASSERT_MSG.format("target", "_BaseSubject")
+
+    return isinstance(subject, Something) or isinstance(target, Something) \
+            or _is_the_subject(subject, target)
 
