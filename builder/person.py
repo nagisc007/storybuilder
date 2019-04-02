@@ -38,8 +38,20 @@ class Person(_BasePerson):
         return Person(name, age, sex, job, selfcall, note, self)
 
     # basic actions
+    def abandon(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ABANDON, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def absorb(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ABSORB, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def abuse(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ABUSE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def accept(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.ACCEPT, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def accompany(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ACCOMPANY, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def acquire(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.ACQUIRE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
@@ -47,20 +59,56 @@ class Person(_BasePerson):
     def add(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.ADD, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def adhere(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ADHERE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def adjust(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ADJUST, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def admire(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ADMIRE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def admit(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ADMIT, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def advise(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.ADVISE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def affect(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.AFFECT, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def agree(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.AGREE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def aid(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.AID, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def aim(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.AIM, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def allege(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ALLEGE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def allow(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ALLOW, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def angry(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.ANGRY, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def announce(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ANNOUNCE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def annoy(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ANNOY, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def answer(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.ANSWER, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def apologize(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.APOLOGIZE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def appeal(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.APPEAL, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def appear(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.APPEAR, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
@@ -68,41 +116,143 @@ class Person(_BasePerson):
     def apply(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.APPLY, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def appoint(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.APPOINT, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def appriciate(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.APPRICIATE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def approach(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.APPROACH, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def approve(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.APPROVE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def argue(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ARGUE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def arrive(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.ARRIVE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def arrange(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ARRANGE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def arrest(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ARREST, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def ask(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.ASK, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def assist(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ASSIST, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def assume(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ASSUME, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def attach(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ATTACH, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def attack(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.ATTACK, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def attend(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ATTEND, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def attract(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ATTRACT, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+    
+    def avoid(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.AVOID, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def award(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.AWARD, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def bake(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BAKE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def be(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.BE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def bear(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BEAR, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+    
+    def beat(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BEAT, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def become(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.BECOME, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def beg(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BEG, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def begin(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.BEGIN, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def behave(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BEHAVE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def believe(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.BELIEVE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def belong(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BELONG, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def bet(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.BET, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def betray(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BETRAY, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def bind(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.BIND, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def birth(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BIRTH, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def bite(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BITE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def blame(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BLAME, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def bleed(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BLEED, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def blend(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BLEND, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def bless(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BLESS, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def block(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BLOCK, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def boast(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BOAST, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def boil(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BOIL, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def bore(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BORE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def borrow(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.BORROW, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def bother(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BOTHER, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def bow(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BOW, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def breaks(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.BREAK, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def breathe(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.BREATHE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def bring(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.BRING, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def brow(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.BROW, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
@@ -131,6 +281,12 @@ class Person(_BasePerson):
     def care(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CARE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def capture(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.CAPTURE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def care(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.CARE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def carry(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CARRY, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
@@ -143,14 +299,29 @@ class Person(_BasePerson):
     def charm(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CHARM, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def chase(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.CHASE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def cheat(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.CHEAT, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def check(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CHECK, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def cheer(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CHEER, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def chew(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.CHEW, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def choose(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CHOOSE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def chop(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.CHOP, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def claim(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.CLAIM, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def clean(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CLEAN, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
@@ -161,6 +332,9 @@ class Person(_BasePerson):
     def climb(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CLIMB, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def cling(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.CLING, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def close(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CLOSE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
@@ -170,11 +344,20 @@ class Person(_BasePerson):
     def coach(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.COACH, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def collapse(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.COLLAPSE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def collect(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.COLLECT, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def come(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.COME, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
     
     def command(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.COMMAND, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def communicate(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.COMMUNICATE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def compare(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.COMPARE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
@@ -182,11 +365,17 @@ class Person(_BasePerson):
     def complete(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.COMPLETE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def concern(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.CONCERN, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def confess(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CONFESS, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def confuse(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CONFUSE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def consider(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.CONSIDER, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def contact(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CONTACT, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
@@ -194,32 +383,80 @@ class Person(_BasePerson):
     def continues(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CONTINUE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def cook(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.COOK, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def cool(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.COOL, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def cooperate(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.COOPERATE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def correct(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.CORRECT, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def cost(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.COST, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def cough(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.COUGH, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
-    def cook(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
-        return self.act(Behavior.COOK, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
-
     def create(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CREATE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def cross(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.CROSS, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def cry(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CRY, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def cure(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.CURE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def curious(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.CURIOUS, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def cut(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CUT, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def damage(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.DAMAGE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def dance(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.DANCE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def dare(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.DARE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def deal(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.DEAL, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def decay(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.DECAY, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def decide(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.DECIDE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def defeat(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.DEFEAT, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def define(self ,action: str, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.DEFINE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def deliver(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.DELIVER, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def deny(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.DENY, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def depend(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.DEPEND, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def destroy(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.DESTROY, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def determine(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.DETERMINE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def die(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.DIE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
@@ -230,8 +467,14 @@ class Person(_BasePerson):
     def disappear(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.DISAPPEAR, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def disappoint(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.DISAPPOINT, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def disapprove(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.DISAPPROVE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def discover(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.DISCOVER, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def dislike(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.DISLIKE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
@@ -284,8 +527,14 @@ class Person(_BasePerson):
     def email(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.EMAIL, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def embarrass(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.EMBARRASS, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def employ(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.EMPLOY, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def encounter(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ENCOUNTER, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def engage(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.ENGAGE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
@@ -293,14 +542,20 @@ class Person(_BasePerson):
     def enjoy(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.ENJOY, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def ensure(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ENSURE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def enter(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.ENTER, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def envy(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.ENVY, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
-    def equip(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+    def equip(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.EQUIP, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def escape(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ESCAPE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def exchange(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.EXCHANGE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
@@ -310,6 +565,12 @@ class Person(_BasePerson):
 
     def excite(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.EXCITE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def exist(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.EXIST, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def expect(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.EXPECT, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def explore(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.EXPLORE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
@@ -431,6 +692,9 @@ class Person(_BasePerson):
     def help(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.HELP, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def hesitate(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.HESITATE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def hide(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.HIDE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
@@ -461,14 +725,23 @@ class Person(_BasePerson):
     def ignore(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.IGNORE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def illustrate(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.ILLUSTRATE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def imagine(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.IMAGINE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def imply(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.IMPLY, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def injure(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.INJURE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def instrument(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.INSTRUMENT, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
+    def interest(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.INTEREST, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
     def introduce(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.INTRODUCE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
@@ -701,6 +974,9 @@ class Person(_BasePerson):
     def puzzle(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.PUZZLE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
+    def quarrel(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.QUARREL, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def reach(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.REACH, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
@@ -745,7 +1021,10 @@ class Person(_BasePerson):
 
     def rescue(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.RESCUE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
-    
+
+    def research(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
+        return self.act(Behavior.RESEARCH, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
+
     def rest(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.REST, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
