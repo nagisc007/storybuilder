@@ -176,13 +176,17 @@ def _comment_of(act: TagAction) -> str:
     return "<!--{}-->".format(act.note)
 
 
-def _desc_str_replaced_tag(descstr: str, subject: _BaseSubject, namedict: dict) -> str:
+def _desc_str_replaced_tag(descstr: str, subject: _BaseSubject) -> str:
     assert_isstr(descstr)
     assert_isclass(subject, _BaseSubject)
 
     if isinstance(subject, Person):
-        return re.sub(r'\$S|\$me', subject.calling['me'], descstr)
+        tmp = descstr
+        for k, v in subject.calling.items():
+            tmp = re.sub(r'\${}'.format(k), v, tmp)
+        return re.sub(r'\$S', subject.calling['me'], tmp)
     return descstr
+
 
 def _description_of_by_tag(act: TagAction, lang: LangType, group_type: GroupType, level: int, is_debug: bool) -> str:
     assert_isclass(act, TagAction)
@@ -219,9 +223,9 @@ def _description_of_by_type(act: Action, lang: LangType, group_type: GroupType, 
     elif not act.descs.data:
         return ""
     elif act.act_type in (ActType.ACT, ActType.EXPLAIN):
-        return _desc_str_replaced_tag(sentence_from(act, lang), act.subject, {})
+        return _desc_str_replaced_tag(sentence_from(act, lang), act.subject)
     elif act.act_type is ActType.TELL:
-        return _desc_str_replaced_tag(dialogue_from_description_if(act, lang), act.subject, {})
+        return _desc_str_replaced_tag(dialogue_from_description_if(act, lang), act.subject)
     else:
         return ""
 
@@ -252,11 +256,6 @@ def _list_head_inserted(group_type: GroupType) -> str:
         return "    " * 1 + "- "
     else:
         return "- "
-
-def _namedict_from(story: ActionGroup) -> dict:
-    assert_isclass(story, ActionGroup)
-
-    return {}
 
 
 def _output_story_to_console(story: list, is_debug: bool) -> bool:
