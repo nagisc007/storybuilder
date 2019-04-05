@@ -3,7 +3,7 @@
 """
 import unittest
 
-from builder.storydb import StoryDB, Word
+from builder.storydb import StoryDB, Word, Person
 
 
 _FILENAME = "storydb.py"
@@ -22,8 +22,17 @@ class StoryDBTEST(unittest.TestCase):
         data = [
                 ("taro", "Taro", 17, "male", "student", "me", "a man"),
                 ("hanako", "Hanako", 17, "female", "student", "me", "a girl"),
-                ("taro", "Kotaro", 40, "male", "lower", "me", "a parent")
+                ("taro", "Kotaro", 40, "male", "lower", "me", "a parent"),
+                ("takeshi", "Takeshi", 35, "male", "driver", {"taro":"Ta", "hanako":"Ha"}, ""),
                 ]
+
+        def calling_from(slf):
+            if isinstance(slf, dict):
+                return slf
+            elif slf:
+                return {"me":slf}
+            else:
+                return {"me":Person.DEF_SELFCALL}
 
         for k, name, age, sex, job, slf, note in data:
             with self.subTest(k=k, name=name, age=age, sex=sex, job=job, slf=slf, note=note):
@@ -33,7 +42,7 @@ class StoryDBTEST(unittest.TestCase):
                 self.assertEqual(self.db[key].age, age)
                 self.assertEqual(self.db[key].sex, sex)
                 self.assertEqual(self.db[key].job, job)
-                self.assertEqual(self.db[key].selfcall, slf)
+                self.assertEqual(self.db[key].calling, calling_from(slf))
                 self.assertEqual(self.db[key].note, note)
 
     def test_attr_append_word(self):

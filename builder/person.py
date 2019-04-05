@@ -14,24 +14,42 @@ class Person(_BasePerson):
         name (str): a name.
         note (str): a short description.
         parent (:obj:`_BasePerson`): a parent.
-        selfcall (str): a subject called himself.
+        calling (:dict:{str, str}): a subject called himself.
         sex (str): a sex.
     """
     CLS_NAME = "_person"
     DEF_SELFCALL = "私"
     
-    def __init__(self, name: str, age: int, sex: str, job: str, selfcall: str=DEF_SELFCALL, note: str="", parent: _BasePerson=None):
+    def __init__(self, name: str, age: int, sex: str, job: str, calling: [str, dict]=DEF_SELFCALL, note: str="", parent: _BasePerson=None):
         """
         Args:
             name (str): a name.
             age (int): a age.
             sex (str): a sex.
             job (str): a job.
-            selfcall (str, optional): a name called by myself.
+            calling ([str, dict], optional): a called someone.
             note (str, optional): a short description.
         """
         super().__init__(name, age, sex, job, note, parent)
-        self.selfcall = selfcall
+        self.calling = self._calling_dict_from(calling)
+
+    # private methods
+    def _calling_dict_from(self, target: [str, dict]) -> dict:
+        if isinstance(target, dict):
+            return target
+        elif isinstance(target, str):
+            if ":" in target:
+                tmp = target.split(":")
+                ret = {}
+                for k, v in zip(tmp[0::2], tmp[1::2]):
+                    ret[k] = v
+                if not "me" in ret.keys():
+                    ret.update({"me":Person.DEF_SELFCALL})
+                return ret
+            else:
+                return {"me": target}
+        else:
+            return {"me": target}
 
     # methods
     def inherit(self, name: str, age: int, sex: str, job: str, selfcall: str=DEF_SELFCALL, note: str=""):
