@@ -12,6 +12,7 @@ import test_storydb
 import test_subject
 import test_testtools
 import test_tools
+import test_utils
 
 
 def suite():
@@ -60,6 +61,9 @@ def suite():
     # tools
     suite.addTest(unittest.makeSuite(test_tools.PublicMethodsTest))
     suite.addTest(unittest.makeSuite(test_tools.PrivateMethodsTest))
+
+    # utils
+    suite.addTest(unittest.makeSuite(test_utils.PublicMethodsTest))
 
     return suite
 

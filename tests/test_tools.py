@@ -6,7 +6,7 @@ import unittest
 import os
 import sys
 from io import StringIO
-
+from builder.sbutils import print_test_title
 from builder.action import TagAction, GroupType
 from builder.enums import LangType
 from builder.person import Person
@@ -21,7 +21,7 @@ class PublicMethodsTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "public methods")
+        print_test_title(_FILENAME, "public methods")
 
     def setUp(self):
         self.sm = Master("test story")
@@ -60,7 +60,7 @@ class PrivateMethodsTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "private methods")
+        print_test_title(_FILENAME, "private methods")
 
     def setUp(self):
         self.ma = Master("test story")
@@ -336,7 +336,3 @@ class PrivateMethodsTest(unittest.TestCase):
                 self.assertIsInstance(tmp, TagAction)
                 self.assertEqual(tools._story_title_of(tmp, lv), expected)
 
-
-# private functions
-def _print_title(fname: str, title: str):
-    print("\n**** TEST: {} - {} ****".format(fname, title))

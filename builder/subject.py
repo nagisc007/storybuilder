@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Module to build a story.
 """
+from .sbutils import assert_isstr, assert_isint
 from .action import _BaseAction, Action, ActionGroup, TagAction
 from .basesubject import _BaseSubject
 from .behavior import Behavior
@@ -29,6 +30,10 @@ class _BasePerson(_BaseSubject):
             parent (:obj:`_BaseSubject`): a parent person.
         """
         super().__init__(name, note, parent)
+        assert_isint(age)
+        assert_isstr(job)
+        assert_isstr(sex)
+
         self.age = age
         self.job = job
         self.sex = sex
@@ -93,6 +98,12 @@ class DayTime(_BaseSubject):
             parent (:obj:`_BaseSubject`): a parent.
         """
         super().__init__(name, note, parent)
+        assert_isint(day)
+        assert_isint(hour)
+        assert_isint(min)
+        assert_isint(mon)
+        assert_isint(year)
+
         self.day = day
         self.hour = hour
         self.min = min

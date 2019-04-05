@@ -2,7 +2,7 @@
 """Test for person.py.
 """
 import unittest
-
+from builder.sbutils import print_test_title
 from builder.person import Person
 from builder.person import Behavior
 from builder.subject import Action, ActType, Item
@@ -16,7 +16,7 @@ class PersonTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "Person")
+        print_test_title(_FILENAME, "Person")
 
     def setUp(self):
         self.taro = Person("Taro", 17, "male", "student", "me", "a man", "he is a guy")
@@ -87,7 +87,3 @@ class PersonTest(unittest.TestCase):
                 self.assertIsInstance(tmp.objects[0], Info)
                 self.assertEqual(tmp.objects[0].note, a)
 
-
-# private functions
-def _print_title(fname: str, title: str):
-    print("\n**** TEST: {} - {} ****".format(fname, title))

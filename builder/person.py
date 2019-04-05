@@ -302,9 +302,6 @@ class Person(_BasePerson):
     def capture(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CAPTURE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 
-    def care(self,  a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
-        return self.act(Behavior.CARE, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
-
     def carry(self, a=None, about=None, asa=None, at=None, by=None, fo=None, frm=None, of=None, on=None, to=None, wth=None):
         return self.act(Behavior.CARRY, self.infos_converted(a, about, asa, at, by, fo, frm, of, on, to, wth))
 

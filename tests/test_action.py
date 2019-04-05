@@ -2,6 +2,7 @@
 """Test for action.py
 """
 import unittest
+from builder.sbutils import print_test_title
 from builder.action import _BaseAction, Action, ActionGroup, Description, TagAction
 from builder.action import _BaseSubject
 from builder.action import Behavior
@@ -15,12 +16,12 @@ class BaseActionTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "_BaseAction")
+        print_test_title(_FILENAME, "_BaseAction")
 
     def test_attributes(self):
         data = [
-                ("test",),
-                ("",),
+                "test",
+                "",
                 ]
         for name in data:
             with self.subTest(name=name):
@@ -33,7 +34,7 @@ class DescriptionTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "Description")
+        print_test_title(_FILENAME, "Description")
 
     def test_attributes(self):
         data = [
@@ -56,7 +57,7 @@ class ActionTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "Action")
+        print_test_title(_FILENAME, "Action")
 
     def setUp(self):
         self.taro = _BaseSubject("Taro", "a man")
@@ -160,7 +161,7 @@ class ActionGroupTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "ActionGroup")
+        print_test_title(_FILENAME, "ActionGroup")
 
     def setUp(self):
         self.taro = _BaseSubject("Taro", "a man")
@@ -186,7 +187,7 @@ class TagActionTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "TagAction")
+        print_test_title(_FILENAME, "TagAction")
 
     def test_attributes(self):
         data = [
@@ -204,7 +205,3 @@ class TagActionTest(unittest.TestCase):
                 self.assertEqual(tmp.tag, tag)
                 self.assertEqual(tmp.note, note)
 
-
-# functions
-def _print_title(filename: str, title: str):
-    print("\n**** TEST: {} - {} ****".format(filename, str))

@@ -2,6 +2,7 @@
 """Test for subject.py
 """
 import unittest
+from builder.sbutils import print_test_title
 from builder.subject import _BasePerson, DayTime, Item, Master, Stage, Word
 from builder.subject import Something, something
 from builder.subject import Action, ActionGroup
@@ -15,7 +16,7 @@ class BasePersonTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "BasePerson")
+        print_test_title(_FILENAME, "BasePerson")
 
     def setUp(self):
         self.taro = _BasePerson("Taro", 17, "male", "student", "a man")
@@ -71,7 +72,7 @@ class DayTimeTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "DayTime")
+        print_test_title(_FILENAME, "DayTime")
 
     def test_attributes(self):
         data = [
@@ -124,7 +125,7 @@ class ItemTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "Item")
+        print_test_title(_FILENAME, "Item")
 
     def test_attributes(self):
         data = [
@@ -204,7 +205,7 @@ class StageTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "Stage")
+        print_test_title(_FILENAME, "Stage")
 
     def test_attributes(self):
         data = [
@@ -227,7 +228,7 @@ class SomethingTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "Something")
+        print_test_title(_FILENAME, "Something")
 
     def test_attributes(self):
         data = [
@@ -245,7 +246,7 @@ class WordTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "Word")
+        print_test_title(_FILENAME, "Word")
 
     def test_attributes(self):
         data = [
@@ -274,7 +275,3 @@ class WordTest(unittest.TestCase):
                 self.assertIsInstance(tmp2, Word)
                 self.assertNotEqual(tmp, tmp2)
 
-
-# private functions
-def _print_title(fname: str, title: str):
-    print("\n**** TEST: {} - {} ****".format(fname, title))

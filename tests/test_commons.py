@@ -2,6 +2,7 @@
 """Test for commons.py
 """
 import unittest
+from builder.sbutils import print_test_title
 from builder.action import Action, Description
 from builder.basesubject import _BaseSubject
 from builder.behavior import Behavior
@@ -18,7 +19,7 @@ class PublicMethodsTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "public methods")
+        print_test_title(_FILENAME, "public methods")
 
     def setUp(self):
         self.taro = Person("Taro", 17, "male", "student")
@@ -279,7 +280,7 @@ class PrivateMethodsTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "private methods")
+        print_test_title(_FILENAME, "private methods")
 
     def test_space_replaced_if_with_symbol(self):
         data = [
@@ -295,9 +296,4 @@ class PrivateMethodsTest(unittest.TestCase):
             with self.subTest(origin=origin, lng=lng, expected=expected):
                 self.assertEqual(commons._space_replaced_if_with_symbol(
                     origin, lng), expected)
-
-
-# private functions
-def _print_title(fname: str, title: str):
-    print("\n**** TEST: {} - {} ****")
 

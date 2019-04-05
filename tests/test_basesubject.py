@@ -2,6 +2,7 @@
 """Test for basesubject.py
 """
 import unittest
+from builder.sbutils import print_test_title
 from builder.basesubject import _BaseSubject, Info, Nothing
 from builder.basesubject import _info_or_subject_from
 
@@ -13,7 +14,7 @@ class BaseSubjectTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "BaseSubject")
+        print_test_title(_FILENAME, "BaseSubject")
 
     def test_attributes(self):
         data = [
@@ -33,11 +34,11 @@ class InfoTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "Info")
+        print_test_title(_FILENAME, "Info")
 
     def test_attributes(self):
         data = [
-                ("a info",),
+                "a info",
                 ]
 
         for note in data:
@@ -52,7 +53,7 @@ class NothingTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "Nothing")
+        print_test_title(_FILENAME, "Nothing")
 
     def test_attributes(self):
         tmp = Nothing()
@@ -66,7 +67,7 @@ class MethodUnitTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "methods")
+        print_test_title(_FILENAME, "methods")
 
     def test_info_or_subject_from(self):
         data = [
@@ -80,7 +81,3 @@ class MethodUnitTest(unittest.TestCase):
             with self.subTest(t=t, expected=expected):
                 self.assertIsInstance(_info_or_subject_from(t), expected)
                 
-
-# private functions
-def _print_title(fname: str, title: str):
-    print("\n**** TEST: {} - {} ****".format(fname, title))

@@ -2,7 +2,7 @@
 """Test for testtools.py
 """
 import unittest
-
+from builder.sbutils import print_test_title
 from builder.basesubject import Info, Nothing
 from builder.person import Person
 from builder.subject import DayTime, Item, Master, Stage, something, Word
@@ -16,7 +16,7 @@ class PublicMethodsTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "public methods")
+        print_test_title(_FILENAME, "public methods")
 
     def setUp(self):
         self.taro = Person("Taro", 17, "male", "student", "me", "a man")
@@ -119,7 +119,7 @@ class PrivateMethodsTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "private methods")
+        print_test_title(_FILENAME, "private methods")
 
     def setUp(self):
         self.ma = Master("test")
@@ -537,8 +537,3 @@ class PrivateMethodsTest(unittest.TestCase):
             with self.subTest(sub=sub, target=target, expected=expected):
                 self.assertEqual(testtools._near_eq_is_the_subject(sub, target), expected)
 
-
-# private functions
-def _print_title(fname: str, title: str) -> bool:
-    print("\n**** TEST: {} - {} ****".format(fname, title))
-    return True

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Define an action class.
 """
+from .sbutils import assert_isclass, assert_isstr, assert_isbool
 from .enums import ActType, AuxVerb, GroupType, LangType, TagType
 from .basesubject import _BaseSubject, Nothing
 from .behavior import Behavior
@@ -17,6 +18,8 @@ class _BaseAction(object):
         Args:
             name (str): an action name.
         """
+        assert_isstr(name)
+
         self.name = name
 
 
@@ -33,6 +36,8 @@ class Description(object):
             descs (:tuple:str): descriptions
             is_omitted (bool, optional): a omit flag.
         """
+        assert_isbool(is_omitted)
+
         self.data = self._descs_from(descs)
         self.is_omitted = is_omitted
 
@@ -77,9 +82,9 @@ class Action(_BaseAction):
             behavior (:enum:`Behavior`): a behavior type.
             objects (:tuple:obj:`_BaseSubject`): objects.
         """
-        assert isinstance(subject, _BaseSubject), "subject Must be Subject(_BaseSubject) class!"
-        assert isinstance(act_type, ActType), "act_type Must be ActType!"
-        assert isinstance(behavior, Behavior), "behavior Mue be Behavior!"
+        assert_isclass(subject, _BaseSubject)
+        assert_isclass(act_type, ActType)
+        assert_isclass(behavior, Behavior)
 
         super().__init__(Action.CLS_NAME)
         self._auxverb = AuxVerb.NONE
@@ -193,6 +198,7 @@ class ActionGroup(_BaseAction):
         lang (:enum:`LangType`): a language type.
     """
     CLS_NAME = "_actiongroup"
+
     def __init__(self, *args: Action, group_type: GroupType, lang: LangType=LangType.JPN):
         """
         Args:
@@ -200,7 +206,8 @@ class ActionGroup(_BaseAction):
             group_type (:enum:`GroupType`): a group type.
             lang (:enum:`LangType`, optional): a language type.
         """
-        assert isinstance(group_type, GroupType), "group_type Must be GroupType!"
+        assert_isclass(group_type, GroupType)
+        assert_isclass(lang, LangType)
 
         super().__init__(ActionGroup.CLS_NAME)
         self.actions = args
@@ -213,6 +220,9 @@ class TagAction(Action):
     """
     def __init__(self, tag: TagType, note: str=""):
         super().__init__(Nothing(), ActType.TAG, Behavior.NONE, ())
+        assert_isclass(tag, TagType)
+        assert_isstr(note)
+        
         self.note = note
         self.tag = tag
         self.desc("") # default no omitted

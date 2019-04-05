@@ -2,7 +2,7 @@
 """Test for storydb.py
 """
 import unittest
-
+from builder.sbutils import print_test_title
 from builder.storydb import StoryDB, Word, Person
 
 
@@ -13,7 +13,7 @@ class StoryDBTEST(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _print_title(_FILENAME, "StoryDB")
+        print_test_title(_FILENAME, "StoryDB")
 
     def setUp(self):
         self.db = StoryDB([], [], [], [], [])
@@ -74,7 +74,3 @@ class StoryDBTEST(unittest.TestCase):
         self.assertEqual(self.db.w.name, "word")
         self.assertEqual(self.db.w.note, "")
 
-
-# private functions
-def _print_title(fname: str, title: str):
-    print("\n**** TEST: {} - {} ****".format(fname, title))

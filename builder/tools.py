@@ -4,14 +4,10 @@
 from __future__ import print_function
 import os
 import argparse
-
+from .sbutils import assert_isclass, assert_isbool, assert_isint, assert_isstr
 from .action import Action, ActionGroup, TagAction
-from .basesubject import Info, Nothing
 from .commons import behavior_with_np_of, descriptions_of_if, dialogue_from_description_if, dialogue_from_info, infos_of, object_names_of, sentence_from, subject_name_of
 from .enums import ActType, GroupType, TagType, LangType
-from .person import Person
-from .subject import DayTime, Item, Stage, Word
-
 
 
 # functions
@@ -23,7 +19,8 @@ def build_to_story(story: ActionGroup):
     Returns:
         True: if complete to success, otherwise False.
     '''
-    assert isinstance(story, ActionGroup), "The story is not ActionGroup"
+    assert_isclass(story, ActionGroup)
+
     FILE_NAME = "story"
     options = options_parsed()
     file_name = options.filename if options.filename else FILE_NAME
@@ -66,6 +63,13 @@ def output_story(story: ActionGroup, filename: str, is_action_data: bool=False,
     Returns:
         True: if complete to success, otherwise False.
     '''
+    assert_isclass(story, ActionGroup)
+    assert_isstr(filename)
+    assert_isbool(is_action_data)
+    assert_isbool(is_out_as_file)
+    assert_isint(pri_filter)
+    assert_isbool(is_debug)
+
     if is_out_as_file:
         return _output_story_to_file(
                 _story_data_converted(story, is_action_data, pri_filter, is_debug),
@@ -78,7 +82,9 @@ def output_story(story: ActionGroup, filename: str, is_action_data: bool=False,
 
 # private functions
 def _action_of_by_tag(act: TagAction, group_type: GroupType, level: int) -> str:
-    assert isinstance(act, TagAction), "act Must be TagAction class!"
+    assert_isclass(act, TagAction)
+    assert_isclass(group_type, GroupType)
+    assert_isint(level)
 
     if act.tag is TagType.COMMENT:
         return _comment_of(act)
@@ -94,6 +100,13 @@ def _action_of_by_tag(act: TagAction, group_type: GroupType, level: int) -> str:
 
 def _action_of_by_type(act: Action, lang: LangType, group_type: GroupType, level: int,
         pri_filter: int, is_debug: bool) -> str:
+    assert_isclass(act, Action)
+    assert_isclass(lang, LangType)
+    assert_isclass(group_type, GroupType)
+    assert_isint(level)
+    assert_isint(pri_filter)
+    assert_isbool(is_debug)
+
     if pri_filter > act.priority:
         return ""
     if act.act_type in (ActType.ACT, ActType.EXPLAIN):
@@ -118,8 +131,10 @@ def _action_of_by_type(act: Action, lang: LangType, group_type: GroupType, level
 
 
 def _action_with_obj_and_info_as_eng(act: Action, group_type: GroupType, is_dialogue: bool, is_test: bool=False) -> str:
-    assert isinstance(act, Action), "act Must be Action class!"
-    assert isinstance(group_type, GroupType), "group_type Must be GroupType!"
+    assert_isclass(act, Action)
+    assert_isclass(group_type, GroupType)
+    assert_isbool(is_dialogue)
+    assert_isbool(is_test)
 
     return "{}{}{:8}:{:8}/{}{}".format(
             "> " if is_test else "",
@@ -132,8 +147,10 @@ def _action_with_obj_and_info_as_eng(act: Action, group_type: GroupType, is_dial
    
 
 def _action_with_obj_and_info_as_jpn(act: Action, group_type: GroupType, is_dialogue: bool, is_test: bool=False) -> str:
-    assert isinstance(act, Action), "act Must be Action class!"
-    assert isinstance(group_type, GroupType), "group_type Must be GroupType!"
+    assert_isclass(act, Action)
+    assert_isclass(group_type, GroupType)
+    assert_isbool(is_dialogue)
+    assert_isbool(is_test)
 
     return "{}{}{:\u3000<6s}:{:\u3000<6s}/{}{}".format(
             "> " if is_test else "",
@@ -145,17 +162,23 @@ def _action_with_obj_and_info_as_jpn(act: Action, group_type: GroupType, is_dial
             )
 
 def _behavior_with_obj(act: Action) -> str:
+    assert_isclass(act, Action)
+
     return "{}({})".format(behavior_with_np_of(act), object_names_of(act))
 
 
 def _comment_of(act: TagAction) -> str:
-    assert isinstance(act, TagAction), "act Must be TagAction class!"
+    assert_isclass(act, TagAction)
 
     return "<!--{}-->".format(act.note)
 
 
 def _description_of_by_tag(act: TagAction, lang: LangType, group_type: GroupType, level: int, is_debug: bool) -> str:
-    assert isinstance(act, TagAction), "act Must be TagAction class!"
+    assert_isclass(act, TagAction)
+    assert_isclass(lang, LangType)
+    assert_isclass(group_type, GroupType)
+    assert_isint(level)
+    assert_isbool(is_debug)
 
     if act.tag is TagType.COMMENT:
         return _comment_of(act) if is_debug else ""
@@ -170,6 +193,12 @@ def _description_of_by_tag(act: TagAction, lang: LangType, group_type: GroupType
 
 
 def _description_of_by_type(act: Action, lang: LangType, group_type: GroupType, level: int, is_debug: bool) -> str:
+    assert_isclass(act, Action)
+    assert_isclass(lang, LangType)
+    assert_isclass(group_type, GroupType)
+    assert_isint(level)
+    assert_isbool(is_debug)
+
     if act.descs.is_omitted:
         return ""
     elif act.act_type is ActType.TAG:
@@ -187,6 +216,8 @@ def _description_of_by_type(act: Action, lang: LangType, group_type: GroupType, 
 
 
 def _flag_info_if(act: Action) -> str:
+    assert_isclass(act, Action)
+
     tmp = ""
     if act.flag:
         tmp += "[" + act.flag + "](f-" + act.flag + ")"
@@ -196,11 +227,13 @@ def _flag_info_if(act: Action) -> str:
 
 
 def _hr_of(num: int=9) -> str:
+    assert_isint(num)
+
     return "--------" * num
 
 
 def _list_head_inserted(group_type: GroupType) -> str:
-    assert isinstance(group_type, GroupType), "group_type Must be GroupType!"
+    assert_isclass(group_type, GroupType)
 
     if group_type is GroupType.COMBI:
         return "    " * 2 + "- "
@@ -211,6 +244,9 @@ def _list_head_inserted(group_type: GroupType) -> str:
 
 
 def _output_story_to_console(story: list, is_debug: bool) -> bool:
+    assert_isclass(story, list)
+    assert_isbool(is_debug)
+
     idx = 0
     for s in story:
         print(_output_with_linenumber(s, idx, is_debug))
@@ -219,6 +255,11 @@ def _output_story_to_console(story: list, is_debug: bool) -> bool:
 
 
 def _output_story_to_file(story: list, filename: str, is_action_data: bool, is_debug: bool) -> bool:
+    assert_isclass(story, list)
+    assert_isstr(filename)
+    assert_isbool(is_action_data)
+    assert_isbool(is_debug)
+
     EXT_MARKDOWN = 'md'
     BUILD_DIR = 'build'
     if not os.path.isdir(BUILD_DIR):
@@ -234,11 +275,15 @@ def _output_story_to_file(story: list, filename: str, is_action_data: bool, is_d
 
 
 def _output_with_linenumber(val: str, num: int, is_debug: bool) -> str:
+    assert_isstr(val)
+    assert_isint(num)
+    assert_isbool(is_debug)
+
     return "{}: {}".format(num, val) if is_debug else val
 
 
 def _scene_title_of(act: TagAction) -> str:
-    assert isinstance(act, TagAction), "act Must be TagAction class!"
+    assert_isclass(act, TagAction)
 
     return "**{}**".format(act.note)
 
@@ -250,12 +295,20 @@ def _story_converted_as_action(story: ActionGroup, pri_filter: int, is_debug: bo
         pri_filter (int): a number filtered an action.
         is_debug (bool): if True, with a debug mode.
     '''
+    assert_isclass(story, ActionGroup)
+    assert_isint(pri_filter)
+    assert_isbool(is_debug)
+
     return _story_converted_as_action_in_group(story, story.group_type, 1, pri_filter, is_debug)
 
 
 def _story_converted_as_action_in_group(group: ActionGroup, group_type: GroupType,
         level: int, pri_filter: int, is_debug: bool) -> list:
-    assert isinstance(group, ActionGroup), "group Must be ActionGroup class!"
+    assert_isclass(group, ActionGroup)
+    assert_isclass(group_type, GroupType)
+    assert_isint(level)
+    assert_isint(pri_filter)
+    assert_isbool(is_debug)
 
     tmp = []
     for a in group.actions:
@@ -267,11 +320,17 @@ def _story_converted_as_action_in_group(group: ActionGroup, group_type: GroupTyp
 
 
 def _story_converted_as_description(story: ActionGroup, is_debug: bool):
+    assert_isclass(story, ActionGroup)
+    assert_isbool(is_debug)
+
     return _story_converted_as_description_in_group(story, story.group_type, 1, is_debug)
 
 
 def _story_converted_as_description_in_group(group: ActionGroup, group_type: GroupType, level: int, is_debug: bool):
-    assert isinstance(group, ActionGroup), "group Must be ActionGroup class!"
+    assert_isclass(group, ActionGroup)
+    assert_isclass(group_type, GroupType)
+    assert_isint(level)
+    assert_isbool(is_debug)
 
     tmp = []
     for a in group.actions:
@@ -295,12 +354,17 @@ def _story_data_converted(story: ActionGroup, is_action_data: bool, pri_filter: 
     Returns:
         :list:str: strings list as a story.
     '''
+    assert_isclass(story, ActionGroup)
+    assert_isbool(is_action_data)
+    assert_isint(pri_filter)
+    assert_isbool(is_debug)
+
     return  _story_converted_as_action(story, pri_filter, is_debug) if is_action_data else _story_converted_as_description(story, is_debug)
 
 
 def _story_title_of(act: TagAction, level: int) -> str:
-    assert isinstance(act, TagAction), "act Must be TagAction class!"
-    assert isinstance(level, int), "level Must be int!"
+    assert_isclass(act, TagAction)
+    assert_isint(level)
 
     return "{}{} {}\n".format("\n" if level > 1 else "", "#" * level, act.note)
 

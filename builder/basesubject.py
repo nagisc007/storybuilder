@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Define a base subject class.
 """
+from .sbutils import assert_isstr
 
 
 class _BaseSubject(object):
@@ -19,6 +20,9 @@ class _BaseSubject(object):
             note (str, optional): a short description.
             parent (:obj:`_BaseSubject`, optional): a parent subject.
         """
+        assert_isstr(name)
+        assert_isstr(note)
+
         self.name = name
         self.note = note
         self.parent = parent
