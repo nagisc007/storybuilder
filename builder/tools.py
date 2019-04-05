@@ -161,7 +161,7 @@ def _description_of_by_tag(act: TagAction, lang: LangType, group_type: GroupType
         return _comment_of(act) if is_debug else ""
     elif act.tag is TagType.TITLE and group_type is GroupType.STORY:
         return _story_title_of(act, level)
-    elif act.tag is TagType.TITLE and group_type is GroupType.SCENE:
+    elif act.tag is TagType.TITLE and group_type is GroupType.SCENE and is_debug:
         return _scene_title_of(act)
     elif act.tag is TagType.HR:
         return _hr_of()

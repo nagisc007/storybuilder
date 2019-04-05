@@ -161,7 +161,7 @@ class PrivateMethodsTest(unittest.TestCase):
                 (self.ma.title("test"), LangType.JPN, GroupType.STORY, 1, False,
                     "# test\n"),
                 (self.ma.title("test"), LangType.JPN, GroupType.SCENE, 1, False,
-                    "**test**"),
+                    ""),
                 (self.ma.hr(), LangType.JPN, GroupType.STORY, 1, False,
                     "--------" * 9),
                 ]
