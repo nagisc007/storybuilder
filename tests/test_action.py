@@ -29,6 +29,29 @@ class BaseActionTest(unittest.TestCase):
                 self.assertEqual(tmp.name, name)
 
 
+class DescriptionTest(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        _print_title(_FILENAME, "Description")
+
+    def test_attributes(self):
+        data = [
+                (("test",), False, ("test",), False),
+                (("test", "apple"), False, ("test", "apple"), False),
+                ("", False, (), False),
+                (("test",), True, ("test",), True),
+                (("test",), "", ("test",), True),
+                ]
+
+        for dsc, omt, exp_dsc, exp_omt in data:
+            with self.subTest(dsc=dsc, omt=omt, exp_dsc=exp_dsc, exp_omt=exp_omt):
+                tmp = Description(dsc) if omt == "" else Description(dsc, omt)
+                self.assertIsInstance(tmp, Description)
+                self.assertEqual(tmp.data, exp_dsc)
+                self.assertEqual(tmp.is_omitted, exp_omt)
+
+
 class ActionTest(unittest.TestCase):
 
     @classmethod

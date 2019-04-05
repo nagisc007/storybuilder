@@ -22,13 +22,19 @@ class _BaseAction(object):
 
 class Description(object):
     """Description class.
+
+    Attributes:
+        descs (:tuple:str): description strings.
+        is_omitted (:bool): if True, no output.
     """
-    def __init__(self, descs):
+    def __init__(self, descs, is_omitted: bool=True):
         """
         Args:
             descs (:tuple:str): descriptions
+            is_omitted (bool, optional): a omit flag.
         """
         self.data = self._descs_from(descs)
+        self.is_omitted = is_omitted
 
     def _descs_from(self, descs) -> tuple:
         if descs:
@@ -37,6 +43,9 @@ class Description(object):
             else:
                 return descs
         return ()
+
+    def omitted(self):
+        self.is_omitted = True
 
 
 class Action(_BaseAction):
@@ -117,7 +126,7 @@ class Action(_BaseAction):
         return self.desc(*args)
 
     def desc(self, *args):
-        self.descs = Description(args)
+        self.descs = Description(args, is_omitted=False)
         return self
 
     def may(self):
@@ -133,6 +142,10 @@ class Action(_BaseAction):
         return self
 
     def non(self): return self.negative()
+
+    def omit(self):
+        self.descs.omitted()
+        return self
 
     def passive(self):
         self._is_passive = True
@@ -202,4 +215,5 @@ class TagAction(Action):
         super().__init__(Nothing(), ActType.TAG, Behavior.NONE, ())
         self.note = note
         self.tag = tag
+        self.desc("") # default no omitted
 

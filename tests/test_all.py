@@ -21,6 +21,7 @@ def suite():
 
     # action
     suite.addTest(unittest.makeSuite(test_action.BaseActionTest))
+    suite.addTest(unittest.makeSuite(test_action.DescriptionTest))
     suite.addTest(unittest.makeSuite(test_action.ActionTest))
     suite.addTest(unittest.makeSuite(test_action.ActionGroupTest))
     suite.addTest(unittest.makeSuite(test_action.TagActionTest))

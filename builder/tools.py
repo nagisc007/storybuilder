@@ -170,7 +170,9 @@ def _description_of_by_tag(act: TagAction, lang: LangType, group_type: GroupType
 
 
 def _description_of_by_type(act: Action, lang: LangType, group_type: GroupType, level: int, is_debug: bool) -> str:
-    if act.act_type is ActType.TAG:
+    if act.descs.is_omitted:
+        return ""
+    elif act.act_type is ActType.TAG:
         return _description_of_by_tag(act, lang, group_type, level, is_debug)
     elif act.act_type is ActType.TEST and is_debug:
         return "> {}".format(descriptions_of_if(act, lang))
@@ -276,7 +278,9 @@ def _story_converted_as_description_in_group(group: ActionGroup, group_type: Gro
         if isinstance(a, ActionGroup):
             tmp.extend(_story_converted_as_description_in_group(a, a.group_type, level + 1, is_debug))
         else:
-            tmp.append(_description_of_by_type(a, group.lang, group.group_type, level, is_debug))
+            val = _description_of_by_type(a, group.lang, group.group_type, level, is_debug)
+            if val:
+                tmp.append(val)
     return tmp
 
 
