@@ -298,5 +298,5 @@ def _story_title_of(act: TagAction, level: int) -> str:
     assert isinstance(act, TagAction), "act Must be TagAction class!"
     assert isinstance(level, int), "level Must be int!"
 
-    return "{} {}\n".format("#" * level, act.note)
+    return "{}{} {}\n".format("\n" if level > 1 else "", "#" * level, act.note)
 
