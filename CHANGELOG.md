@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.0.8] - 2019-04-05
+### Added
+- Utility functions(assertion, print test title)
+- Omit description
+- Story title(episode title) inserted break line before
+- Description shorter typing
+### Changed
+- Class and function arg type check using custom assertion
+- Multi calling attribute
+### Fixed
+- No use comma when after symbol
+- Coverage check
+- Behavior REPLY lacking
+
 ## [0.0.7] - 2019-04-02
 ### Added
 - StoryDB
@@ -92,7 +106,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Example story as usage.
 - Output story as markdown.
 
-[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.0.7...HEAD
+[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.0.8...HEAD
+[0.0.8]: https://github.com/nagisc007/storybuilder/releases/v0.0.8
 [0.0.7]: https://github.com/nagisc007/storybuilder/releases/v0.0.7
 [0.0.6]: https://github.com/nagisc007/storybuilder/releases/v0.0.6
 [0.0.5]: https://github.com/nagisc007/storybuilder/releases/v0.0.5
