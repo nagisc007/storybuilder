@@ -113,6 +113,9 @@ class Action(_BaseAction):
         self._auxverb = AuxVerb.CAN
         return self
 
+    def d(self, *args):
+        return self.desc(*args)
+
     def desc(self, *args):
         self.descs = Description(args)
         return self
