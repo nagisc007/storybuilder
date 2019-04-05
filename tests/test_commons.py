@@ -275,6 +275,28 @@ class PublicMethodsTest(unittest.TestCase):
                 self.assertEqual(commons.subject_name_of(act), expected)
 
 
+class PrivateMethodsTest(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        _print_title(_FILENAME, "private methods")
+
+    def test_space_replaced_if_with_symbol(self):
+        data = [
+                ("!,", LangType.ENG, "! "),
+                ("?,", LangType.ENG, "? "),
+                ("!?,", LangType.ENG, "!? "),
+                ("！、", LangType.JPN, "！　"),
+                ("？、", LangType.JPN, "？　"),
+                ("！？、", LangType.JPN, "！？　"),
+                ]
+
+        for origin, lng, expected in data:
+            with self.subTest(origin=origin, lng=lng, expected=expected):
+                self.assertEqual(commons._space_replaced_if_with_symbol(
+                    origin, lng), expected)
+
+
 # private functions
 def _print_title(fname: str, title: str):
     print("\n**** TEST: {} - {} ****")

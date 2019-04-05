@@ -34,6 +34,7 @@ def suite():
 
     # commons
     suite.addTest(unittest.makeSuite(test_commons.PublicMethodsTest))
+    suite.addTest(unittest.makeSuite(test_commons.PrivateMethodsTest))
 
     # enums
     suite.addTest(unittest.makeSuite(test_enums.EnumsTest))

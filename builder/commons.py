@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Common functions for storybuilder.
 """
+import re
 from .action import Action, ActionGroup, Description
 from .basesubject import _BaseSubject, Info, Nothing
 from .enums import LangType
@@ -10,6 +11,7 @@ from .subject import Something
 _ASSERT_MSG = "{} Must be {}!"
 
 
+# public functions
 def behavior_with_np_of(act: Action) -> str:
     assert isinstance(act, Action), "act Must be Action class!"
 
@@ -29,7 +31,7 @@ def comma_of(lang: LangType) -> str:
 
 
 def description_of(act: Action, lang: LangType) -> str:
-    return comma_of(lang).join(act.descs.data)
+    return _space_replaced_if_with_symbol(comma_of(lang).join(act.descs.data), lang)
 
 
 def descriptions_of_if(act: Action, lang: LangType) -> str:
@@ -150,4 +152,12 @@ def something_name_if(obj: _BaseSubject) -> str:
 
 def subject_name_of(act: Action) -> str:
     return something_name_if(act.subject) if act.subject else ""
+
+
+# private functions
+def _space_replaced_if_with_symbol(target: str, lang: LangType) -> str:
+    if lang is LangType.JPN:
+        return re.sub(r'([！？])、', r'\1　', target)
+    else:
+        return re.sub(r'([!?])\,',  r'\1 ', target)
 
