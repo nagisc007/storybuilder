@@ -27,7 +27,7 @@ class PublicMethodsTest(unittest.TestCase):
         self.sm = Master("test story")
         self.taro = Person("Taro", 17, "male", "student", "me")
         self.hanako = Person("Hanako", 17, "female", "student", "me")
-        self.masao = Person("Masao", 17, "male", "student", "me")
+        self.masao = Person("Masao", 17, "male", "student", "俺")
         self.story = self.sm.story(
                 "Taro and Hanako",
                 self.hanako.come("in room").desc("a cute girl come in"),
@@ -66,7 +66,7 @@ class PrivateMethodsTest(unittest.TestCase):
         self.ma = Master("test story")
         self.taro = Person("Taro", 17, "male", "student", "me")
         self.hanako = Person("Hanako", 17, "female", "student", "me")
-        self.masao = Person("Masao", 17, "male", "student", "me")
+        self.masao = Person("Masao", 17, "male", "student", "俺")
         self.item = Item("stick")
         self.story = self.ma.story(
                 "Taro and Hanako",
@@ -153,6 +153,17 @@ class PrivateMethodsTest(unittest.TestCase):
             with self.subTest(v=v, expected=expected):
                 tmp = self.ma.comment(v)
                 self.assertEqual(tools._comment_of(tmp), expected)
+
+    def test_desc_str_replaced_tag(self):
+        data = [
+                ("$Sだった", self.taro, {}, "meだった"),
+                ("$meMeme", self.hanako, {}, "meMeme"),
+                ("$Sだし", self.masao, {}, "俺だし"),
+                ]
+
+        for doc, sub, dct, expected in data:
+            with self.subTest(doc=doc, sub=sub, dct=dct, expected=expected):
+                self.assertEqual(tools._desc_str_replaced_tag(doc, sub, dct), expected)
 
     def test_description_of_by_tag(self):
         data = [

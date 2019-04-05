@@ -4,11 +4,13 @@
 from __future__ import print_function
 import os
 import argparse
+import re
 from .sbutils import assert_isclass, assert_isbool, assert_isint, assert_isstr
 from .action import Action, ActionGroup, TagAction
 from .commons import behavior_with_np_of, descriptions_of_if, dialogue_from_description_if, dialogue_from_info, infos_of, object_names_of, sentence_from, subject_name_of
 from .enums import ActType, GroupType, TagType, LangType
 from .subject import _BaseSubject
+from .person import Person
 
 
 # functions
@@ -178,6 +180,8 @@ def _desc_str_replaced_tag(descstr: str, subject: _BaseSubject, namedict: dict) 
     assert_isstr(descstr)
     assert_isclass(subject, _BaseSubject)
 
+    if isinstance(subject, Person):
+        return re.sub(r'\$S|\$me', subject.calling['me'], descstr)
     return descstr
 
 def _description_of_by_tag(act: TagAction, lang: LangType, group_type: GroupType, level: int, is_debug: bool) -> str:
