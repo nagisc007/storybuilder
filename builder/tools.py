@@ -355,7 +355,10 @@ def _story_converted_as_description_in_group(group: ActionGroup, group_type: Gro
             val = _description_of_by_type(a, group.lang, group.group_type, level, is_debug)
             if val:
                 tmp.append(val)
-    return tmp
+    if group_type is GroupType.COMBI:
+        return "".join(tmp)
+    else:
+        return tmp
 
 
 def _story_data_converted(story: ActionGroup, is_action_data: bool, pri_filter: int, is_debug: bool) -> list:

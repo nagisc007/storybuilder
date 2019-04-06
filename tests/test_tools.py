@@ -333,6 +333,22 @@ class PrivateMethodsTest(unittest.TestCase):
                     ' "Nice to meet you" ',
                     ' "I\'m not fine" '])
 
+    def test_story_converted_as_description_in_group_with_combi(self):
+        ma = Master('test')
+        data = [
+                (ma.story(self.taro.talk().d("test"), self.hanako.talk().d("apple")),
+                    GroupType.COMBI,
+                    "　test。　apple。"),
+                (ma.story(self.taro.talk().d("test"), self.hanako.talk().d("apple"), lang=LangType.ENG),
+                    GroupType.COMBI,
+                    " test.  apple. "),
+                ]
+
+        for v, gtype, expected in data:
+            with self.subTest(v=v, gtype=gtype, expected=expected):
+                self.assertEqual(tools._story_converted_as_description_in_group(
+                    v, gtype, 1, False), expected)
+
     def test_story_data_converted(self):
         self.assertEqual(tools._story_data_converted(self.story, True, 0, False),
                 ["# Taro and Hanako\n", "- Hanako  :来る()    /in room",
