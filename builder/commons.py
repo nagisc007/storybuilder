@@ -69,6 +69,16 @@ def dialogue_from_info(act: Action, lang: LangType) -> str:
     return "「{}」".format(infos_of(act).replace('/', '、')) if lang == LangType.JPN else ' "{}" '.format(infos_of(act).replace('/', ', '))
 
 
+def extraspace_chopped(target: str, lang: LangType) -> str:
+    assert_isstr(target)
+    assert_isclass(lang, LangType)
+
+    if lang is LangType.JPN:
+        return re.sub(r'。　(.)', r'。\1', target)
+    else:
+        return re.sub(r'\s+', r' ', target)
+
+
 def infos_of(act: Action) -> str:
     '''Informations string from the action.
 

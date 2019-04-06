@@ -7,7 +7,8 @@ import argparse
 import re
 from .sbutils import assert_isclass, assert_isbool, assert_isint, assert_isstr
 from .action import Action, ActionGroup, TagAction
-from .commons import behavior_with_np_of, descriptions_of_if, dialogue_from_description_if, dialogue_from_info, infos_of, object_names_of, sentence_from, subject_name_of
+from .commons import behavior_with_np_of, descriptions_of_if, dialogue_from_description_if, dialogue_from_info
+from .commons import extraspace_chopped, infos_of, object_names_of, sentence_from, subject_name_of
 from .enums import ActType, GroupType, TagType, LangType
 from .subject import _BaseSubject
 from .person import Person
@@ -355,7 +356,10 @@ def _story_converted_as_description_in_group(group: ActionGroup, group_type: Gro
             val = _description_of_by_type(a, group.lang, group.group_type, level, is_debug)
             if val:
                 tmp.append(val)
-    return tmp
+    if group_type is GroupType.COMBI:
+        return extraspace_chopped("".join(tmp), group.lang)
+    else:
+        return tmp
 
 
 def _story_data_converted(story: ActionGroup, is_action_data: bool, pri_filter: int, is_debug: bool) -> list:
