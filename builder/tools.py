@@ -98,6 +98,8 @@ def _action_of_by_tag(act: TagAction, group_type: GroupType, level: int) -> str:
         return _scene_title_of(act)
     elif act.tag is TagType.HR:
         return _hr_of()
+    elif act.tag is TagType.SYMBOL:
+        return _break_symbol_of(act)
     else:
         return ""
 
@@ -171,6 +173,12 @@ def _behavior_with_obj(act: Action) -> str:
     return "{}({})".format(behavior_with_np_of(act), object_names_of(act))
 
 
+def _break_symbol_of(act: TagAction) -> str:
+    assert_isclass(act, TagAction)
+
+    return "\n\n{}\n\n".format(act.note)
+
+
 def _comment_of(act: TagAction) -> str:
     assert_isclass(act, TagAction)
 
@@ -204,6 +212,8 @@ def _description_of_by_tag(act: TagAction, lang: LangType, group_type: GroupType
         return _scene_title_of(act)
     elif act.tag is TagType.HR:
         return _hr_of()
+    elif act.tag is TagType.SYMBOL:
+        return _break_symbol_of(act)
     else:
         return ""
 

@@ -91,6 +91,7 @@ class PrivateMethodsTest(unittest.TestCase):
                 (self.ma.title("test"), GroupType.STORY, 2, "\n## test\n"),
                 (self.ma.title("test"), GroupType.SCENE, 1, "**test**"),
                 (self.ma.hr(), GroupType.STORY, 1, "--------" * 9),
+                (self.ma.break_symbol("**"), GroupType.STORY, 1, "\n\n**\n\n"),
                 ]
         
         for act, gtype, lv, expected in data:
@@ -146,6 +147,16 @@ class PrivateMethodsTest(unittest.TestCase):
             with self.subTest(act=act, expected=expected):
                 self.assertEqual(tools._behavior_with_obj(act), expected)
 
+    def test_break_symbol_of(self):
+        data = [
+                ("****", "\n\n****\n\n"),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(tools._break_symbol_of(self.ma.break_symbol(v)),
+                        expected)
+
     def test_comment_of(self):
         data = [
                 ("a test", "<!--a test-->"),
@@ -178,6 +189,8 @@ class PrivateMethodsTest(unittest.TestCase):
                     ""),
                 (self.ma.hr(), LangType.JPN, GroupType.STORY, 1, False,
                     "--------" * 9),
+                (self.ma.break_symbol("**"), LangType.JPN, GroupType.STORY, 1, False,
+                    "\n\n**\n\n"),
                 ]
 
         for act, lng, gtype, lv, dbg, expected in data:

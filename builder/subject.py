@@ -166,6 +166,17 @@ class Master(_BaseSubject):
         else:
             return (title,) + args
  
+    def break_symbol(self, char: str) -> TagAction:
+        """
+        Args:
+            char (str): a symbol character.
+        Returns:
+            TagAction object.
+        """
+        assert_isstr(char)
+
+        return TagAction(TagType.SYMBOL, char)
+
     def combine(self, *args: _BaseAction, lang: LangType=LangType.JPN):
         """
         Args:

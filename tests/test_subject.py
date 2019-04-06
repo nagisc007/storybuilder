@@ -5,7 +5,7 @@ import unittest
 from builder.sbutils import print_test_title
 from builder.subject import _BasePerson, DayTime, Item, Master, Stage, Word
 from builder.subject import Something, something
-from builder.subject import Action, ActionGroup
+from builder.subject import Action, ActionGroup, TagAction
 from builder.subject import Behavior
 from builder.subject import ActType, TagType
 
@@ -166,6 +166,20 @@ class MasterTest(unittest.TestCase):
                 self.assertEqual(tmp.name, name)
                 self.assertEqual(tmp.note, note)
 
+    def test_break_symbol(self):
+        data = [
+                ("****", "****"),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                tmp = self.ma.break_symbol(v)
+                self.assertIsInstance(tmp, TagAction)
+                self.assertEqual(tmp.act_type, ActType.TAG)
+                self.assertEqual(tmp.behavior, Behavior.NONE)
+                self.assertEqual(tmp.tag, TagType.SYMBOL)
+                self.assertEqual(tmp.note, expected)
+
     def test_combine(self):
         data = [
                 ((self.taro.tell("a test"),), 1),
@@ -189,6 +203,7 @@ class MasterTest(unittest.TestCase):
                 self.assertIsInstance(tmp, Action)
                 self.assertEqual(tmp.act_type, ActType.TAG)
                 self.assertEqual(tmp.behavior, Behavior.NONE)
+                self.assertEqual(tmp.tag, TagType.COMMENT)
                 self.assertEqual(tmp.note, cmt)
 
     def test_scene(self):

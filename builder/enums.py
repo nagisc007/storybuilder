@@ -83,6 +83,7 @@ class TagType(Enum):
     TITLE = auto()
     COMMENT = auto()
     HR = auto()
+    SYMBOL = auto()
 
     def __str__(self) -> str:
         return {
@@ -90,5 +91,6 @@ class TagType(Enum):
                 self.HR.value: "_HR",
                 self.NONE.value: "_NONE",
                 self.TITLE.value: "_TITLE",
+                self.SYMBOL.value: "_SYMBOL",
                 }[self.value]
 
