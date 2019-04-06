@@ -100,6 +100,8 @@ def _action_of_by_tag(act: TagAction, group_type: GroupType, level: int) -> str:
         return _hr_of()
     elif act.tag is TagType.SYMBOL:
         return _break_symbol_of(act)
+    elif act.tag is TagType.BR:
+        return "\n"
     else:
         return ""
 
@@ -214,6 +216,8 @@ def _description_of_by_tag(act: TagAction, lang: LangType, group_type: GroupType
         return _hr_of()
     elif act.tag is TagType.SYMBOL:
         return _break_symbol_of(act)
+    elif act.tag is TagType.BR:
+        return "\n"
     else:
         return ""
 

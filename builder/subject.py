@@ -166,6 +166,11 @@ class Master(_BaseSubject):
         else:
             return (title,) + args
  
+    def br(self, lines: int=1) -> TagAction:
+        assert_isint(lines)
+
+        return TagAction(TagType.BR, str(lines))
+
     def break_symbol(self, char: str) -> TagAction:
         """
         Args:
@@ -197,14 +202,15 @@ class Master(_BaseSubject):
         """
         return TagAction(TagType.HR, "")
 
-    def scene(self, title: str, *args: _BaseAction, lang: LangType=LangType.JPN):
+    def scene(self, title: str, *args: _BaseAction, lang: LangType=LangType.JPN, is_nobr: bool=False):
         """
         Args:
             title (str): a scene title.
             *args (:tuple:obj:`_BaseAction`): a scene actions.
             lang (:enum:`LangType`): a scene language type.
         """
-        return ActionGroup(lang=lang, group_type=GroupType.SCENE, *self._args_with_title_if(title, args))
+        return ActionGroup(lang=lang, group_type=GroupType.SCENE,
+                *self._args_with_title_if(title, args + (self.br(1),) if not is_nobr else ()))
 
     def story(self, title: str, *args: _BaseAction, lang: LangType=LangType.JPN):
         """
