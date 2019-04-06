@@ -222,9 +222,9 @@ def _description_of_by_type(act: Action, lang: LangType, group_type: GroupType, 
         return "> {}".format(descriptions_of_if(act, lang))
     elif not act.descs.data:
         return ""
-    elif act.act_type in (ActType.ACT, ActType.EXPLAIN):
+    elif act.act_type in (ActType.ACT, ActType.EXPLAIN) and not act.descs.is_dialogue:
         return _desc_str_replaced_tag(sentence_from(act, lang), act.subject)
-    elif act.act_type is ActType.TELL:
+    elif act.act_type is ActType.TELL or act.descs.is_dialogue:
         return _desc_str_replaced_tag(dialogue_from_description_if(act, lang), act.subject)
     else:
         return ""

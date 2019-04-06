@@ -38,19 +38,28 @@ class DescriptionTest(unittest.TestCase):
 
     def test_attributes(self):
         data = [
-                (("test",), False, ("test",), False),
-                (("test", "apple"), False, ("test", "apple"), False),
-                ("", False, (), False),
-                (("test",), True, ("test",), True),
-                (("test",), "", ("test",), True),
+                (("test",), False, False,
+                    ("test",), False, False),
+                (("test", "apple"), False, False,
+                    ("test", "apple"), False, False),
+                ("", False, False,
+                    (), False, False),
+                (("test",), True, False,
+                    ("test",), True, False),
+                (("test",), "", False,
+                    ("test",), True, False),
                 ]
 
-        for dsc, omt, exp_dsc, exp_omt in data:
-            with self.subTest(dsc=dsc, omt=omt, exp_dsc=exp_dsc, exp_omt=exp_omt):
+        for dsc, omt, dial, exp_dsc, exp_omt, exp_dial in data:
+            with self.subTest(dsc=dsc, omt=omt, dial=dial,
+                    exp_dsc=exp_dsc, exp_omt=exp_omt, exp_dial=exp_dial):
                 tmp = Description(dsc) if omt == "" else Description(dsc, omt)
+                if dial:
+                    tmp.dialogue()
                 self.assertIsInstance(tmp, Description)
                 self.assertEqual(tmp.data, exp_dsc)
                 self.assertEqual(tmp.is_omitted, exp_omt)
+                self.assertEqual(tmp.is_dialogue, exp_dial)
 
 
 class ActionTest(unittest.TestCase):
@@ -155,6 +164,21 @@ class ActionTest(unittest.TestCase):
                 else:
                     self.fail("Invalid value in AuxVerb")
                 self.assertEqual(self.act0.auxverb, v)
+
+    def test_tell(self):
+        data = [
+                ("test", False, False),
+                ("test", True, True),
+                ]
+
+        for doc, dial, expected in data:
+            tmp = self.taro.explain()
+            if dial:
+                tmp.tell(doc)
+            else:
+                tmp.desc(doc)
+            self.assertIsInstance(tmp.descs, Description)
+            self.assertEqual(tmp.descs.is_dialogue, expected)
 
 
 class ActionGroupTest(unittest.TestCase):
