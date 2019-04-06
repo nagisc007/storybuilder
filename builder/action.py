@@ -28,6 +28,7 @@ class Description(object):
 
     Attributes:
         descs (:tuple:str): description strings.
+        is_dialogue (:bool): if True, treating as a dialogue.
         is_omitted (:bool): if True, no output.
     """
     def __init__(self, descs, is_omitted: bool=True):
@@ -39,6 +40,7 @@ class Description(object):
         assert_isbool(is_omitted)
 
         self.data = self._descs_from(descs)
+        self.is_dialogue = False
         self.is_omitted = is_omitted
 
     def _descs_from(self, descs) -> tuple:
@@ -48,6 +50,9 @@ class Description(object):
             else:
                 return descs
         return ()
+
+    def dialogue(self):
+        self.is_dialogue = True
 
     def omitted(self):
         self.is_omitted = True
@@ -174,6 +179,11 @@ class Action(_BaseAction):
 
     def should(self):
         self._auxverb = AuxVerb.SHOULD
+        return self
+
+    def tell(self, *args):
+        self.desc(*args)
+        self.descs.dialogue()
         return self
 
     def think(self):

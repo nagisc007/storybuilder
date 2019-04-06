@@ -198,6 +198,10 @@ class PrivateMethodsTest(unittest.TestCase):
                     " test. "),
                 (self.taro.talk().desc("test").omit(), LangType.JPN, GroupType.STORY, 1, False,
                     ""),
+                (self.taro.talk().tell("test"), LangType.JPN, GroupType.STORY, 1, False,
+                    "「test」"),
+                (self.taro.talk().tell("test", "apple"), LangType.ENG, GroupType.STORY, 1, False,
+                    ' "test, apple" ')
                 ]
 
         for act, lng, gtype, lv, dbg, expected in data:
