@@ -134,6 +134,8 @@ class PublicMethodsTest(unittest.TestCase):
                     "　これを。ただしくする。"),
                 (" This is a pen.  the pen. ", LangType.ENG,
                     " This is a pen. the pen. "),
+                ("　これを。、ただしくして。", LangType.JPN,
+                    "　これを。ただしくして。"),
                 ]
 
         for v, lng, expected in data:
