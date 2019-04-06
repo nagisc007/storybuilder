@@ -74,7 +74,7 @@ def extraspace_chopped(target: str, lang: LangType) -> str:
     assert_isclass(lang, LangType)
 
     if lang is LangType.JPN:
-        return re.sub(r'。　(.)', r'。\1', target)
+        return re.sub(r'。[　、](.)', r'。\1', target)
     else:
         return re.sub(r'\s+', r' ', target)
 
