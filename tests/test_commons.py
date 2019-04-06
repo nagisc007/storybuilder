@@ -128,6 +128,18 @@ class PublicMethodsTest(unittest.TestCase):
             with self.subTest(act=act, lng=lng, expected=expected):
                 self.assertEqual(commons.dialogue_from_info(act, lng), expected)
 
+    def test_extraspace_chopped(self):
+        data = [
+                ("　これを。　ただしくする。", LangType.JPN,
+                    "　これを。ただしくする。"),
+                (" This is a pen.  the pen. ", LangType.ENG,
+                    " This is a pen. the pen. "),
+                ]
+
+        for v, lng, expected in data:
+            with self.subTest(v=v, lng=lng, expected=expected):
+                self.assertEqual(commons.extraspace_chopped(v, lng), expected)
+
     def test_infos_of(self):
         taro = Person("Taro", 17, "male", "student")
         data = [

@@ -338,10 +338,10 @@ class PrivateMethodsTest(unittest.TestCase):
         data = [
                 (ma.story(self.taro.talk().d("test"), self.hanako.talk().d("apple")),
                     GroupType.COMBI,
-                    "　test。　apple。"),
+                    "　test。apple。"),
                 (ma.story(self.taro.talk().d("test"), self.hanako.talk().d("apple"), lang=LangType.ENG),
                     GroupType.COMBI,
-                    " test.  apple. "),
+                    " test. apple. "),
                 ]
 
         for v, gtype, expected in data:
