@@ -297,3 +297,14 @@ class PrivateMethodsTest(unittest.TestCase):
                 self.assertEqual(commons._space_replaced_if_with_symbol(
                     origin, lng), expected)
 
+    def test_endpoint_replaced_if_with_comma(self):
+        data = [
+                (",.", LangType.ENG, "."),
+                (", .", LangType.ENG, ", ."),
+                ("、。", LangType.JPN, "。"),
+                ]
+
+        for origin, lng, expected in data:
+            with self.subTest(origin=origin, lng=lng, expected=expected):
+                self.assertEqual(commons._endpoint_replaced_if_with_comma(
+                    origin, lng), expected)

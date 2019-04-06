@@ -37,7 +37,8 @@ def description_of(act: Action, lang: LangType) -> str:
     assert_isclass(act, Action)
     assert_isclass(lang, LangType)
 
-    return _space_replaced_if_with_symbol(comma_of(lang).join(act.descs.data), lang)
+    return _endpoint_replaced_if_with_comma(
+            _space_replaced_if_with_symbol(comma_of(lang).join(act.descs.data), lang), lang)
 
 
 def descriptions_of_if(act: Action, lang: LangType) -> str:
@@ -196,4 +197,14 @@ def _space_replaced_if_with_symbol(target: str, lang: LangType) -> str:
         return re.sub(r'([！？])、', r'\1　', target)
     else:
         return re.sub(r'([!?])\,',  r'\1 ', target)
+
+
+def _endpoint_replaced_if_with_comma(target: str, lang: LangType) -> str:
+    assert_isstr(target)
+    assert_isclass(lang, LangType)
+
+    if lang is LangType.JPN:
+        return re.sub(r'[、]。', r'。', target)
+    else:
+        return re.sub(r'[,]\.', r'.', target)
 
