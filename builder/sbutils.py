@@ -6,6 +6,12 @@
 _ASSERT_MSG = "{} Must be type {}!"
 
 # public functions
+def assert_isbetween(ins, max_, min_) -> bool:
+    assert ins <= max_ and ins >= min_, "Must be between {} to {}".format(max_, min_)
+
+    return True
+
+
 def assert_isbool(ins) -> bool:
     assert isinstance(ins, bool), _ASSERT_MSG.format(_instance_name_if(ins), "bool")
 

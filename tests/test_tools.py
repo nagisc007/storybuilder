@@ -7,7 +7,7 @@ import os
 import sys
 from io import StringIO
 from builder.sbutils import print_test_title
-from builder.action import TagAction, GroupType
+from builder.action import Action, TagAction, GroupType
 from builder.enums import LangType
 from builder.person import Person
 from builder.subject import Item, Master, Word
@@ -99,10 +99,11 @@ class PrivateMethodsTest(unittest.TestCase):
                 self.assertEqual(tools._action_of_by_tag(act, gtype, lv), expected)
 
     def test_action_of_by_type(self):
+        DEF_PRI = Action.DEFAULT_PRIORITY
         data = [
-                (self.taro.talk(), LangType.JPN, GroupType.STORY, 1, 5, False,
+                (self.taro.talk(), LangType.JPN, GroupType.STORY, 1, DEF_PRI, False,
                     "- Taro　　:話す()　　/"),
-                (self.taro.talk(self.hanako), LangType.JPN, GroupType.STORY, 1, 5, False,
+                (self.taro.talk(self.hanako), LangType.JPN, GroupType.STORY, 1, DEF_PRI, False,
                     "- Taro　　:話す(Hanako)/"),
                 ]
 
@@ -200,27 +201,28 @@ class PrivateMethodsTest(unittest.TestCase):
                         expected)
 
     def test_description_of_by_type(self):
+        DEF_PRI = Action.DEFAULT_PRIORITY
         data = [
-                (self.taro.talk(), LangType.JPN, GroupType.STORY, 1, False,
+                (self.taro.talk(), LangType.JPN, GroupType.STORY, 1, DEF_PRI, False,
                     ""),
-                (self.taro.talk().desc("test"), LangType.JPN, GroupType.STORY, 1, False,
+                (self.taro.talk().desc("test"), LangType.JPN, GroupType.STORY, 1, DEF_PRI, False,
                     "　test。"),
-                (self.taro.talk().desc("test", "is good"), LangType.JPN, GroupType.STORY, 1, False,
+                (self.taro.talk().desc("test", "is good"), LangType.JPN, GroupType.STORY, 1, DEF_PRI, False,
                     "　test、is good。"),
-                (self.taro.talk().desc("test"), LangType.ENG, GroupType.STORY, 1, False,
+                (self.taro.talk().desc("test"), LangType.ENG, GroupType.STORY, 1, DEF_PRI, False,
                     " test. "),
-                (self.taro.talk().desc("test").omit(), LangType.JPN, GroupType.STORY, 1, False,
+                (self.taro.talk().desc("test").omit(), LangType.JPN, GroupType.STORY, 1, DEF_PRI, False,
                     ""),
-                (self.taro.talk().tell("test"), LangType.JPN, GroupType.STORY, 1, False,
+                (self.taro.talk().tell("test"), LangType.JPN, GroupType.STORY, 1, DEF_PRI, False,
                     "「test」"),
-                (self.taro.talk().tell("test", "apple"), LangType.ENG, GroupType.STORY, 1, False,
+                (self.taro.talk().tell("test", "apple"), LangType.ENG, GroupType.STORY, 1, DEF_PRI, False,
                     ' "test, apple" ')
                 ]
 
-        for act, lng, gtype, lv, dbg, expected in data:
-            with self.subTest(act=act, lng=lng, gtype=gtype, lv=lv, dbg=dbg,
+        for act, lng, gtype, lv, pri, dbg, expected in data:
+            with self.subTest(act=act, lng=lng, gtype=gtype, lv=lv, pri=pri, dbg=dbg,
                     expected=expected):
-                self.assertEqual(tools._description_of_by_type(act, lng, gtype, lv, dbg),
+                self.assertEqual(tools._description_of_by_type(act, lng, gtype, lv, pri, dbg),
                         expected)
 
     def test_flag_info_if(self):
@@ -332,7 +334,7 @@ class PrivateMethodsTest(unittest.TestCase):
 
 
     def test_story_converted_as_description(self):
-        self.assertEqual(tools._story_converted_as_description(self.story, False),
+        self.assertEqual(tools._story_converted_as_description(self.story, 5, False),
                 ["# Taro and Hanako\n",
                     " a cute girl come in. ",
                     ' "Nice to meet you" ',
@@ -357,7 +359,7 @@ class PrivateMethodsTest(unittest.TestCase):
         for v, gtype, expected in data:
             with self.subTest(v=v, gtype=gtype, expected=expected):
                 self.assertEqual(tools._story_converted_as_description_in_group(
-                    v, gtype, 1, False), expected)
+                    v, gtype, 1, 5, False), expected)
 
     def test_story_data_converted(self):
         self.assertEqual(tools._story_data_converted(self.story, True, 0, False),

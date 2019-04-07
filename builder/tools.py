@@ -222,14 +222,16 @@ def _description_of_by_tag(act: TagAction, lang: LangType, group_type: GroupType
         return ""
 
 
-def _description_of_by_type(act: Action, lang: LangType, group_type: GroupType, level: int, is_debug: bool) -> str:
+def _description_of_by_type(act: Action, lang: LangType, group_type: GroupType, level: int,
+        pri_filter: int, is_debug: bool) -> str:
     assert_isclass(act, Action)
     assert_isclass(lang, LangType)
     assert_isclass(group_type, GroupType)
     assert_isint(level)
+    assert_isint(pri_filter)
     assert_isbool(is_debug)
 
-    if act.descs.is_omitted:
+    if act.priority < pri_filter:
         return ""
     elif act.act_type is ActType.TAG:
         return _description_of_by_tag(act, lang, group_type, level, is_debug)
@@ -349,25 +351,28 @@ def _story_converted_as_action_in_group(group: ActionGroup, group_type: GroupTyp
     return tmp
 
 
-def _story_converted_as_description(story: ActionGroup, is_debug: bool):
+def _story_converted_as_description(story: ActionGroup, pri_filter: int, is_debug: bool):
     assert_isclass(story, ActionGroup)
+    assert_isint(pri_filter)
     assert_isbool(is_debug)
 
-    return _story_converted_as_description_in_group(story, story.group_type, 1, is_debug)
+    return _story_converted_as_description_in_group(story, story.group_type, 1, pri_filter, is_debug)
 
 
-def _story_converted_as_description_in_group(group: ActionGroup, group_type: GroupType, level: int, is_debug: bool):
+def _story_converted_as_description_in_group(group: ActionGroup, group_type: GroupType, level: int,
+        pri_filter: int, is_debug: bool):
     assert_isclass(group, ActionGroup)
     assert_isclass(group_type, GroupType)
     assert_isint(level)
+    assert_isint(pri_filter)
     assert_isbool(is_debug)
 
     tmp = []
     for a in group.actions:
         if isinstance(a, ActionGroup):
-            tmp.extend(_story_converted_as_description_in_group(a, a.group_type, level + 1, is_debug))
+            tmp.extend(_story_converted_as_description_in_group(a, a.group_type, level + 1, pri_filter, is_debug))
         else:
-            val = _description_of_by_type(a, group.lang, group.group_type, level, is_debug)
+            val = _description_of_by_type(a, group.lang, group.group_type, level, pri_filter, is_debug)
             if val:
                 tmp.append(val)
     if group_type is GroupType.COMBI:
@@ -392,7 +397,7 @@ def _story_data_converted(story: ActionGroup, is_action_data: bool, pri_filter: 
     assert_isint(pri_filter)
     assert_isbool(is_debug)
 
-    return  _story_converted_as_action(story, pri_filter, is_debug) if is_action_data else _story_converted_as_description(story, is_debug)
+    return  _story_converted_as_action(story, pri_filter, is_debug) if is_action_data else _story_converted_as_description(story, pri_filter, is_debug)
 
 
 def _story_title_of(act: TagAction, level: int) -> str:

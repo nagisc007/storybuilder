@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Define an action class.
 """
-from .sbutils import assert_isclass, assert_isstr, assert_isbool
+from .sbutils import assert_isclass, assert_isstr, assert_isbool, assert_isbetween
 from .enums import ActType, AuxVerb, GroupType, LangType, TagType
 from .basesubject import _BaseSubject, Nothing
 from .behavior import Behavior
@@ -29,19 +29,16 @@ class Description(object):
     Attributes:
         descs (:tuple:str): description strings.
         is_dialogue (:bool): if True, treating as a dialogue.
-        is_omitted (:bool): if True, no output.
     """
-    def __init__(self, descs, is_omitted: bool=True):
+    def __init__(self, descs, is_dialogue: bool=False):
         """
         Args:
             descs (:tuple:str): descriptions
-            is_omitted (bool, optional): a omit flag.
         """
-        assert_isbool(is_omitted)
+        assert_isbool(is_dialogue)
 
         self.data = self._descs_from(descs)
-        self.is_dialogue = False
-        self.is_omitted = is_omitted
+        self.is_dialogue = is_dialogue
 
     def _descs_from(self, descs) -> tuple:
         if descs:
@@ -53,9 +50,6 @@ class Description(object):
 
     def dialogue(self):
         self.is_dialogue = True
-
-    def omitted(self):
-        self.is_omitted = True
 
 
 class Action(_BaseAction):
@@ -135,8 +129,8 @@ class Action(_BaseAction):
     def d(self, *args):
         return self.desc(*args)
 
-    def desc(self, *args):
-        self.descs = Description(args, is_omitted=False)
+    def desc(self, *args, is_dialogue: bool=False):
+        self.descs = Description(args, is_dialogue=True) if is_dialogue else Description(args)
         return self
 
     def may(self):
@@ -154,7 +148,9 @@ class Action(_BaseAction):
     def non(self): return self.negative()
 
     def omit(self):
-        self.descs.omitted()
+        """Set minimum priority.
+        """
+        self._priority = Action.MIN_PRIORITY
         return self
 
     def passive(self):
@@ -172,7 +168,7 @@ class Action(_BaseAction):
         return self
 
     def set_priority(self, pri):
-        assert pri <= Action.MAX_PRIORITY and pri >= Action.MIN_PRIORITY, "pri Must be between {} to {}".format(Action.MAX_PRIORITY, Action.MIN_PRIORITY)
+        assert_isbetween(pri, Action.MAX_PRIORITY, Action.MIN_PRIORITY)
 
         self._priority = pri
         return self
@@ -182,8 +178,7 @@ class Action(_BaseAction):
         return self
 
     def tell(self, *args):
-        self.desc(*args)
-        self.descs.dialogue()
+        self.desc(*args, is_dialogue=True)
         return self
 
     def think(self):
@@ -235,5 +230,4 @@ class TagAction(Action):
         
         self.note = note
         self.tag = tag
-        self.desc("") # default no omitted
 

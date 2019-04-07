@@ -38,27 +38,19 @@ class DescriptionTest(unittest.TestCase):
 
     def test_attributes(self):
         data = [
-                (("test",), False, False,
-                    ("test",), False, False),
-                (("test", "apple"), False, False,
-                    ("test", "apple"), False, False),
-                ("", False, False,
-                    (), False, False),
-                (("test",), True, False,
-                    ("test",), True, False),
-                (("test",), "", False,
-                    ("test",), True, False),
+                (("test",), None, ("test",), False),
+                (("test", "apple"), None, ("test", "apple"), False),
+                ("", None, (), False),
+                (("test",), True, ("test",), True),
+                (("test",), False, ("test",), False),
+                (("test",), None, ("test",), False),
                 ]
 
-        for dsc, omt, dial, exp_dsc, exp_omt, exp_dial in data:
-            with self.subTest(dsc=dsc, omt=omt, dial=dial,
-                    exp_dsc=exp_dsc, exp_omt=exp_omt, exp_dial=exp_dial):
-                tmp = Description(dsc) if omt == "" else Description(dsc, omt)
-                if dial:
-                    tmp.dialogue()
+        for dsc, dial, exp_dsc, exp_dial in data:
+            with self.subTest(dsc=dsc, dial=dial, exp_dsc=exp_dsc, exp_dial=exp_dial):
+                tmp = Description(dsc) if dial is None else Description(dsc, dial)
                 self.assertIsInstance(tmp, Description)
                 self.assertEqual(tmp.data, exp_dsc)
-                self.assertEqual(tmp.is_omitted, exp_omt)
                 self.assertEqual(tmp.is_dialogue, exp_dial)
 
 
@@ -164,6 +156,19 @@ class ActionTest(unittest.TestCase):
                 else:
                     self.fail("Invalid value in AuxVerb")
                 self.assertEqual(self.act0.auxverb, v)
+
+    def test_omit(self):
+        data = [
+                ("test", None, Action.DEFAULT_PRIORITY),
+                ("test", True, Action.MIN_PRIORITY),
+                ]
+
+        for v, omt, expected in data:
+            with self.subTest(v=v, omt=omt, expected=expected):
+                tmp = self.taro.explain()
+                if omt:
+                    tmp.omit()
+                self.assertEqual(tmp.priority, expected)
 
     def test_tell(self):
         data = [
