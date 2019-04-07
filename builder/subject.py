@@ -209,8 +209,12 @@ class Master(_BaseSubject):
             *args (:tuple:obj:`_BaseAction`): a scene actions.
             lang (:enum:`LangType`): a scene language type.
         """
-        return ActionGroup(lang=lang, group_type=GroupType.SCENE,
-                *self._args_with_title_if(title, args + (self.br(1),) if not is_nobr else ()))
+        tmp = ()
+        if not is_nobr:
+            tmp = self._args_with_title_if(title, args + (self.br(1),))
+        else:
+            tmp = self._args_with_title_if(title, args)
+        return ActionGroup(lang=lang, group_type=GroupType.SCENE, *tmp)
 
     def story(self, title: str, *args: _BaseAction, lang: LangType=LangType.JPN):
         """
