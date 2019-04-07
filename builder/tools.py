@@ -8,7 +8,7 @@ import re
 from .sbutils import assert_isclass, assert_isbool, assert_isint, assert_isstr
 from .action import Action, ActionGroup, TagAction
 from .commons import behavior_with_np_of, descriptions_of_if, dialogue_from_description_if, dialogue_from_info
-from .commons import extraspace_chopped, infos_of, object_names_of, sentence_from, subject_name_of
+from .commons import extraspace_chopped, extraend_chopped, infos_of, object_names_of, sentence_from, subject_name_of
 from .enums import ActType, GroupType, TagType, LangType
 from .subject import _BaseSubject
 from .person import Person
@@ -412,9 +412,9 @@ def _story_converted_as_description_in_group(group: ActionGroup, group_type: Gro
         else:
             val = _description_of_by_type(a, group.lang, group.group_type, level, pri_filter, is_debug)
             if val:
-                tmp.append(extraspace_chopped(val, group.lang))
+                tmp.append(extraend_chopped(extraspace_chopped(val, group.lang), group.lang))
     if group_type is GroupType.COMBI:
-        return [extraspace_chopped("".join(tmp), group.lang),]
+        return [extraend_chopped(extraspace_chopped("".join(tmp), group.lang), group.lang),]
     else:
         return tmp
 
