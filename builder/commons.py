@@ -69,6 +69,16 @@ def dialogue_from_info(act: Action, lang: LangType) -> str:
     return "「{}」".format(infos_of(act).replace('/', '、')) if lang == LangType.JPN else ' "{}" '.format(infos_of(act).replace('/', ', '))
 
 
+def double_comma_chopped(target: str, lang: LangType) -> str:
+    assert_isstr(target)
+    assert_isclass(lang, LangType)
+
+    if lang is LangType.JPN:
+        return re.sub(r'([、。]){2}', r'\1', target)
+    else:
+        return re.sub(r'([,\.]){2}', r'\1', target)
+
+
 def extraend_chopped(target: str, lang: LangType) -> str:
     assert_isstr(target)
     assert_isclass(lang, LangType)
@@ -84,7 +94,7 @@ def extraspace_chopped(target: str, lang: LangType) -> str:
     assert_isclass(lang, LangType)
 
     if lang is LangType.JPN:
-        return re.sub(r'。[　、](.)', r'。\1', target)
+        return re.sub(r'([。」])[　、](.)', r'\1\2', target)
     else:
         return re.sub(r' +', r' ', target)
 

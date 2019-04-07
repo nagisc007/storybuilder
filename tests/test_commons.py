@@ -128,6 +128,18 @@ class PublicMethodsTest(unittest.TestCase):
             with self.subTest(act=act, lng=lng, expected=expected):
                 self.assertEqual(commons.dialogue_from_info(act, lng), expected)
 
+    def test_double_comma_chopped(self):
+        data = [
+                ("　これを。。ただしく。。", LangType.JPN,
+                    "　これを。ただしく。"),
+                (" This is a pen.. the pen. ", LangType.ENG,
+                    " This is a pen. the pen. "),
+                ]
+
+        for v, lng, expected in data:
+            with self.subTest(v=v, lng=lng, expected=expected):
+                self.assertEqual(commons.double_comma_chopped(v, lng), expected)
+
     def test_extraspace_chopped(self):
         data = [
                 ("　これを。　ただしくする。", LangType.JPN,
@@ -136,6 +148,8 @@ class PublicMethodsTest(unittest.TestCase):
                     " This is a pen. the pen. "),
                 ("　これを。、ただしくして。", LangType.JPN,
                     "　これを。ただしくして。"),
+                ("「これを」　正しくする。", LangType.JPN,
+                    "「これを」正しくする。"),
                 ]
 
         for v, lng, expected in data:
