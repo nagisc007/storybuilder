@@ -167,6 +167,43 @@ class PrivateMethodsTest(unittest.TestCase):
                 tmp = self.ma.comment(v)
                 self.assertEqual(tools._comment_of(tmp), expected)
 
+    def test_count_desc_at_action(self):
+        data = [
+                (self.taro.talk().d("test\n"), 4),
+                (self.taro.talk().d("test", "apple"), 9),
+                (self.taro.talk().d(""), 0),
+                (self.taro.talk().d("おはよう"), 4),
+                (self.taro.talk().d("　おはよう。"), 5),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(tools._count_desc_at_action(v), expected)
+
+    def test_count_desc_in_group(self):
+        data = [
+                (self.ma.scene("test", self.taro.talk().d("test")),
+                    4),
+                (self.ma.scene("test", self.taro.talk().d("test"), self.taro.talk().d("test")),
+                    8),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(tools._count_desc_in_group(v), expected)
+
+    def test_count_descriptions(self):
+        data = [
+                (self.ma.scene("test", self.taro.talk().d("test")),
+                    4),
+                (self.ma.scene("test", self.taro.talk().d("test"), self.taro.talk().d("test")),
+                    8),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(tools._count_descriptions(v), expected)
+
     def test_desc_str_replaced_tag(self):
         data = [
                 ("$Sだった", self.taro, "meだった"),

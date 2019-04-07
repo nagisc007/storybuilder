@@ -28,7 +28,8 @@ def build_to_story(story: ActionGroup):
     FILE_NAME = "story"
     options = options_parsed()
     file_name = options.filename if options.filename else FILE_NAME
-    return output_story(story, file_name, options.action, options.build, options.priority, options.debug)
+    return output_story(story, file_name, options.action, options.build,
+            options.charcount, options.priority, options.debug)
 
 
 def options_parsed():
@@ -41,6 +42,7 @@ def options_parsed():
 
     parser.add_argument('-a', '--action', help="output as action data", action='store_true')
     parser.add_argument('-b', '--build', help="build and output as a file", action='store_true')
+    parser.add_argument('-c', '--charcount', help="display characters count", action='store_true')
     parser.add_argument('-d', '--debug', help="with debug mode", action='store_true')
     parser.add_argument('-i', '--info', help="display with informations", action='store_true')
     parser.add_argument('-f', '--filename', help="advanced output file name")
@@ -53,7 +55,8 @@ def options_parsed():
 
 
 def output_story(story: ActionGroup, filename: str, is_action_data: bool=False,
-        is_out_as_file: bool=False, pri_filter: int=Action.MIN_PRIORITY,
+        is_out_as_file: bool=False, is_out_chars: bool=False,
+        pri_filter: int=Action.MIN_PRIORITY,
         is_debug: bool=False):
     '''Output a story.
 
@@ -71,8 +74,14 @@ def output_story(story: ActionGroup, filename: str, is_action_data: bool=False,
     assert_isstr(filename)
     assert_isbool(is_action_data)
     assert_isbool(is_out_as_file)
+    assert_isbool(is_out_chars)
     assert_isint(pri_filter)
     assert_isbool(is_debug)
+
+    if is_out_chars:
+        total_chars = _count_descriptions(story)
+        print("Characters:\n")
+        print("    Total: {}".format(total_chars))
 
     if is_out_as_file:
         return _output_story_to_file(
@@ -187,6 +196,30 @@ def _comment_of(act: TagAction) -> str:
     return "<!--{}-->".format(act.note)
 
 
+def _count_desc_at_action(act: Action) -> int:
+    assert_isclass(act, Action)
+
+    return sum([len(_desc_excepted_symbols(v)) for v in act.descs.data if not act.act_type in (ActType.TAG, ActType.TEST)])
+
+
+def _count_desc_in_group(group: ActionGroup) -> int:
+    assert_isclass(group, ActionGroup)
+
+    tmp = []
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            tmp.append(_count_desc_in_group(a))
+        else:
+            tmp.append(_count_desc_at_action(a))
+    return sum(tmp)
+
+
+def _count_descriptions(story: ActionGroup) -> int:
+    assert_isclass(story, ActionGroup)
+
+    return _count_desc_in_group(story)
+
+
 def _desc_str_replaced_tag(descstr: str, subject: _BaseSubject) -> str:
     assert_isstr(descstr)
     assert_isclass(subject, _BaseSubject)
@@ -246,6 +279,11 @@ def _description_of_by_type(act: Action, lang: LangType, group_type: GroupType, 
     else:
         return ""
 
+
+def _desc_excepted_symbols(target: str) -> str:
+    assert_isstr(target)
+
+    return re.sub(r'　|\s|\n|\r', '', target)
 
 def _flag_info_if(act: Action) -> str:
     assert_isclass(act, Action)
