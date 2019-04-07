@@ -412,7 +412,7 @@ def _story_converted_as_description_in_group(group: ActionGroup, group_type: Gro
         else:
             val = _description_of_by_type(a, group.lang, group.group_type, level, pri_filter, is_debug)
             if val:
-                tmp.append(val)
+                tmp.append(extraspace_chopped(val, group.lang))
     if group_type is GroupType.COMBI:
         return [extraspace_chopped("".join(tmp), group.lang),]
     else:

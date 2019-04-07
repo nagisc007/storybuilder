@@ -76,7 +76,7 @@ def extraspace_chopped(target: str, lang: LangType) -> str:
     if lang is LangType.JPN:
         return re.sub(r'。[　、](.)', r'。\1', target)
     else:
-        return re.sub(r'\s+', r' ', target)
+        return re.sub(r' +', r' ', target)
 
 
 def infos_of(act: Action) -> str:
