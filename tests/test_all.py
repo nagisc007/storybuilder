@@ -7,8 +7,8 @@ import test_action
 import test_basesubject
 import test_commons
 import test_enums
+import test_master
 import test_person
-import test_storydb
 import test_subject
 import test_testtools
 import test_tools
@@ -40,17 +40,16 @@ def suite():
     # enums
     suite.addTest(unittest.makeSuite(test_enums.EnumsTest))
 
+    # master
+    suite.addTest(unittest.makeSuite(test_master.MasterTest))
+
     # person
     suite.addTest(unittest.makeSuite(test_person.PersonTest))
-
-    # storydb
-    suite.addTest(unittest.makeSuite(test_storydb.StoryDBTEST))
 
     # subject
     suite.addTest(unittest.makeSuite(test_subject.BasePersonTest))
     suite.addTest(unittest.makeSuite(test_subject.DayTimeTest))
     suite.addTest(unittest.makeSuite(test_subject.ItemTest))
-    suite.addTest(unittest.makeSuite(test_subject.MasterTest))
     suite.addTest(unittest.makeSuite(test_subject.SomethingTest))
     suite.addTest(unittest.makeSuite(test_subject.WordTest))
 

@@ -4,8 +4,9 @@
 import unittest
 from builder.sbutils import print_test_title
 from builder.basesubject import Info, Nothing
+from builder.master import Master
 from builder.person import Person
-from builder.subject import DayTime, Item, Master, Stage, something, Word
+from builder.subject import DayTime, Item, Stage, something, Word
 import builder.testtools as testtools
 
 

@@ -9,8 +9,9 @@ from io import StringIO
 from builder.sbutils import print_test_title
 from builder.action import Action, TagAction, GroupType
 from builder.enums import LangType
+from builder.master import Master
 from builder.person import Person
-from builder.subject import Item, Master, Word
+from builder.subject import Item, Word
 import builder.tools as tools
 
 

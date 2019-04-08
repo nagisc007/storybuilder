@@ -3,7 +3,7 @@
 """
 import unittest
 from builder.sbutils import print_test_title
-from builder.subject import _BasePerson, DayTime, Item, Master, Stage, Word
+from builder.subject import _BasePerson, DayTime, Item, Stage, Word
 from builder.subject import Something, something
 from builder.subject import Action, ActionGroup, TagAction
 from builder.subject import Behavior
@@ -140,79 +140,6 @@ class ItemTest(unittest.TestCase):
                 self.assertEqual(tmp.note, note)
 
     def test_inherit(self):
-        pass
-
-
-class MasterTest(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        print("\n**** TEST: subject.py - Master ****")
-
-    def setUp(self):
-        self.ma = Master('test')
-        self.taro = _BasePerson("Taro", 17, "male", "student")
-
-    def test_attributes(self):
-        data = [
-                ("a test", "a note"),
-                ("a test", ""),
-                ]
-
-        for name, note in data:
-            with self.subTest(name=name, note=note):
-                tmp = Master(name, note) if note else Master(name)
-                self.assertIsInstance(tmp, Master)
-                self.assertEqual(tmp.name, name)
-                self.assertEqual(tmp.note, note)
-
-    def test_break_symbol(self):
-        data = [
-                ("****", "****"),
-                ]
-
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                tmp = self.ma.break_symbol(v)
-                self.assertIsInstance(tmp, TagAction)
-                self.assertEqual(tmp.act_type, ActType.TAG)
-                self.assertEqual(tmp.behavior, Behavior.NONE)
-                self.assertEqual(tmp.tag, TagType.SYMBOL)
-                self.assertEqual(tmp.note, expected)
-
-    def test_combine(self):
-        data = [
-                ((self.taro.tell("a test"),), 1),
-                ((self.taro.tell("a test"), self.taro.tell("a test")), 2),
-                ]
-
-        for args, expected in data:
-            with self.subTest(args=args, expected=expected):
-                tmp = self.ma.combine(*args)
-                self.assertIsInstance(tmp, ActionGroup)
-                self.assertEqual(len(tmp.actions), expected)
-                self.assertEqual(tmp.actions, args)
-
-    def test_comment(self):
-        data = [
-                ("a test"),
-                ]
-        for cmt in data:
-            with self.subTest(cmt=cmt):
-                tmp = self.ma.comment(cmt)
-                self.assertIsInstance(tmp, Action)
-                self.assertEqual(tmp.act_type, ActType.TAG)
-                self.assertEqual(tmp.behavior, Behavior.NONE)
-                self.assertEqual(tmp.tag, TagType.COMMENT)
-                self.assertEqual(tmp.note, cmt)
-
-    def test_scene(self):
-        pass
-
-    def test_story(self):
-        pass
-
-    def test_title(self):
         pass
 
 
