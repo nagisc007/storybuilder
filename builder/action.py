@@ -2,7 +2,8 @@
 """Define an action class.
 """
 from .sbutils import assert_isclass, assert_isstr, assert_isbool, assert_isbetween
-from .enums import ActType, AuxVerb, GroupType, LangType, TagType
+from .description import Desc
+from .enums import ActType, DescType, AuxVerb, GroupType, LangType, TagType
 from .basesubject import _BaseSubject, Nothing
 from .behavior import Behavior
 
@@ -23,42 +24,13 @@ class _BaseAction(object):
         self.name = name
 
 
-class Description(object):
-    """Description class.
-
-    Attributes:
-        descs (:tuple:str): description strings.
-        is_dialogue (:bool): if True, treating as a dialogue.
-    """
-    def __init__(self, descs, is_dialogue: bool=False):
-        """
-        Args:
-            descs (:tuple:str): descriptions
-        """
-        assert_isbool(is_dialogue)
-
-        self.data = self._descs_from(descs)
-        self.is_dialogue = is_dialogue
-
-    def _descs_from(self, descs) -> tuple:
-        if descs:
-            if isinstance(descs, str):
-                return (descs,)
-            else:
-                return descs
-        return ()
-
-    def dialogue(self):
-        self.is_dialogue = True
-
-
 class Action(_BaseAction):
     """A general action class.
 
     Attributes:
         act_type (:enum:`ActType`): an action category type.
         behavior (:enum:`Behavior`): a behavior type of this action.
-        descs (:obj:`Description`): descriptions data object.
+        descs (:obj:`_BaseDesc`): descriptions data object.
         objects (:tuple:obj:`_BaseSubject`): objects of this action.
         subject (:obj:`_BaseSubject`): a subject of this action.
         _auxverb (:enum:`AuxVerb`): an auxiliary verb.
@@ -94,7 +66,7 @@ class Action(_BaseAction):
         self._priority = Action.DEFAULT_PRIORITY
         self.act_type = act_type
         self.behavior = behavior
-        self.descs = Description("")
+        self.descs = Desc("")
         self.objects = objects
         self.subject = subject
 
@@ -130,7 +102,7 @@ class Action(_BaseAction):
         return self.desc(*args)
 
     def desc(self, *args, is_dialogue: bool=False):
-        self.descs = Description(args, is_dialogue=True) if is_dialogue else Description(args)
+        self.descs = Desc(args, desc_type=DescType.DIALOGUE) if is_dialogue else Desc(args)
         return self
 
     def may(self):

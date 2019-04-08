@@ -48,6 +48,23 @@ class AuxVerb(Enum):
                 }[self.value]
 
 
+class DescType(Enum):
+    """Description type enum.
+    """
+    NONE = auto()
+    DESCRIPTION = auto()
+    DIALOGUE = auto()
+    TAG = auto()
+
+    def __str__(self) -> str:
+        return {
+                self.DESCRIPTION.value: "_DESCRIPTION",
+                self.DIALOGUE.value: "_DIALOGUE",
+                self.NONE.value: "_NONE",
+                self.TAG.value: "_TAG",
+                }[self.value]
+
+
 class GroupType(Enum):
     """Action group type enum.
     """

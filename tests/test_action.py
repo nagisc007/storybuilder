@@ -3,10 +3,11 @@
 """
 import unittest
 from builder.sbutils import print_test_title
-from builder.action import _BaseAction, Action, ActionGroup, Description, TagAction
+from builder.action import _BaseAction, Action, ActionGroup, Desc, TagAction
 from builder.action import _BaseSubject
 from builder.action import Behavior
 from builder.action import ActType, AuxVerb, GroupType, LangType, TagType
+from builder.enums import DescType
 
 
 _FILENAME = "action.py"
@@ -28,30 +29,6 @@ class BaseActionTest(unittest.TestCase):
                 tmp = _BaseAction(name)
                 self.assertIsInstance(tmp, _BaseAction)
                 self.assertEqual(tmp.name, name)
-
-
-class DescriptionTest(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        print_test_title(_FILENAME, "Description")
-
-    def test_attributes(self):
-        data = [
-                (("test",), None, ("test",), False),
-                (("test", "apple"), None, ("test", "apple"), False),
-                ("", None, (), False),
-                (("test",), True, ("test",), True),
-                (("test",), False, ("test",), False),
-                (("test",), None, ("test",), False),
-                ]
-
-        for dsc, dial, exp_dsc, exp_dial in data:
-            with self.subTest(dsc=dsc, dial=dial, exp_dsc=exp_dsc, exp_dial=exp_dial):
-                tmp = Description(dsc) if dial is None else Description(dsc, dial)
-                self.assertIsInstance(tmp, Description)
-                self.assertEqual(tmp.data, exp_dsc)
-                self.assertEqual(tmp.is_dialogue, exp_dial)
 
 
 class ActionTest(unittest.TestCase):
@@ -94,7 +71,7 @@ class ActionTest(unittest.TestCase):
         for d in data:
             with self.subTest(d=d):
                 self.act0.desc(*d)
-                self.assertIsInstance(self.act0.descs, Description)
+                self.assertIsInstance(self.act0.descs, Desc)
                 self.assertEqual(self.act0.descs.data, d)
 
     def test_negative(self):
@@ -172,8 +149,8 @@ class ActionTest(unittest.TestCase):
 
     def test_tell(self):
         data = [
-                ("test", False, False),
-                ("test", True, True),
+                ("test", False, DescType.DESCRIPTION),
+                ("test", True, DescType.DIALOGUE),
                 ]
 
         for doc, dial, expected in data:
@@ -182,8 +159,8 @@ class ActionTest(unittest.TestCase):
                 tmp.tell(doc)
             else:
                 tmp.desc(doc)
-            self.assertIsInstance(tmp.descs, Description)
-            self.assertEqual(tmp.descs.is_dialogue, expected)
+            self.assertIsInstance(tmp.descs, Desc)
+            self.assertEqual(tmp.descs.desc_type, expected)
 
 
 class ActionGroupTest(unittest.TestCase):

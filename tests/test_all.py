@@ -6,6 +6,7 @@ import unittest
 import test_action
 import test_basesubject
 import test_commons
+import test_description
 import test_enums
 import test_master
 import test_person
@@ -22,7 +23,6 @@ def suite():
 
     # action
     suite.addTest(unittest.makeSuite(test_action.BaseActionTest))
-    suite.addTest(unittest.makeSuite(test_action.DescriptionTest))
     suite.addTest(unittest.makeSuite(test_action.ActionTest))
     suite.addTest(unittest.makeSuite(test_action.ActionGroupTest))
     suite.addTest(unittest.makeSuite(test_action.TagActionTest))
@@ -36,6 +36,11 @@ def suite():
     # commons
     suite.addTest(unittest.makeSuite(test_commons.PublicMethodsTest))
     suite.addTest(unittest.makeSuite(test_commons.PrivateMethodsTest))
+
+    # description
+    suite.addTest(unittest.makeSuite(test_description.BaseDescTest))
+    suite.addTest(unittest.makeSuite(test_description.DescTest))
+    suite.addTest(unittest.makeSuite(test_description.DescGroupTest))
 
     # enums
     suite.addTest(unittest.makeSuite(test_enums.EnumsTest))

@@ -3,7 +3,7 @@
 """
 import unittest
 from builder.sbutils import print_test_title
-from builder.action import Action, Description
+from builder.action import Action, Desc
 from builder.basesubject import _BaseSubject
 from builder.behavior import Behavior
 from builder.enums import ActType, LangType
@@ -65,10 +65,10 @@ class PublicMethodsTest(unittest.TestCase):
         for dsc, lng, expected in data:
             tmp = Action(self.taro, ActType.ACT, Behavior.DO, ())
             self.assertIsInstance(tmp, Action)
-            self.assertIsInstance(tmp.descs, Description)
+            self.assertIsInstance(tmp.descs, Desc)
             self.assertFalse(tmp.descs.data)
             tmp.desc(*dsc)
-            self.assertIsInstance(tmp.descs, Description)
+            self.assertIsInstance(tmp.descs, Desc)
             self.assertEqual(tmp.descs.data, dsc)
             self.assertEqual(commons.description_of(tmp, lng), expected)
 

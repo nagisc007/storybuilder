@@ -10,7 +10,7 @@ from .action import Action, ActionGroup, TagAction
 from .commons import behavior_with_np_of, descriptions_of_if, dialogue_from_description_if, dialogue_from_info
 from .commons import double_comma_chopped, extraspace_chopped, extraend_chopped
 from .commons import infos_of, object_names_of, sentence_from, subject_name_of
-from .enums import ActType, GroupType, TagType, LangType
+from .enums import ActType, DescType, GroupType, TagType, LangType
 from .subject import _BaseSubject
 from .person import Person
 
@@ -273,9 +273,9 @@ def _description_of_by_type(act: Action, lang: LangType, group_type: GroupType, 
         return "> {}".format(descriptions_of_if(act, lang))
     elif not act.descs.data:
         return ""
-    elif act.act_type in (ActType.ACT, ActType.EXPLAIN) and not act.descs.is_dialogue:
+    elif act.act_type in (ActType.ACT, ActType.EXPLAIN) and not act.descs.desc_type is DescType.DIALOGUE:
         return _desc_str_replaced_tag(sentence_from(act, lang), act.subject)
-    elif act.act_type is ActType.TELL or act.descs.is_dialogue:
+    elif act.act_type is ActType.TELL or act.descs.desc_type is DescType.DIALOGUE:
         return _desc_str_replaced_tag(dialogue_from_description_if(act, lang), act.subject)
     else:
         return ""
