@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.0] - 2019-04-10
+### Added
+- new Base Action
+- new Base Subject
+- Subject class for basic all subject
+### Changed
+- StoryDB to Master
+- All tests with new Action and Subject
+### Deleted
+- Behavior
+- BehavType
+- old Person class (have many attr)
+
 ## [0.0.9] - 2019-04-08
 ### Added
 - Characters count
@@ -120,7 +133,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Example story as usage.
 - Output story as markdown.
 
-[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.0.9...HEAD
+[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/nagisc007/storybuilder/releases/v0.1.0
 [0.0.9]: https://github.com/nagisc007/storybuilder/releases/v0.0.9
 [0.0.8]: https://github.com/nagisc007/storybuilder/releases/v0.0.8
 [0.0.7]: https://github.com/nagisc007/storybuilder/releases/v0.0.7
