@@ -7,31 +7,46 @@ from enum import Enum, auto
 class ActType(Enum):
     """Act type enum.
     """
-    ACT = auto() # general type
+    BE = auto() # state type
+    BEHAV = auto() # behavior type
+    DEAL = auto() # deal type
+    DO = auto() # general act type
     EXPLAIN = auto() # information type
-    TAG = auto() # structure type
-    TELL = auto() # dialogue type
+    FEEL = auto() # feel type
+    GROUP = auto() # for groups
+    LOOK = auto() # look type
+    MOVE = auto() # move type
+    TAG = auto() # for tags
+    TALK = auto() # talk type
     TEST = auto() # test type
+    THINK = auto() # thinking type
 
     def __str__(self) -> str:
         return {
-                self.ACT.value: "ACT",
+                self.BE.value: "BE",
+                self.BEHAV.value: "BEHAV",
+                self.DEAL.value: "DEAL",
+                self.DO.value: "DO",
                 self.EXPLAIN.value: "EXPLAIN",
+                self.FEEL.value: "FEEL",
+                self.GROUP.value: "GROUP",
+                self.LOOK.value: "LOOK",
+                self.MOVE.value: "MOVE",
                 self.TAG.value: "TAG",
-                self.TELL.value: "TELL",
+                self.TALK.value: "TALK",
                 self.TEST.value: "TEST",
+                self.THINK.value: "THINK",
                 }[self.value]
 
 
 class AuxVerb(Enum):
     """Auxiliary verb type enum.
     """
-    NONE = auto()
     CAN = auto()
     MAY = auto()
     MUST = auto()
+    NONE = auto()
     SHOULD = auto()
-    THINK = auto()
     WANT = auto()
     WILL = auto()
 
@@ -42,18 +57,17 @@ class AuxVerb(Enum):
                 self.MUST.value: "MUST",
                 self.NONE.value: "NONE",
                 self.SHOULD.value: "SHOULD",
-                self.THINK.value: "THINK",
                 self.WANT.value: "WANT",
-                self.WANT.value: "WILL",
+                self.WILL.value: "WILL",
                 }[self.value]
 
 
 class DescType(Enum):
     """Description type enum.
     """
-    NONE = auto()
     DESCRIPTION = auto()
     DIALOGUE = auto()
+    NONE = auto()
     TAG = auto()
 
     def __str__(self) -> str:
@@ -96,12 +110,12 @@ class LangType(Enum):
 class TagType(Enum):
     """Tag type enum.
     """
-    NONE = auto()
-    TITLE = auto()
     BR = auto()
     COMMENT = auto()
     HR = auto()
+    NONE = auto()
     SYMBOL = auto()
+    TITLE = auto()
 
     def __str__(self) -> str:
         return {

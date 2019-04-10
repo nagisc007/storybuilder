@@ -1,27 +1,11 @@
 # -*- coding: utf-8 -*-
 """Define an action class.
 """
-from .sbutils import assert_isclass, assert_isstr, assert_isbool, assert_isbetween
+from .sbutils import assert_isclass, assert_isstr, assert_isbetween
 from .description import Desc
 from .enums import ActType, DescType, AuxVerb, GroupType, LangType, TagType
-from .basesubject import _BaseSubject, Nothing
-from .behavior import Behavior
-
-
-class _BaseAction(object):
-    """Base action class.
-
-    Attributes:
-        name (str): a name of the action.
-    """
-    def __init__(self, name: str):
-        """
-        Args:
-            name (str): an action name.
-        """
-        assert_isstr(name)
-
-        self.name = name
+from .baseaction import _BaseAction
+from .basesubject import _BaseSubject
 
 
 class Action(_BaseAction):
@@ -29,73 +13,50 @@ class Action(_BaseAction):
 
     Attributes:
         act_type (:enum:`ActType`): an action category type.
-        behavior (:enum:`Behavior`): a behavior type of this action.
+        auxverb (:enum:`AuxVerb`): an auxiliary verb.
+        deflags (:tuple:str): a story deflag to associate this action.
         descs (:obj:`_BaseDesc`): descriptions data object.
+        flags (:tuple:str): a story flag to associate this action.
+        is_negative (bool): if True is a negative mode.
+        is_passive (bool): if True is a passive mode.
         objects (:tuple:obj:`_BaseSubject`): objects of this action.
+        priority (int): a action priotiry.
         subject (:obj:`_BaseSubject`): a subject of this action.
-        _auxverb (:enum:`AuxVerb`): an auxiliary verb.
-        _deflag (str): a story deflag to associate this action.
-        _flag (str): a story flag to associate this action.
-        _is_negative (bool): if True is a negative mode.
-        _is_passive (bool): if True is a passive mode.
-        _priority (:int): a action priotiry.
+        verb (str): a action verb.
     """
-    CLS_NAME = "_action"
     DEFAULT_PRIORITY = 5
     MAX_PRIORITY = 10
     MIN_PRIORITY = 0
 
-    def __init__(self, subject: _BaseSubject, act_type: ActType, behavior: Behavior, objects: tuple):
+    def __init__(self, act_type: ActType, subject: _BaseSubject, verb: str, objects: tuple):
         """
         Args:
-            subject (:obj:`_BaseSubject`): a subject.
             act_type (:enum:`ActType`): an action type.
-            behavior (:enum:`Behavior`): a behavior type.
+            subject (:obj:`_BaseSubject`): a subject.
+            verb (str): an action verbs.
             objects (:tuple:obj:`_BaseSubject`): objects.
         """
-        assert_isclass(subject, _BaseSubject)
         assert_isclass(act_type, ActType)
-        assert_isclass(behavior, Behavior)
+        assert_isclass(subject, _BaseSubject)
+        assert_isstr(verb)
 
-        super().__init__(Action.CLS_NAME)
-        self._auxverb = AuxVerb.NONE
-        self._deflag = ""
-        self._flag = ""
-        self._is_negative = False
-        self._is_passive = False
-        self._priority = Action.DEFAULT_PRIORITY
-        self.act_type = act_type
-        self.behavior = behavior
+        super().__init__(act_type)
+        self.auxverb = AuxVerb.NONE
+        self.deflags = ()
+        self.flags = ()
+        self.is_negative = False
+        self.is_passive = False
+        self.priority = Action.DEFAULT_PRIORITY
         self.descs = Desc("")
         self.objects = objects
         self.subject = subject
+        self.verb = verb
 
-    @property
-    def auxverb(self) -> AuxVerb:
-        return self._auxverb
-
-    @property
-    def deflag(self) -> str:
-        return self._deflag
-
-    @property
-    def flag(self) -> str:
-        return self._flag
-
-    @property
-    def is_negative(self) -> bool:
-        return self._is_negative
-
-    @property
-    def is_passive(self) -> bool:
-        return self._is_passive
-
-    @property
-    def priority(self) -> int:
-        return self._priority
+    def _flags_str_tuple_from(self, *args) -> tuple:
+        return tuple(str(v) if isinstance(v, int) else v for v in args)
 
     def can(self):
-        self._auxverb = AuxVerb.CAN
+        self.auxverb = AuxVerb.CAN
         return self
 
     def d(self, *args):
@@ -106,15 +67,15 @@ class Action(_BaseAction):
         return self
 
     def may(self):
-        self._auxverb = AuxVerb.MAY
+        self.auxverb = AuxVerb.MAY
         return self
 
     def must(self):
-        self._auxverb = AuxVerb.MUST
+        self.auxverb = AuxVerb.MUST
         return self
 
     def negative(self):
-        self._is_negative = True
+        self.is_negative = True
         return self
 
     def non(self): return self.negative()
@@ -122,52 +83,48 @@ class Action(_BaseAction):
     def omit(self):
         """Set minimum priority.
         """
-        self._priority = Action.MIN_PRIORITY
+        self.priority = Action.MIN_PRIORITY
         return self
 
     def passive(self):
-        self._is_passive = True
+        self.is_passive = True
         return self
 
     def ps(self): return self.passive()
 
-    def set_flag(self, f):
-        self._flag = f
+    def set_deflags(self, *args):
+        self.deflags = self._flags_str_tuple_from(*args)
         return self
 
-    def set_deflag(self, f):
-        self._deflag = f
+    def set_flags(self, *args):
+        self.flags = self._flags_str_tuple_from(*args)
         return self
 
     def set_priority(self, pri):
         assert_isbetween(pri, Action.MAX_PRIORITY, Action.MIN_PRIORITY)
 
-        self._priority = pri
+        self.priority = pri
         return self
 
     def should(self):
-        self._auxverb = AuxVerb.SHOULD
+        self.auxverb = AuxVerb.SHOULD
         return self
 
     def tell(self, *args):
         self.desc(*args, is_dialogue=True)
         return self
 
-    def think(self):
-        self._auxverb = AuxVerb.THINK
-        return self
-
     def want(self):
-        self._auxverb = AuxVerb.WANT
+        self.auxverb = AuxVerb.WANT
         return self
 
     def will(self):
-        self._auxverb = AuxVerb.WILL
+        self.auxverb = AuxVerb.WILL
         return self
 
 
 class ActionGroup(_BaseAction):
-    """Acrion grouping class.
+    """Action grouping class.
 
     Attributes:
         actions (:tuple:obj:`Action`): action lists.
@@ -186,20 +143,24 @@ class ActionGroup(_BaseAction):
         assert_isclass(group_type, GroupType)
         assert_isclass(lang, LangType)
 
-        super().__init__(ActionGroup.CLS_NAME)
+        super().__init__(ActType.GROUP)
         self.actions = args
         self.group_type = group_type
         self.lang = lang
 
 
-class TagAction(Action):
-    """Action for tag.
+class TagAction(_BaseAction):
+    """Action class for tag specialized.
+
+    Attributes:
+        tag (:enum:`TagType`): a tag type.
+        tag_info (str): a tag information.
     """
-    def __init__(self, tag: TagType, note: str=""):
-        super().__init__(Nothing(), ActType.TAG, Behavior.NONE, ())
+    def __init__(self, tag: TagType, tag_info: str=""):
+        super().__init__(ActType.TAG)
         assert_isclass(tag, TagType)
-        assert_isstr(note)
+        assert_isstr(tag_info)
         
-        self.note = note
         self.tag = tag
+        self.tag_info = tag_info
 

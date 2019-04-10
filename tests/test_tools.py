@@ -8,10 +8,10 @@ import sys
 from io import StringIO
 from builder.sbutils import print_test_title
 from builder.action import Action, TagAction, GroupType
-from builder.enums import LangType
+from builder.description import Desc
+from builder.enums import DescType, LangType
 from builder.master import Master
-from builder.person import Person
-from builder.subject import Item, Word
+from builder.subject import Person, Item, Word
 import builder.tools as tools
 
 
@@ -25,6 +25,7 @@ class PublicMethodsTest(unittest.TestCase):
         print_test_title(_FILENAME, "public methods")
 
     def setUp(self):
+        self.ma = Master("test")
         self.sm = Master("test story")
         self.taro = Person("Taro", 17, "male", "student", "me")
         self.hanako = Person("Hanako", 17, "female", "student", "me")
@@ -32,15 +33,15 @@ class PublicMethodsTest(unittest.TestCase):
         self.story = self.sm.story(
                 "Taro and Hanako",
                 self.hanako.come("in room").desc("a cute girl come in"),
-                self.taro.tell("wow", to=self.hanako).desc("Nice to meet you"),
-                self.hanako.tell("like").negative().desc("I'm not fine"),
+                self.taro.be("wow", self.hanako).desc("Nice to meet you"),
+                self.hanako.be("like").negative().desc("I'm not fine"),
                 lang=LangType.ENG,
                 )
         self.story_j = self.sm.story(
                 "太郎と花子",
                 self.hanako.come("部屋").desc("可愛い少女"),
-                self.taro.tell("ああ").desc("よう"),
-                self.hanako.tell("好き", to=self.taro, wth=self.masao).negative().desc("全然")
+                self.taro.be("ああ").desc("よう"),
+                self.hanako.be("好き", self.taro, self.masao).negative().desc("全然")
                 )
         self.test_file = "test_file"
 
@@ -51,6 +52,21 @@ class PublicMethodsTest(unittest.TestCase):
     @unittest.skip("must use stdout")
     def test_options_parsed(self):
         pass
+
+    def test_output_info(self):
+        _BASEMSG = "Characters:\n    Total: {}\n"
+        data = [
+                (self.ma.story("test", self.taro.be()),
+                    _BASEMSG.format(0))
+                ]
+
+        for story, expected in data:
+            with self.subTest(story=story, expected=expected):
+                tmp_stdout, sys.stdout = sys.stdout, StringIO()
+                tools.output_info(story)
+                self.assertEqual(sys.stdout.getvalue(), expected)
+                # fall back
+                sys.stdout = tmp_stdout
 
     @unittest.skip("almost same _output_story_to_file and _output_story_to_console")
     def test_output_story(self):
@@ -73,15 +89,15 @@ class PrivateMethodsTest(unittest.TestCase):
         self.story = self.ma.story(
                 "Taro and Hanako",
                 self.hanako.come("in room").desc("a cute girl come in"),
-                self.taro.tell("wow", to=self.hanako).desc("Nice to meet you"),
-                self.hanako.tell("like").negative().desc("I'm not fine"),
+                self.taro.be("wow", self.hanako).desc("Nice to meet you"),
+                self.hanako.be("like").negative().desc("I'm not fine"),
                 lang=LangType.ENG,
                 )
         self.story_j = self.ma.story(
                 "太郎と花子",
                 self.hanako.come("部屋").desc("可愛い少女"),
-                self.taro.tell("ああ").desc("よう"),
-                self.hanako.tell("好き", to=self.taro, wth=self.masao).negative().desc("全然")
+                self.taro.be("ああ").desc("よう"),
+                self.hanako.be("好き", self.taro, self.masao).negative().desc("全然")
                 )
         self.test_file = "test_file"
 
@@ -103,9 +119,9 @@ class PrivateMethodsTest(unittest.TestCase):
         DEF_PRI = Action.DEFAULT_PRIORITY
         data = [
                 (self.taro.talk(), LangType.JPN, GroupType.STORY, 1, DEF_PRI, False,
-                    "- Taro　　:話す()　　/"),
+                    "- Taro　　:talk()　　　　/"),
                 (self.taro.talk(self.hanako), LangType.JPN, GroupType.STORY, 1, DEF_PRI, False,
-                    "- Taro　　:話す(Hanako)/"),
+                    "- Taro　　:talk(Hanako)/"),
                 ]
 
         for act, lng, gtype, lv, pri, dbg, expected in data:
@@ -114,40 +130,27 @@ class PrivateMethodsTest(unittest.TestCase):
                 self.assertEqual(tools._action_of_by_type(act, lng, gtype, lv, pri, dbg),
                         expected)
 
-    def test_action_with_obj_and_info_as_eng(self):
+    def test_action_info_as_eng(self):
         data = [
-                (self.taro.talk(), GroupType.STORY, False, False,
-                    "- Taro    :話す()    /"),
+                (self.taro.talk(), GroupType.STORY, False,
+                    "- Taro    :talk()      /"),
                 ]
 
-        for act, gtype, dial, istest, expected in data:
-            with self.subTest(act=act, gtype=gtype, dial=dial, istest=istest,
-                    expected=expected):
-                self.assertEqual(tools._action_with_obj_and_info_as_eng(
-                    act, gtype, dial, istest), expected)
+        for act, gtype, istest, expected in data:
+            with self.subTest(act=act, gtype=gtype, istest=istest, expected=expected):
+                self.assertEqual(tools._action_info_as_eng(
+                    act, gtype, istest), expected)
 
-    def test_action_with_obj_and_info_as_jpn(self):
+    def test_action_info_as_jpn(self):
         data = [
-                (self.taro.talk(), GroupType.STORY, False, False,
-                    "- Taro　　:話す()　　/"),
+                (self.taro.talk(), GroupType.STORY, False, 
+                    "- Taro　　:talk()　　　　/"),
                 ]
 
-        for act, gtype, dial, istest, expected in data:
-            with self.subTest(act=act, gtype=gtype, dial=dial, istest=istest,
-                    expected=expected):
-                self.assertEqual(tools._action_with_obj_and_info_as_jpn(
-                    act, gtype, dial, istest), expected)
-
-    def test_behavior_with_obj(self):
-        data = [
-                (self.taro.tell(self.hanako), "台詞(Hanako)"),
-                (self.taro.tell("Hanako"), "台詞()"),
-                (self.taro.tell(self.hanako, self.item), "台詞(Hanako/stick)"),
-                ]
-
-        for act, expected in data:
-            with self.subTest(act=act, expected=expected):
-                self.assertEqual(tools._behavior_with_obj(act), expected)
+        for act, gtype, istest, expected in data:
+            with self.subTest(act=act, gtype=gtype, istest=istest, expected=expected):
+                self.assertEqual(tools._action_info_as_jpn(
+                    act, gtype, istest), expected)
 
     def test_break_symbol_of(self):
         data = [
@@ -204,6 +207,16 @@ class PrivateMethodsTest(unittest.TestCase):
         for v, expected in data:
             with self.subTest(v=v, expected=expected):
                 self.assertEqual(tools._count_descriptions(v), expected)
+
+    def test_desc_head_of(self):
+        data = [
+                (Desc("test", desc_type=DescType.DESCRIPTION), LangType.JPN,
+                    "　"),
+                ]
+
+        for dsc, lng, expected in data:
+            with self.subTest(dsc=dsc, lng=lng, expected=expected):
+                self.assertEqual(tools._desc_head_of(dsc, lng), expected)
 
     def test_desc_str_replaced_tag(self):
         data = [
@@ -263,23 +276,44 @@ class PrivateMethodsTest(unittest.TestCase):
                 self.assertEqual(tools._description_of_by_type(act, lng, gtype, lv, pri, dbg),
                         expected)
 
+    def test_desc_excepted_symbols(self):
+        pass
+
+    def test_extra_chopped(self):
+        pass
+
     def test_flag_info_if(self):
         data = [
-                ("flag", "deflag", "[flag](f-flag)[D:deflag](d-deflag)"),
-                ("flag", "", "[flag](f-flag)"),
-                ("", "deflag", "[D:deflag](d-deflag)"),
+                ("flag", "deflag", "[flag](flag)[D:deflag](deflag)"),
+                ("flag", "", "[flag](flag)"),
+                ("", "deflag", "[D:deflag](deflag)"),
                 ]
 
         for flg, dflg, expected in data:
             with self.subTest(flg=flg, dflg=dflg, expected=expected):
                 tmp = self.taro.talk()
                 if flg and dflg:
-                    tmp = self.taro.talk().set_flag(flg).set_deflag(dflg)
+                    tmp = self.taro.talk().set_flags(flg).set_deflags(dflg)
                 elif flg:
-                    tmp = self.taro.talk().set_flag(flg)
+                    tmp = self.taro.talk().set_flags(flg)
                 elif dflg:
-                    tmp = self.taro.talk().set_deflag(dflg)
+                    tmp = self.taro.talk().set_deflags(dflg)
                 self.assertEqual(tools._flag_info_if(tmp), expected)
+
+    def test_flag_info_of(self):
+        data = [
+                ("test", "", True, "[test](test)"),
+                ]
+
+        for flg, dflg, isflg, expected in data:
+            with self.subTest(flg=flg, dflg=dflg, isflg=isflg, expected=expected):
+                tmp = self.taro.be()
+                if flg:
+                    tmp.set_flags(flg)
+                if dflg:
+                    tmp.set_deflags(dflg)
+                self.assertEqual(tools._flag_info_of(tmp, isflg), expected)
+
 
     def test_hr_of(self):
         data = [
@@ -306,26 +340,31 @@ class PrivateMethodsTest(unittest.TestCase):
                 self.assertEqual(tools._list_head_inserted(v), expected)
 
     def test_output_story_to_console(self):
-        tmp_stdout, sys.stdout = sys.stdout, StringIO()
-        self.assertTrue(tools._output_story_to_console(["# test story", "test"], False))
-        self.assertEqual(
-                sys.stdout.getvalue(),
-                "# test story\ntest\n"
-                )
-        # fall back
-        sys.stdout = tmp_stdout
+        data = [
+                (["# test story", "test"], False,
+                    "# test story\ntest\n"),
+                ]
+        for story, isdbg, expected in data:
+            with self.subTest(story=story, isdbg=isdbg, expected=expected):
+                tmp_stdout, sys.stdout = sys.stdout, StringIO()
+                self.assertTrue(tools._output_story_to_console(story, isdbg))
+                self.assertEqual(sys.stdout.getvalue(),expected)
+                # fall back
+                sys.stdout = tmp_stdout
 
+    def test_output_story_to_file(self):
+        data = [
+                (["# test story", "test"], "test_file", True, False,
+                    "build/test_file_a.md"),
+                (["# test story", "test"], "test_file", False, False,
+                    "build/test_file.md"),
+                ]
 
-    def test_output_story_to_file_as_action(self):
-        self.assertTrue(tools._output_story_to_file(["# test story", "test"], self.test_file, True, False))
-        build_path = os.path.join(os.getcwd(), "build/{}_a.md".format(self.test_file))
-        self.assertTrue(os.path.exists(build_path))
-
-
-    def test_output_story_to_file_as_description(self):
-        self.assertTrue(tools._output_story_to_file(["# test story", "test"], self.test_file, False, False))
-        build_path = os.path.join(os.getcwd(), "build/{}.md".format(self.test_file))
-        self.assertTrue(os.path.exists(build_path))
+        for story, fname, isact, isdbg, exp_path in data:
+            with self.subTest(story=story, fname=fname, isact=isact, isdbg=isdbg, exp_path=exp_path):
+                build_path = os.path.join(os.getcwd(), exp_path)
+                self.assertTrue(tools._output_story_to_file(story, fname, isact, isdbg))
+                self.assertTrue(os.path.exists(build_path))
 
     def test_output_with_linenumber(self):
         data = [
@@ -351,33 +390,40 @@ class PrivateMethodsTest(unittest.TestCase):
                 self.assertEqual(tools._scene_title_of(tmp), expected)
 
     def test_story_converted_as_action(self):
-        self.assertEqual(tools._story_converted_as_action(self.story, 0, False),
-                ["# Taro and Hanako\n", "- Hanako  :来る()    /in room",
-                    "- Taro    :台詞(Hanako)/ \"wow\" ",
-                    "- Hanako  :~~台詞~~()/ \"like\" "])
+        data = [
+                (self.ma.story("Test", self.taro.be()),
+                    0, False,
+                    ["# Test\n", "- Taro　　:be()　　　　/"])
+                ]
 
-
-    def test_story_converted_as_action_jpn(self):
-        self.assertEqual(tools._story_converted_as_action(self.story_j, 0, False),
-                ["# 太郎と花子\n", "- Hanako:来る()　　/部屋",
-                    "- Taro　　:台詞()　　/「ああ」",
-                    "- Hanako:~~台詞~~(Taro/Masao)/「好き」"])
-
+        for story, pri, isdbg, expected in data:
+            with self.subTest(story=story, pri=pri, isdbg=isdbg, expected=expected):
+                self.assertEqual(tools._story_converted_as_action(story, pri, isdbg),
+                        expected)
 
     def test_story_converted_as_action_in_group(self):
-        self.assertEqual(tools._story_converted_as_action_in_group(self.story, self.story.group_type, 1, 0, False),
-                ["# Taro and Hanako\n", "- Hanako  :来る()    /in room",
-                    "- Taro    :台詞(Hanako)/ \"wow\" ",
-                    "- Hanako  :~~台詞~~()/ \"like\" "])
+        data = [
+                (self.ma.story("Test", self.taro.be()),
+                    GroupType.STORY, 1, 0, False,
+                    ["# Test\n", "- Taro　　:be()　　　　/"])
+                ]
 
+        for story, gtype, lv, pri, isdbg, expected in data:
+            with self.subTest(story=story, gtype=gtype, lv=lv, pri=pri, isdbg=isdbg, expected=expected):
+                self.assertEqual(tools._story_converted_as_action_in_group(story, gtype, lv, pri, isdbg),
+                        expected)
 
     def test_story_converted_as_description(self):
-        self.assertEqual(tools._story_converted_as_description(self.story, 5, False),
-                ["# Taro and Hanako\n",
-                    " a cute girl come in. ",
-                    ' "Nice to meet you" ',
-                    ' "I\'m not fine" '])
+        data = [
+                (self.ma.story("Test", self.taro.be().d("test")),
+                    5, False,
+                    ["# Test\n", "　test。"])
+                ]
 
+        for story, pri, isdbg, expected in data:
+            with self.subTest(story=story, pri=pri, isdbg=isdbg, expected=expected):
+                self.assertEqual(tools._story_converted_as_description(story, pri, isdbg),
+                        expected)
 
     def test_story_converted_as_description_in_group(self):
         data = [
@@ -400,10 +446,16 @@ class PrivateMethodsTest(unittest.TestCase):
                     v, gtype, 1, 5, False), expected)
 
     def test_story_data_converted(self):
-        self.assertEqual(tools._story_data_converted(self.story, True, 0, False),
-                ["# Taro and Hanako\n", "- Hanako  :来る()    /in room",
-                     "- Taro    :台詞(Hanako)/ \"wow\" ",
-                    "- Hanako  :~~台詞~~()/ \"like\" "])
+        data = [
+                (self.ma.story("Test", self.taro.be()),
+                    True, 5, False,
+                    ["# Test\n", "- Taro　　:be()　　　　/"]),
+                ]
+
+        for story, isact, pri, isdbg, expected in data:
+            with self.subTest(story=story, isact=isact, pri=pri, isdbg=isdbg, expected=expected):
+                self.assertEqual(tools._story_data_converted(story, isact, pri, isdbg),
+                        expected)
 
     def test_story_title_of(self):
         ma = Master('test')
@@ -420,3 +472,12 @@ class PrivateMethodsTest(unittest.TestCase):
                 self.assertIsInstance(tmp, TagAction)
                 self.assertEqual(tools._story_title_of(tmp, lv), expected)
 
+    def test_test_head_if(self):
+        data = [
+                (True, "> "),
+                (False, "")
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(tools._test_head_if(v), expected)

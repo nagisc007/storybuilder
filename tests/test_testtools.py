@@ -3,11 +3,10 @@
 """
 import unittest
 from builder.sbutils import print_test_title
-from builder.basesubject import Info, Nothing
 from builder.master import Master
-from builder.person import Person
-from builder.subject import DayTime, Item, Stage, something, Word
+from builder.subject import Person, Day, Info, Item, Nothing, Stage, Something, Word
 import builder.testtools as testtools
+from builder.testtools import MatchLv
 
 
 _FILENAME = "testtools.py"
@@ -20,33 +19,24 @@ class PublicMethodsTest(unittest.TestCase):
         print_test_title(_FILENAME, "public methods")
 
     def setUp(self):
-        self.taro = Person("Taro", 17, "male", "student", "me", "a man")
-        self.hanako = Person("Hanako", 17, "female", "student", "me", "a cute girl")
-        self.day = DayTime("A day", 10, 5, 2019, 12)
-        self.room = Stage("Classroom")
-        self.ma = Master("The test")
-        self.story = self.ma.story("THE TEST",
-                self.ma.comment("-- the test start --"),
-                self.day.explain("warming afternoon"),
-                self.room.explain("a silent room"),
-                self.taro.tell("I am").set_flag("taro"),
-                self.taro.tell("Boring").set_flag(1),
-                self.hanako.come("in class"),
-                self.taro.lose("love").set_deflag("taro"),
-                self.taro.meet(self.hanako, "a cute girl").set_deflag(1),
-                self.hanako.fall(self.taro, "love").negative(),
-                )
+        self.ma = Master("test")
+        self.taro = Person("Taro", 17, "male", "student")
+        self.hanako = Person("Hanako", 17, "female", "student")
+        self.day = Day("Test day")
+        self.stage = Stage("Test stage")
+        self.item = Item("A test")
+        self.word = Word("A test")
 
-    @unittest.skip("contains fail result")
+    @unittest.expectedFailure
     def test_followed_all_flags(self):
         data = [
                 (self.ma.combine(
-                    self.taro.talk().set_flag(1),
-                    self.taro.talk().set_deflag(1),
+                    self.taro.talk().set_flags(1),
+                    self.taro.talk().set_deflags(1),
                     ), True),
                 (self.ma.combine(
-                    self.taro.talk().set_flag(1),
-                    self.taro.talk().set_deflag(2),
+                    self.taro.talk().set_flags(1),
+                    self.taro.talk().set_deflags(2),
                     ), False),
                 ]
 
@@ -54,66 +44,184 @@ class PublicMethodsTest(unittest.TestCase):
             with self.subTest(story=story, expected=expected):
                 self.assertEqual(testtools.followed_all_flags(self, story), expected)
 
-    @unittest.skip("same _has_a_daytime_in_group")
-    def test_has_a_daytime(self):
-        pass
+    def test_has_a_day(self):
+        data = [
+                (self.ma.story("test", self.taro.be(self.day)),
+                    True),
+                (self.ma.story("fail", self.taro.be()),
+                    False),
+                ]
 
-    @unittest.skip("same _has_a_item_in_group")
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(testtools.has_a_day(v), expected)
+
     def test_has_a_item(self):
-        pass
+        data = [
+                (self.ma.story("test", self.taro.be(self.item)),
+                    True),
+                (self.ma.story("fail", self.taro.be()),
+                    False),
+                ]
 
-    @unittest.skip("same _has_a_person_in_group")
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(testtools.has_a_item(v), expected)
+
     def test_has_a_person(self):
-        pass
+        data = [
+                (self.ma.story("test", self.taro.be()),
+                    True),
+                (self.ma.story("fail", self.stage.be()),
+                    False),
+                ]
 
-    @unittest.skip("same _has_a_stage_in_group")
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(testtools.has_a_person(v), expected)
+
     def test_has_a_stage(self):
-        pass
+        data = [
+                (self.ma.story("test", self.taro.be(self.stage)),
+                    True),
+                (self.ma.story("fail", self.taro.be()),
+                    False),
+                ]
 
-    @unittest.skip("same _has_a_word_in_group")
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(testtools.has_a_stage(v), expected)
+
     def test_has_a_word(self):
-        pass
+        data = [
+                (self.ma.story("test", self.taro.be(self.word)),
+                    True),
+                (self.ma.story("fail", self.taro.be()),
+                    False),
+                ]
 
-    @unittest.skip("contains fail result")
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(testtools.has_a_word(v), expected)
+
+    @unittest.expectedFailure
     def test_has_basic_infos(self):
-        self.assertTrue(testtools.has_basic_infos(self, self.story, self.taro, self.hanako))
+        data = [
+                (self.ma.story("test",
+                    self.taro.be(self.day), self.taro.go(self.stage), self.taro.talk(self.hanako)),
+                    self.taro, self.hanako, True),
+                (self.ma.story("fail",
+                    self.taro.be(), self.taro.go(),),
+                    self.taro, self.hanako, False),
+                ]
 
-    @unittest.skip("contains fail result")
+        for story, hero, rival, expected in data:
+            with self.subTest(story=story, hero=hero, rival=rival, expected=expected):
+                self.assertEqual(testtools.has_basic_infos(self, story, hero, rival),
+                        expected)
+
+    @unittest.expectedFailure
     def test_has_outline_infos(self):
-        what_act = self.taro.tell("Boring")
-        why_act = self.taro.lose("love")
-        how_act = self.taro.meet(something(),"girl")
-        res_act = self.hanako.fall(self.taro, "love").negative()
-        self.assertTrue(testtools.has_outline_infos(self, self.story,
-            what_act, why_act, how_act, res_act, True))
+        base_story = self.ma.story("test",
+                self.taro.be(self.day), self.taro.go(self.stage),
+                self.taro.have("apple"))
 
-    @unittest.skip("same _has_the_action_in_group")
+        data = [
+                (self.taro.be(), self.taro.go(), self.taro.have(), self.taro.talk(),
+                    False, True),
+                (self.taro.go(), self.taro.be(), self.taro.be(), self.taro.be(),
+                    False, False),
+                ]
+
+        for what, why, how, result, fuz, expected in data:
+            with self.subTest(what=what, why=why, how=how, result=result, fuz=fuz,
+                    expected=expected):
+                self.assertEqual(testtools.has_outline_infos(self, base_story,
+                    whta, why, how, result, fuz), expected)
+
     def test_has_the_action(self):
-        pass
+        data = [
+                (self.ma.story("test", self.taro.be()), self.taro.be(),
+                    MatchLv.COMPLETE, True),
+                (self.ma.story("test", self.taro.be()), self.taro.go(),
+                    MatchLv.COMPLETE, False),
+                ]
 
-    @unittest.skip("same _has_the_daytime_in_group")
-    def test_has_the_daytime(self):
-        pass
+        for story, target, mlv, expected in data:
+            with self.subTest(story=story, target=target, mlv=mlv, expected=expected):
+                self.assertEqual(testtools.has_the_action(story, target, mlv), expected)
 
-    @unittest.skip("same _has_the_item_in_group")
+    def test_has_the_day(self):
+        data = [
+                (self.ma.story(self.taro.be(self.day)), self.day,
+                    True),
+                (self.ma.story(self.taro.be()), Day("test"),
+                    False),
+                ]
+
+        for story, target, expected in data:
+            with self.subTest(story=story, target=target, expected=expected):
+                self.assertEqual(testtools.has_the_day(story, target), expected)
+
     def test_has_the_item(self):
-        pass
+        data = [
+                (self.ma.story(self.taro.be(self.item)), self.item,
+                    True),
+                (self.ma.story(self.taro.be()), Item("test"),
+                    False),
+                ]
 
-    @unittest.skip("same _has_the_person_in_group")
+        for story, target, expected in data:
+            with self.subTest(story=story, target=target, expected=expected):
+                self.assertEqual(testtools.has_the_item(story, target), expected)
+
     def test_has_the_person(self):
-        pass
+        data = [
+                (self.ma.story(self.taro.be()), self.taro,
+                    True),
+                (self.ma.story(self.stage.be()), self.taro,
+                    False),
+                ]
 
-    @unittest.skip("same _has_the_stage_in_group")
+        for story, target, expected in data:
+            with self.subTest(story=story, target=target, expected=expected):
+                self.assertEqual(testtools.has_the_person(story, target), expected)
+
     def test_has_the_stage(self):
-        pass
+        data = [
+                (self.ma.story(self.taro.be(self.stage)), self.stage,
+                    True),
+                (self.ma.story(self.taro.be()), Stage("test"),
+                    False),
+                ]
 
-    @unittest.skip("same _has_the_word_in_group")
+        for story, target, expected in data:
+            with self.subTest(story=story, target=target, expected=expected):
+                self.assertEqual(testtools.has_the_stage(story, target), expected)
+
     def test_has_the_word(self):
-        pass
+        data = [
+                (self.ma.story(self.taro.be(self.word)), self.word,
+                    True),
+                (self.ma.story(self.taro.be()), Word("test"),
+                    False),
+                ]
 
-    @unittest.skip("same _is_actiongroup_all_actions")
+        for story, target, expected in data:
+            with self.subTest(story=story, target=target, expected=expected):
+                self.assertEqual(testtools.has_the_word(story, target), expected)
+
     def test_is_all_actions(self):
-        self.assertTrue(testtools.is_all_actions(self.story))
+        data = [
+                (self.ma.story("test", self.taro.be()),
+                    True),
+                (self.ma.story("test", Info("test")),
+                    False),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(testtools.is_all_actions(v), expected)
 
 
 class PrivateMethodsTest(unittest.TestCase):
@@ -125,317 +233,179 @@ class PrivateMethodsTest(unittest.TestCase):
     def setUp(self):
         self.ma = Master("test")
         self.taro = Person("Taro", 17, "male", "student")
-        self.day = DayTime("Test day")
+        self.day = Day("Test day")
         self.stage = Stage("Test stage")
         self.item = Item("A test")
         self.word = Word("A test")
 
-    def test_count_info_in_objects(self):
+    def test_contains_the_info(self):
         data = [
-                ((Info("a"),), 1),
-                ((Info("a"), Info("b")), 2),
-                ((Info("a"), Info("b"), Info("c")), 3),
-                ((), 0),
-                ((Info("a"), something()), 1)
+                (Info("test"), Info("tes"), True),
+                (Info("test"), Info("apple"), False),
                 ]
 
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                self.assertEqual(testtools._count_info_in_objects(v), expected)
+        for info, target, expected in data:
+            self.assertEqual(testtools._contains_the_info(info, target), expected)
+
+    def test_count_subjects_in(self):
+        data = [
+                ((Info("a"),),
+                    Info, 1),
+                ((Info("a"), Info("b")),
+                    Info, 2),
+                ((Info("a"), Something(), Info("c")),
+                    Info, 2),
+                ((),
+                    Info, 0),
+                ((Info("a"), Something()),
+                    Something, 1)
+                ]
+
+        for v, sbcls, expected in data:
+            with self.subTest(v=v, sbcls=sbcls, expected=expected):
+                self.assertEqual(testtools._count_subjects_in(v, sbcls), expected)
         
-    def test_count_nothing_in_objects(self):
-        data = [
-                ((Nothing(),), 1),
-                ((Nothing(), Nothing()), 2),
-                ((), 0),
-                ((Nothing(), something()), 1),
-                ]
-
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                self.assertEqual(testtools._count_nothing_in_objects(v), expected)
-
-    def test_count_something_in_objects(self):
-        data = [
-                ((something(),), 1),
-                ((something(), something()), 2),
-                ((), 0),
-                ((something(), Nothing()), 1)
-                ]
-
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                self.assertEqual(testtools._count_something_in_objects(v), expected)
-
-    @unittest.skip("using fail message")
+    @unittest.expectedFailure
     def test_fail_message_with_target(self):
-        pass
+        self.assertFalse(testtools._fail_message_without_target(self, "test", self.taro.be()))
 
-    def test_flag_gathered(self):
+    def test_flags_gathered_at_action(self):
         data = [
-                ("flag", "deflag", True, "flag"),
-                ("flag", "", True, "flag"),
-                ("", "", True, ""),
-                ("flag", "deflag", False, "deflag"),
-                ("flag", "", False, ""),
-                ("", "", False, ""),
+                (("test",), None, True, ["test"]),
+                (None, ("test", "apple"), False, ["test", "apple"])
                 ]
 
-        for flg, dflg, is_flg, expected in data:
-            with self.subTest(flg=flg, dflg=dflg, is_flg=is_flg, expected=expected):
-                tmp = self.taro.tell("test").set_flag(flg).set_deflag(dflg)
-                self.assertEqual(testtools._flag_gatherd(tmp, is_flg), expected)
+        for flg, dflg, isflg, expected in data:
+            with self.subTest(flg=flg, dflg=dflg, isflg=isflg, expected=expected):
+                tmp = self.taro.be()
+                if flg:
+                    tmp.set_flags(*flg)
+                if dflg:
+                    tmp.set_deflags(*dflg)
+                self.assertEqual(testtools._flags_gathered_at_action(tmp, isflg),
+                        expected)
 
-    @unittest.skip("using action group")
     def test_flags_gathered_in_group(self):
-        pass
-
-    def test_has_a_daytime(self):
         data = [
-                (self.day.explain("test"), True),
-                (self.taro.explain("test"), False),
-                (self.taro.talk(about=self.day), True),
+                (self.ma.story("test", self.taro.be().set_flags("test")),
+                    True,
+                    ["test"]),
+                (self.ma.story("test", self.taro.be().set_deflags("test")),
+                    False,
+                    ["test"]),
+                (self.ma.story("test", self.ma.scene("a", self.taro.be().set_flags("test"))),
+                    True,
+                    ["test"]),
                 ]
 
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                self.assertEqual(testtools._has_a_daytime(v), expected)
+        for story, isflg, expected in data:
+            with self.subTest(story=story, isflg=isflg, expected=expected):
+                self.assertEqual(testtools._flags_gathered_in_group(story, isflg),
+                        expected)
 
-    @unittest.skip("using action group")
-    def test_has_a_daytime_in_group(self):
-        pass
-
-    def test_has_a_item(self):
+    def test_has_a_subject(self):
         data = [
-                (self.item.explain("test"), True),
-                (self.taro.explain("test"), False),
-                (self.taro.talk(about=self.item), True),
+                (self.taro.be(), Person, True),
+                (self.taro.have(self.item), Item, True),
+                (self.taro.go("school"), Info, True),
+                (self.taro.come(), Word, False),
                 ]
 
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                self.assertEqual(testtools._has_a_item(v), expected)
+        for act, scls, expected in data:
+            with self.subTest(act=act, scls=scls, expected=expected):
+                self.assertEqual(testtools._has_a_subject(act, scls), expected)
 
-    @unittest.skip("using action group")
-    def test_has_a_item_in_group(self):
-        pass
-
-    def test_has_a_person(self):
+    def test_has_a_subject_in(self):
         data = [
-                (self.taro.explain("test"), True),
-                (self.item.explain("test"), False),
-                (self.stage.explain(at=self.taro), True),
-                ]
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                self.assertEqual(testtools._has_a_person(v), expected)
-    
-    @unittest.skip("using action group")
-    def test_has_a_person_in_group(self):
-        pass
-
-    def test_has_a_stage(self):
-        data = [
-                (self.stage.explain("test"), True),
-                (self.taro.explain("test"), False),
-                (self.taro.talk(about=self.stage), True),
+                ((self.taro,), Person, True),
+                ((self.taro, self.item), Item, True),
+                ((self.taro,), Info, False),
                 ]
 
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                self.assertEqual(testtools._has_a_stage(v), expected)
+        for objs, scls, expected in data:
+            with self.subTest(objs=objs, scls=scls, expected=expected):
+                self.assertEqual(testtools._has_a_subject_in(objs, scls), expected)
 
-    @unittest.skip("using action group")
-    def test_has_a_stage_in_group(self):
-        pass
-
-    def test_has_a_word(self):
+    def test_has_a_subject_in_group(self):
         data = [
-                (self.word.explain("test"), True),
-                (self.taro.explain("test"), False),
-                (self.taro.talk(at=self.word), True),
+                (self.ma.story("test", self.taro.be()), Person,
+                    True),
+                (self.ma.story("test", self.taro.have(self.item)), Item,
+                    True),
+                (self.ma.story("test", self.taro.go("school")), Info,
+                    True),
+                (self.ma.story("test", self.taro.know("apple")), Word,
+                    False),
+                (self.ma.story("test", self.ma.scene("a", self.taro.be())),
+                    Person, True),
                 ]
 
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                self.assertEqual(testtools._has_a_word(v), expected)
+        for story, scls, expected in data:
+            with self.subTest(story=story, scls=scls, expected=expected):
+                self.assertEqual(testtools._has_a_subject_in_group(story, scls),
+                        expected)
 
-    @unittest.skip("using action group")
-    def test_has_a_word_in_group(self):
-        pass
-
-    def test_has_info_at_action(self):
-        data = [
-                (Info("test").explain(), True),
-                (self.taro.talk(self.item), False),
-                (self.taro.talk("test"), True),
-                ]
-
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                self.assertEqual(testtools._has_info_at_action(v), expected)
-
-    def test_has_info_in_objects(self):
-        data = [
-                ((Info("test"),), True),
-                ((something(),), False)
-                ]
-
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                self.assertEqual(testtools._has_info_in_objects(v), expected)
-
-    def test_has_nothing_at_action(self):
-        data = [
-                (Nothing().explain(), True),
-                (self.taro.talk(Nothing()), True),
-                (self.taro.talk("test"), True),
-                ]
-
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                self.assertEqual(testtools._has_nothing_at_action(v), expected)
-
-    def test_has_nothing_in_objects(self):
-        data = [
-                ((Info("test"),), False),
-                ((Nothing(),), True),
-                ]
-
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                self.assertEqual(testtools._has_nothing_in_objects(v), expected)
-
-    def test_has_something_at_action(self):
-        data = [
-                (something().explain(), True),
-                (self.taro.talk("test"), False),
-                (self.taro.talk(something()), True),
-                ]
-
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                self.assertEqual(testtools._has_something_at_action(v), expected)
-
-    def test_has_something_in_objects(self):
-        data = [
-                ((something(),), True),
-                ((Info("test"),), False),
-                ]
-
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                self.assertEqual(testtools._has_something_in_objects(v), expected)
-
-    @unittest.skip("using action group")
     def test_has_the_action_in_group(self):
-        pass
-
-    @unittest.skip("using action group")
-    def test_has_the_action_in_group_with_fuzzy(self):
-        pass
-
-    def test_has_the_daytime(self):
         data = [
-                (self.taro.talk(self.day), self.day, True),
-                (self.day.explain(), self.day, True),
-                (self.taro.talk(), self.day, False),
+                (self.ma.story("test", self.taro.be()), self.taro.be(),
+                    MatchLv.COMPLETE, True),
+                (self.ma.story("test", self.taro.have("apple")), self.taro.have("orrange"),
+                    MatchLv.COMPLETE, False),
+                (self.ma.story("test", self.taro.have("apple")), self.taro.have("app"),
+                    MatchLv.NEAR, True),
+                (self.ma.story("test", self.ma.scene("a", self.taro.be())),
+                    self.taro.be(), MatchLv.COMPLETE, True),
+                (self.ma.story("test", self.ma.scene("a", self.taro.have("apple"))),
+                    self.taro.be(), MatchLv.COMPLETE, False),
+                (self.ma.story("test", self.taro.have("apple", "orrange")),
+                    self.taro.have(Something()), MatchLv.ALMOST, True),
                 ]
 
-        for act, target, expected in data:
-            with self.subTest(act=act, target=target, expected=expected):
-                self.assertEqual(testtools._has_the_daytime(act, target), expected)
+        for story, target, mlv, expected in data:
+            with self.subTest(story=story, target=target, mlv=mlv, expected=expected):
+                self.assertEqual(testtools._has_the_action_in_group(story, target, mlv),
+                        expected)
 
-    @unittest.skip("using action group")
-    def test_has_the_daytime_in_group(self):
-        pass
-
-    def test_has_the_info(self):
+    def test_has_the_subject(self):
         data = [
-                (Info("testing"), Info("test"), True),
-                (Info("test"), Info("tention"), False),
+                (self.taro.be(), Person, self.taro,
+                    True),
+                (self.taro.have(self.item), Item, self.item,
+                    True),
+                (self.taro.go(self.stage), Word, self.word,
+                    False),
+                (self.taro.know(Word("apple")), Word, Word("orrange"),
+                    False),
                 ]
 
-        for val, target, expected in data:
-            with self.subTest(val=val, target=target, expected=expected):
-                self.assertEqual(testtools._has_the_info(val, target), expected)
+        for act, scls, target, expected in data:
+            with self.subTest(act=act, scls=scls, target=target, expected=expected):
+                self.assertEqual(testtools._has_the_subject(act, scls, target),
+                        expected)
 
-    def test_has_the_infos(self):
+    def test_has_the_subject_in_group(self):
         data = [
-                ((Info("test"), Info("apple")),
-                    (Info("apple"),), True),
-                ((Info("test"), Info("apple")),
-                    (Info("orange"),), False),
+                (self.ma.story("test", self.taro.be()), Person, self.taro,
+                    True),
+                (self.ma.story("test", self.taro.have(self.item)), Item, self.item,
+                    True),
+                (self.ma.story("test", self.taro.go("test")), Word, self.word,
+                    False),
+                (self.ma.story("test", self.ma.scene("a", self.taro.be())),
+                    Person, self.taro, True),
                 ]
 
-        for vals, targets, expected in data:
-            with self.subTest(vals=vals, targets=targets, expected=expected):
-                self.assertEqual(testtools._has_the_infos(vals, targets), expected)
-
-    def test_has_the_item(self):
-        data = [
-                (self.item.explain(), self.item, True),
-                (self.taro.talk(), self.item, False),
-                (self.taro.talk(self.item), self.item, True),
-                ]
-
-        for act, target, expected in data:
-            with self.subTest(act=act, target=target, expected=expected):
-                self.assertEqual(testtools._has_the_item(act, target), expected)
-
-    @unittest.skip("using action group")
-    def test_has_the_item_in_group(self):
-        pass
-
-    def test_has_the_person(self):
-        data = [
-                (self.taro.talk(), self.taro, True),
-                (self.stage.explain(), self.taro, False),
-                (self.stage.explain(self.taro), self.taro, True),
-                ]
-
-        for act, target, expected in data:
-            with self.subTest(act=act, target=target, expected=expected):
-                self.assertEqual(testtools._has_the_person(act, target), expected)
-
-    @unittest.skip("using action group")
-    def test_has_the_person_in_group(self):
-        pass
-
-    def test_has_the_stage(self):
-        data = [
-                (self.stage.explain(), self.stage, True),
-                (self.taro.talk(), self.stage, False),
-                (self.taro.talk(self.stage), self.stage, True),
-                ]
-
-        for act, target, expected in data:
-            with self.subTest(act=act, target=target, expected=expected):
-                self.assertEqual(testtools._has_the_stage(act, target), expected)
-
-    @unittest.skip("using action group")
-    def test_has_the_stage_in_group(self):
-        pass
-
-    def test_has_the_word(self):
-        data = [
-                (self.word.explain(), self.word, True),
-                (self.taro.talk(), self.word, False),
-                (self.taro.talk(self.word), self.word, True),
-                ]
-
-        for act, target, expected in data:
-            with self.subTest(act=act, target=target, expected=expected):
-                self.assertEqual(testtools._has_the_word(act, target), expected)
-
-    @unittest.skip("using action group")
-    def test_has_the_word_in_group(self):
-        pass
+        for story, scls, target, expected in data:
+            with self.subTest(story=story, scls=scls, target=target, expected=expected):
+                self.assertEqual(testtools._has_the_subject_in_group(story, scls, target),
+                        expected)
 
     def test_is_actiongroup_all_actions(self):
         data = [
                 ((self.taro.talk(), self.taro.talk(),), True),
                 ((self.taro.talk(), "test"), False),
+                ((self.ma.scene("test", self.taro.be()),), True),
+                ((self.ma.scene("test", Info("test")),), False),
                 ]
 
         for vals, expected in data:
@@ -443,55 +413,33 @@ class PrivateMethodsTest(unittest.TestCase):
                 tmp = self.ma.combine(*vals)
                 self.assertEqual(testtools._is_actiongroup_all_actions(tmp), expected)
 
-    @unittest.skip("complex test")
     def test_is_the_action(self):
-        pass
-
-    def test_is_the_action_behavior(self):
         data = [
-                (self.taro.talk(), self.taro.talk(), True),
-                (self.taro.talk(), self.taro.take(), False),
-                (self.taro.talk().must(), self.taro.talk().must(), True),
-                (self.taro.talk().may(), self.taro.talk(), False),
-                (self.taro.talk().non(), self.taro.talk().non(), True),
-                (self.taro.talk().non(), self.taro.talk(), False),
-                (self.taro.talk().ps(), self.taro.talk().ps(), True),
-                (self.taro.talk().ps(), self.taro.talk(), False),
-                (self.taro.talk().can().non().ps(), self.taro.talk().can().non().ps(), True),
-                (self.taro.talk().should().non(), self.taro.talk().should().non().ps(), False),
+                (self.taro.be(), self.taro.be(), True),
+                (self.taro.go(), self.taro.come(), False),
+                (self.taro.be("sad"), self.taro.be("sad"), True),
                 ]
 
         for act, target, expected in data:
             with self.subTest(act=act, target=target, expected=expected):
-                self.assertEqual(testtools._is_the_action_behavior(act, target), expected)
+                self.assertEqual(testtools._is_the_action(act, target), expected)
 
-    @unittest.skip("nearly eq is _is_the_infos")
-    def test_is_the_action_infos(self):
-        pass
-
-    @unittest.skip("nearly eq is _is_the_subject")
-    def test_is_the_action_subject(self):
-        pass
-
-    @unittest.skip("nearly eq is _is_the_objects")
-    def test_is_the_action_objects(self):
-        pass
-
-    def test_is_the_infos(self):
+    def test_is_the_action_verb(self):
         data = [
-                (self.taro.talk("test"),
-                    (Info("test"),), True),
-                (self.taro.talk("test", "apple"),
-                    (Info("apple"), Info("orrange")), False),
-                (self.taro.talk("test", "apple"),
-                    (Info("test"), Info("app")), False),
+                (self.taro.be(), self.taro.be(), True),
+                (self.taro.be().can(), self.taro.be().can(), True),
+                (self.taro.be().can(), self.taro.be().must(), False),
+                (self.taro.be().non(), self.taro.be().non(), True),
+                (self.taro.be().non(), self.taro.be(), False),
+                (self.taro.be().ps(), self.taro.be().ps(), True),
+                (self.taro.be(), self.taro.be().ps(), False),
                 ]
 
-        for act, targets, expected in data:
-            with self.subTest(act=act, targets=targets, expected=expected):
-                self.assertEqual(testtools._is_the_infos(act.objects, targets), expected)
+        for act, target, expected in data:
+            with self.subTest(act=act, target=target, expected=expected):
+                self.assertEqual(testtools._is_the_action_verb(act, target), expected)
 
-    def test_is_the_objects(self):
+    def test_is_same_objects(self):
         data = [
                 (self.taro.talk(self.item, self.word),
                     (self.item, self.word), True),
@@ -501,9 +449,9 @@ class PrivateMethodsTest(unittest.TestCase):
 
         for act, targets, expected in data:
             with self.subTest(act=act, targets=targets, expected=expected):
-                self.assertEqual(testtools._is_the_objects(act.objects, targets), expected)
+                self.assertEqual(testtools._is_same_objects(act.objects, targets), expected)
 
-    def test_is_the_subject(self):
+    def test_is_same_subjects(self):
         data = [
                 (self.taro, self.item, False),
                 (self.taro, self.taro, True),
@@ -512,29 +460,50 @@ class PrivateMethodsTest(unittest.TestCase):
 
         for sub, target, expected in data:
             with self.subTest(sub=sub, target=target, expected=expected):
-                self.assertEqual(testtools._is_the_subject(sub, target), expected)
+                self.assertEqual(testtools._is_same_subjects(sub, target), expected)
 
-    @unittest.skip("complex test")
-    def test_near_eq_is_the_action(self):
-        pass
+    def test_near_eq_the_action(self):
+        data = [
+                (self.taro.be(), self.taro.be(), False, True),
+                ]
 
-    @unittest.skip("complex test")
-    def test_near_eq_is_the_infos(self):
-        pass
+        for act, target, isinfo, expected in data:
+            with self.subTest(act=act, target=target, isinfo=isinfo, expected=expected):
+                self.assertEqual(testtools._near_eq_the_action(act, target, isinfo),
+                        expected)
 
-    @unittest.skip("complex test")
-    def test_near_eq_is_the_objects(self):
-        pass
+    def test_near_eq_objects(self):
+        data = [
+                ((self.taro,), (self.taro,),
+                    False, True),
+                ((self.taro,), (self.item,),
+                    False, False),
+                ((self.taro, self.item,), (self.taro,),
+                    False, True),
+                ((self.taro, Info("test")), (self.taro, Info("test")),
+                    False, True),
+                ((self.taro, Info("test")), (self.taro, Info("tes")),
+                    False, False),
+                ((self.taro, Info("test"),), (self.taro, Info("tes"),),
+                    True, True),
+                ((self.taro, self.item), (self.taro, Something()),
+                    False, True),
+                ]
 
-    def test_near_eq_is_the_subject(self):
+        for objs, targets, isinfo, expected in data:
+            with self.subTest(objs=objs, targets=targets, isinfo=isinfo, expected=expected):
+                self.assertEqual(testtools._near_eq_objects(objs, targets, isinfo),
+                        expected)
+
+    def test_near_eq_subjects(self):
         data = [
                 (self.taro, self.item, False),
                 (self.taro, self.taro, True),
-                (self.taro, something(), True),
-                (something(), self.item, True),
+                (self.taro, Something(), True),
+                (Something(), self.item, True),
                 ]
 
         for sub, target, expected in data:
             with self.subTest(sub=sub, target=target, expected=expected):
-                self.assertEqual(testtools._near_eq_is_the_subject(sub, target), expected)
+                self.assertEqual(testtools._near_eq_subjects(sub, target), expected)
 

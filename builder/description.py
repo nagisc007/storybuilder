@@ -45,6 +45,7 @@ class Desc(_BaseDesc):
             if isinstance(descs, str):
                 return (descs,)
             else:
+                assert_istuple(descs)
                 return descs
         return ()
 

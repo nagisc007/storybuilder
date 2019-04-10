@@ -7,12 +7,12 @@ import argparse
 import re
 from .sbutils import assert_isclass, assert_isbool, assert_isint, assert_isstr
 from .action import Action, ActionGroup, TagAction
-from .commons import behavior_with_np_of, descriptions_of_if, dialogue_from_description_if, dialogue_from_info
+from .commons import descriptions_of, verb_with_np_of 
 from .commons import double_comma_chopped, extraspace_chopped, extraend_chopped
-from .commons import infos_of, object_names_of, sentence_from, subject_name_of
+from .commons import infos_of, object_names_of, subject_name_of
+from .description import Desc
 from .enums import ActType, DescType, GroupType, TagType, LangType
-from .subject import _BaseSubject
-from .person import Person
+from .subject import Subject, Person
 
 
 # functions
@@ -55,6 +55,13 @@ def options_parsed():
     return (args)
 
 
+def output_info(story: ActionGroup):
+    assert_isclass(story, ActionGroup)
+
+    totals = _count_descriptions(story)
+    print("Characters:\n    Total: {}".format(totals))
+
+
 def output_story(story: ActionGroup, filename: str, is_action_data: bool=False,
         is_out_as_file: bool=False, is_out_chars: bool=False,
         pri_filter: int=Action.MIN_PRIORITY,
@@ -80,9 +87,7 @@ def output_story(story: ActionGroup, filename: str, is_action_data: bool=False,
     assert_isbool(is_debug)
 
     if is_out_chars:
-        total_chars = _count_descriptions(story)
-        print("Characters:\n")
-        print("    Total: {}".format(total_chars))
+        output_info(story)
 
     if is_out_as_file:
         return _output_story_to_file(
@@ -127,74 +132,67 @@ def _action_of_by_type(act: Action, lang: LangType, group_type: GroupType, level
 
     if pri_filter > act.priority:
         return ""
-    if act.act_type in (ActType.ACT, ActType.EXPLAIN):
-        if lang is LangType.JPN:
-            return _action_with_obj_and_info_as_jpn(act, group_type, False)
-        else:
-            return _action_with_obj_and_info_as_eng(act, group_type, False)
+    if act.act_type is ActType.GROUP:
+        return ""
     elif act.act_type is ActType.TAG:
         return _action_of_by_tag(act, group_type, level)
-    elif act.act_type == ActType.TELL:
-        if lang is LangType.JPN:
-            return _action_with_obj_and_info_as_jpn(act, group_type, True)
+    elif act.act_type is ActType.TEST:
+        if is_debug:
+            if lang is LangType.JPN:
+                return _action_info_as_jpn(act, group_type, True)
+            else:
+                return _action_info_as_eng(act, group_type, True)
         else:
-            return _action_with_obj_and_info_as_eng(act, group_type, True)
-    elif act.act_type is ActType.TEST and is_debug:
-        if lang is LangType.JPN:
-            return _action_with_obj_and_info_as_jpn(act, group_type, False, True)
-        else:
-            return _action_with_obj_and_info_as_eng(act, group_type, False, True)
+            return ""
     else:
-        return ""
+        if lang is LangType.JPN:
+            return _action_info_as_jpn(act, group_type, False)
+        else:
+            return _action_info_as_eng(act, group_type, False)
 
 
-def _action_with_obj_and_info_as_eng(act: Action, group_type: GroupType, is_dialogue: bool, is_test: bool=False) -> str:
+def _action_info_as_eng(act: Action, group_type: GroupType, is_test: bool) -> str:
     assert_isclass(act, Action)
     assert_isclass(group_type, GroupType)
-    assert_isbool(is_dialogue)
     assert_isbool(is_test)
 
-    return "{}{}{:8}:{:8}/{}{}".format(
-            "> " if is_test else "",
-            _list_head_inserted(group_type),
-            subject_name_of(act),
-            _behavior_with_obj(act),
-            dialogue_from_info(act, LangType.ENG) if is_dialogue else infos_of(act),
-            _flag_info_if(act)
+    return "{test}{lihead}{subject:8}:{verb}{obj:8}/{info}{flag}".format(
+            test=_test_head_if(is_test),
+            lihead=_list_head_inserted(group_type),
+            subject=subject_name_of(act),
+            verb=verb_with_np_of(act),
+            obj="({})".format(object_names_of(act)),
+            info=infos_of(act),
+            flag=_flag_info_if(act),
             )
-   
 
-def _action_with_obj_and_info_as_jpn(act: Action, group_type: GroupType, is_dialogue: bool, is_test: bool=False) -> str:
+
+def _action_info_as_jpn(act: Action, group_type: GroupType, is_test: bool) -> str:
     assert_isclass(act, Action)
     assert_isclass(group_type, GroupType)
-    assert_isbool(is_dialogue)
     assert_isbool(is_test)
 
-    return "{}{}{:\u3000<6s}:{:\u3000<6s}/{}{}".format(
-            "> " if is_test else "",
-            _list_head_inserted(group_type),
-            subject_name_of(act),
-            _behavior_with_obj(act),
-            dialogue_from_info(act, LangType.JPN) if is_dialogue else infos_of(act),
-            _flag_info_if(act)
+    return "{test}{lihead}{subject:\u3000<6s}:{verb}{obj:\u3000<6s}/{info}{flag}".format(
+            test=_test_head_if(is_test),
+            lihead=_list_head_inserted(group_type),
+            subject=subject_name_of(act),
+            verb=verb_with_np_of(act),
+            obj="({})".format(object_names_of(act)),
+            info=infos_of(act),
+            flag=_flag_info_if(act),
             )
-
-def _behavior_with_obj(act: Action) -> str:
-    assert_isclass(act, Action)
-
-    return "{}({})".format(behavior_with_np_of(act), object_names_of(act))
 
 
 def _break_symbol_of(act: TagAction) -> str:
     assert_isclass(act, TagAction)
 
-    return "\n\n{}\n\n".format(act.note)
+    return "\n\n{}\n\n".format(act.tag_info)
 
 
 def _comment_of(act: TagAction) -> str:
     assert_isclass(act, TagAction)
 
-    return "<!--{}-->".format(act.note)
+    return "<!--{}-->".format(act.tag_info)
 
 
 def _count_desc_at_action(act: Action) -> int:
@@ -210,6 +208,8 @@ def _count_desc_in_group(group: ActionGroup) -> int:
     for a in group.actions:
         if isinstance(a, ActionGroup):
             tmp.append(_count_desc_in_group(a))
+        elif isinstance(a, TagAction):
+            continue
         else:
             tmp.append(_count_desc_at_action(a))
     return sum(tmp)
@@ -221,9 +221,16 @@ def _count_descriptions(story: ActionGroup) -> int:
     return _count_desc_in_group(story)
 
 
-def _desc_str_replaced_tag(descstr: str, subject: _BaseSubject) -> str:
+def _desc_head_of(desc: Desc, lang: LangType) -> str:
+    if lang is LangType.JPN:
+        return "　" if desc.desc_type is DescType.DESCRIPTION else ""
+    else:
+        return " " if desc.desc_type is DescType.DESCRIPTION else ""
+
+
+def _desc_str_replaced_tag(descstr: str, subject: Subject) -> str:
     assert_isstr(descstr)
-    assert_isclass(subject, _BaseSubject)
+    assert_isclass(subject, Subject)
 
     if isinstance(subject, Person):
         tmp = descstr
@@ -270,13 +277,11 @@ def _description_of_by_type(act: Action, lang: LangType, group_type: GroupType, 
     elif act.act_type is ActType.TAG:
         return _description_of_by_tag(act, lang, group_type, level, is_debug)
     elif act.act_type is ActType.TEST and is_debug:
-        return "> {}".format(descriptions_of_if(act, lang))
+        return "> {}".format(descriptions_of(act, lang))
     elif not act.descs.data:
         return ""
-    elif act.act_type in (ActType.ACT, ActType.EXPLAIN) and not act.descs.desc_type is DescType.DIALOGUE:
-        return _desc_str_replaced_tag(sentence_from(act, lang), act.subject)
-    elif act.act_type is ActType.TELL or act.descs.desc_type is DescType.DIALOGUE:
-        return _desc_str_replaced_tag(dialogue_from_description_if(act, lang), act.subject)
+    elif act.descs.desc_type in (DescType.DESCRIPTION, DescType.DIALOGUE):
+        return _desc_head_of(act.descs, lang) + _desc_str_replaced_tag(descriptions_of(act, lang), act.subject)
     else:
         return ""
 
@@ -301,11 +306,14 @@ def _extra_chopped(target: str, lang: LangType) -> str:
 def _flag_info_if(act: Action) -> str:
     assert_isclass(act, Action)
 
+    return _flag_info_of(act, True) + _flag_info_of(act, False)
+
+
+def _flag_info_of(act: Action, is_flag: bool) -> str:
+    _flags = act.flags if is_flag else act.deflags
     tmp = ""
-    if act.flag:
-        tmp += "[" + act.flag + "](f-" + act.flag + ")"
-    if act.deflag:
-        tmp += "[D:" + act.deflag + "](d-" + act.deflag + ")"
+    for flg in _flags:
+        tmp += "[{de}{flag}]({flag})".format(flag=flg, de="" if is_flag else "D:")
     return tmp
 
 
@@ -368,7 +376,7 @@ def _output_with_linenumber(val: str, num: int, is_debug: bool) -> str:
 def _scene_title_of(act: TagAction) -> str:
     assert_isclass(act, TagAction)
 
-    return "**{}**".format(act.note)
+    return "**{}**".format(act.tag_info)
 
 
 def _story_converted_as_action(story: ActionGroup, pri_filter: int, is_debug: bool) -> list:
@@ -397,6 +405,8 @@ def _story_converted_as_action_in_group(group: ActionGroup, group_type: GroupTyp
     for a in group.actions:
         if isinstance(a, ActionGroup):
             tmp.extend(_story_converted_as_action_in_group(a, a.group_type, level + 1, pri_filter, is_debug))
+        elif isinstance(a, TagAction):
+            tmp.append(_action_of_by_tag(a, group.group_type, level))
         else:
             tmp.append(_action_of_by_type(a, group.lang, group.group_type, level, pri_filter, is_debug))
     return tmp
@@ -422,6 +432,10 @@ def _story_converted_as_description_in_group(group: ActionGroup, group_type: Gro
     for a in group.actions:
         if isinstance(a, ActionGroup):
             tmp.extend(_story_converted_as_description_in_group(a, a.group_type, level + 1, pri_filter, is_debug))
+        elif isinstance(a, TagAction):
+            val = _description_of_by_tag(a, group.lang, group.group_type, level, is_debug)
+            if val:
+                tmp.append(_extra_chopped(val, group.lang))
         else:
             val = _description_of_by_type(a, group.lang, group.group_type, level, pri_filter, is_debug)
             if val:
@@ -455,5 +469,8 @@ def _story_title_of(act: TagAction, level: int) -> str:
     assert_isclass(act, TagAction)
     assert_isint(level)
 
-    return "{}{} {}\n".format("\n" if level > 1 else "", "#" * level, act.note)
+    return "{}{} {}\n".format("\n" if level > 1 else "", "#" * level, act.tag_info)
 
+
+def _test_head_if(is_test: bool) -> str:
+    return "> " if is_test else ""

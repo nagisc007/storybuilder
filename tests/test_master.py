@@ -4,10 +4,9 @@
 import unittest
 from builder.sbutils import print_test_title
 from builder.action import Action, ActionGroup, TagAction
-from builder.behavior import Behavior
 from builder.enums import ActType, GroupType, LangType, TagType
-from builder.master import Master, Word, Person
-
+from builder.master import Master
+from builder.subject import Person, Stage, Day, Item, Word
 
 _FILENAME = "master.py"
 
@@ -35,7 +34,7 @@ class MasterTest(unittest.TestCase):
                 self.assertEqual(tmp.name, name)
                 self.assertEqual(tmp.note, note)
 
-    def test_attr_append_person(self):
+    def test_append_person(self):
         data = [
                 ("taro", "Taro", 17, "male", "student", "me", "a man"),
                 ("hanako", "Hanako", 17, "female", "student", "me", "a girl"),
@@ -62,34 +61,111 @@ class MasterTest(unittest.TestCase):
                 self.assertEqual(self.ma[key].calling, calling_from(slf))
                 self.assertEqual(self.ma[key].note, note)
 
-    def test_attr_append_word(self):
+    def test_append_stage(self):
         data = [
-                ("w", "word", "a word"),
-                ("t", "test", "a test"),
-                ("w", "word2", "a word2")
+                ("school", "school", "for a student",
+                    "school", "school", "for a student"),
+                ("room", "room", "a room",
+                    "room", "room", "a room"),
+                ("room", "taro room", "",
+                    "s_room", "taro room", ""),
                 ]
 
-        for k, name, note in data:
-            with self.subTest(k=k, name=name, note=note):
-                self.ma.append_word(k, (name, note))
-                key = k if name != "word2" else "w_w"
-                self.assertEqual(self.ma[key].name, name)
-                self.assertEqual(self.ma[key].note, note)
+        for k, name, note, exp_key, exp_name, exp_note in data:
+            with self.subTest(k=k, name=name,
+                    exp_key=exp_key, exp_name=exp_name, exp_note=exp_note):
+                self.ma.append_stage(k, (name, note))
+                self.assertEqual(self.ma[exp_key].name, exp_name)
+                self.assertEqual(self.ma[exp_key].note, exp_note)
 
-    def test_attr_append_word_lacked(self):
-        data0 = ("w", "word")
-        data1 = ("t", "test", "a test")
-        self.ma.append_word(data0[0], data0[1:])
-        self.ma.append_word(data1[0], data1[1:])
-        self.assertEqual(self.ma.w.name, "word")
-        self.assertEqual(self.ma.w.note, "")
-        self.assertEqual(self.ma.t.name, "test")
-        self.assertEqual(self.ma.t.note, "a test")
+    def test_append_day(self):
+        data = [
+                ("d1", "day1", 1, 10, 2000, 12, 30, "a day",
+                    "d1", "day1", 1, 10, 2000, 12, 30, "a day"),
+                ("d1", "day1", 1, 10, 2000, 12, 30, "a day",
+                    "d_d1", "day1", 1, 10, 2000, 12, 30, "a day"),
+                ("d2", "day2", 0, 00, 0, 0, 0, "",
+                    "d2", "day2", 0, 0, 0, 0, 0, ""),
+                ]
 
-    def test_attr_append_word_using_cls(self):
-        self.ma.append_word("w", Word("word"))
-        self.assertEqual(self.ma.w.name, "word")
-        self.assertEqual(self.ma.w.note, "")
+        for k, name, mon, day, year, hour, min, note, exp_key, exp_name, exp_mon, exp_day, exp_year, exp_hour, exp_min, exp_note in data:
+            with self.subTest(k=k, name=name, mon=mon, day=day, year=year, hour=hour, min=min, note=note,
+                    exp_key=exp_key, exp_name=exp_name, exp_mon=exp_mon, exp_day=exp_day, exp_year=exp_year, exp_hour=exp_hour, exp_min=exp_min, exp_note=exp_note):
+                if isinstance(name, Day):
+                    self.ma.append_day(k, name)
+                elif note:
+                    self.ma.append_day(k, (name, mon, day, year, hour, min, note))
+                else:
+                    self.ma.append_day(k, (name,))
+                self.assertEqual(self.ma[exp_key].name, exp_name)
+                self.assertEqual(self.ma[exp_key].mon, exp_mon)
+                self.assertEqual(self.ma[exp_key].day, exp_day)
+                self.assertEqual(self.ma[exp_key].year, exp_year)
+                self.assertEqual(self.ma[exp_key].hour, exp_hour)
+                self.assertEqual(self.ma[exp_key].min, exp_min)
+                self.assertEqual(self.ma[exp_key].note, exp_note)
+
+    def test_append_item(self):
+        data = [
+                ("pen", "pen", "a pen",
+                    "pen", "pen", "a pen"),
+                ("pen", "pencil", "a pencil",
+                    "i_pen", "pencil", "a pencil"),
+                ("test", Item("test"), "",
+                    "test", "test", "")
+                ]
+
+        for k, name, note, exp_key, exp_name, exp_note in data:
+            with self.subTest(k=k, name=name, note=note,
+                    exp_key=exp_key, exp_name=exp_name, exp_note=exp_note):
+                if isinstance(name, Item):
+                    self.ma.append_item(k, name)
+                elif note:
+                    self.ma.append_item(k, (name, note))
+                else:
+                    self.ma.append_item(k, (name,))
+                self.assertEqual(self.ma[exp_key].name, exp_name)
+                self.assertEqual(self.ma[exp_key].note, exp_note)
+
+    def test_append_word(self):
+        data = [
+                ("w", "word", "a word",
+                    "w", "word", "a word"),
+                ("t", "test", "a test",
+                    "t", "test", "a test"),
+                ("w", "word2", "a word2",
+                    "w_w", "word2", "a word2"),
+                ("lack", "test", "",
+                    "lack", "test", ""),
+                ("cls", Word("test"), "",
+                    "cls", "test", "")
+                ]
+
+        for k, name, note, exp_key, exp_name, exp_note in data:
+            with self.subTest(k=k, name=name, note=note,
+                    exp_key=exp_key, exp_name=exp_name, exp_note=exp_note):
+                if isinstance(name, Word):
+                    self.ma.append_word(k, name)
+                elif note:
+                    self.ma.append_word(k, (name, note))
+                else:
+                    self.ma.append_word(k, (name,))
+                self.assertEqual(self.ma[exp_key].name, exp_name)
+                self.assertEqual(self.ma[exp_key].note, exp_note)
+
+    def test_br(self):
+        data = [
+                (10, TagType.BR, "10"),
+                (None, TagType.BR, "1")
+                ]
+        
+        for v, exp_type, expected in data:
+            with self.subTest(v=v, exp_type=exp_type, expected=expected):
+                tmp = self.ma.br(v) if v else self.ma.br()
+                self.assertIsInstance(tmp, TagAction)
+                self.assertEqual(tmp.act_type, ActType.TAG)
+                self.assertEqual(tmp.tag, exp_type)
+                self.assertEqual(tmp.tag_info, expected)
 
     def test_break_symbol(self):
         data = [
@@ -101,14 +177,13 @@ class MasterTest(unittest.TestCase):
                 tmp = self.ma.break_symbol(v)
                 self.assertIsInstance(tmp, TagAction)
                 self.assertEqual(tmp.act_type, ActType.TAG)
-                self.assertEqual(tmp.behavior, Behavior.NONE)
                 self.assertEqual(tmp.tag, TagType.SYMBOL)
-                self.assertEqual(tmp.note, expected)
+                self.assertEqual(tmp.tag_info, expected)
 
     def test_combine(self):
         data = [
-                ((self.taro.tell("a test"),), 1),
-                ((self.taro.tell("a test"), self.taro.tell("a test")), 2),
+                ((self.taro.be("a test"),), 1),
+                ((self.taro.be("a test"), self.taro.be("a test")), 2),
                 ]
 
         for args, expected in data:
@@ -122,21 +197,86 @@ class MasterTest(unittest.TestCase):
         data = [
                 ("a test"),
                 ]
+
         for cmt in data:
             with self.subTest(cmt=cmt):
                 tmp = self.ma.comment(cmt)
-                self.assertIsInstance(tmp, Action)
+                self.assertIsInstance(tmp, TagAction)
                 self.assertEqual(tmp.act_type, ActType.TAG)
-                self.assertEqual(tmp.behavior, Behavior.NONE)
                 self.assertEqual(tmp.tag, TagType.COMMENT)
-                self.assertEqual(tmp.note, cmt)
+                self.assertEqual(tmp.tag_info, cmt)
+
+    def test_hr(self):
+        data = [
+                (TagType.HR, ""),
+                ]
+
+        for tag, info in data:
+            with self.subTest(tag=tag, info=info):
+                tmp = self.ma.hr()
+                self.assertIsInstance(tmp, TagAction)
+                self.assertEqual(tmp.tag, tag)
+                self.assertEqual(tmp.tag_info, info)
 
     def test_scene(self):
+        data = [
+                ("test1", (self.taro.do(),), LangType.JPN, None,
+                    "test1", 3, LangType.JPN),
+                ("test2", (self.taro.do(), self.taro.do()), LangType.JPN, True,
+                    "test2", 3, LangType.JPN),
+                ]
+
+        for title, acts, lng, nobr, exp_title, exp_actlen, exp_lng in data:
+            with self.subTest(title=title, acts=acts, lng=lng, nobr=nobr,
+                    exp_title=exp_title, exp_actlen=exp_actlen, exp_lng=exp_lng):
+                tmp = self.ma.scene(title, *acts, lang=lng, is_nobr=True) if nobr else self.ma.scene(title, *acts, lang=lng)
+                self.assertIsInstance(tmp, ActionGroup)
+                self.assertEqual(tmp.act_type, ActType.GROUP)
+                self.assertEqual(len(tmp.actions), exp_actlen)
+                self.assertEqual(tmp.actions[0].tag_info, exp_title)
+                self.assertEqual(tmp.lang, exp_lng)
+
+    def test_set_days(self):
+        pass
+
+    def test_set_db(self):
+        pass
+
+    def test_set_items(self):
+        pass
+
+    def test_set_persons(self):
+        pass
+
+    def test_set_stages(self):
+        pass
+
+    def test_set_words(self):
         pass
 
     def test_story(self):
-        pass
+        data = [
+                ("test1", (self.taro.do(),), LangType.JPN,
+                    "test1", 2, LangType.JPN),
+                ]
+        for title, acts, lng, exp_title, exp_actlen, exp_lng in data:
+            with self.subTest(title=title, acts=acts, lng=lng,
+                    exp_title=exp_title, exp_actlen=exp_actlen, exp_lng=exp_lng):
+                tmp = self.ma.story(title, *acts, lang=lng)
+                self.assertIsInstance(tmp, ActionGroup)
+                self.assertEqual(tmp.act_type, ActType.GROUP)
+                self.assertEqual(len(tmp.actions), exp_actlen)
+                self.assertEqual(tmp.actions[0].tag_info, exp_title)
+                self.assertEqual(tmp.lang, exp_lng)
 
     def test_title(self):
-        pass
+        data = [
+                ("test", "test"),
+                ]
+
+        for v, expected in data:
+            tmp = self.ma.title(v)
+            self.assertIsInstance(tmp, TagAction)
+            self.assertEqual(tmp.tag, TagType.TITLE)
+            self.assertEqual(tmp.tag_info, expected)
 

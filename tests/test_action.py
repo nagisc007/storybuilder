@@ -3,32 +3,13 @@
 """
 import unittest
 from builder.sbutils import print_test_title
-from builder.action import _BaseAction, Action, ActionGroup, Desc, TagAction
-from builder.action import _BaseSubject
-from builder.action import Behavior
-from builder.action import ActType, AuxVerb, GroupType, LangType, TagType
-from builder.enums import DescType
+from builder.action import Action, ActionGroup, TagAction
+from builder.basesubject import _BaseSubject
+from builder.description import Desc
+from builder.enums import ActType, AuxVerb, DescType, GroupType, LangType, TagType
 
 
 _FILENAME = "action.py"
-
-
-class BaseActionTest(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        print_test_title(_FILENAME, "_BaseAction")
-
-    def test_attributes(self):
-        data = [
-                "test",
-                "",
-                ]
-        for name in data:
-            with self.subTest(name=name):
-                tmp = _BaseAction(name)
-                self.assertIsInstance(tmp, _BaseAction)
-                self.assertEqual(tmp.name, name)
 
 
 class ActionTest(unittest.TestCase):
@@ -39,128 +20,192 @@ class ActionTest(unittest.TestCase):
 
     def setUp(self):
         self.taro = _BaseSubject("Taro", "a man")
-        self.act0 = Action(self.taro, ActType.ACT, Behavior.ACT, ())
+        self.act = Action(ActType.BE, self.taro, "be", ())
+
+    def get_baseaction(self):
+        return Action(ActType.BE, self.taro, "be", ())
 
     def test_attributes(self):
         data = [
-                (self.taro, ActType.ACT, Behavior.ACT, ()),
-                (self.taro, ActType.ACT, Behavior.ACT, (self.taro,)),
+                (ActType.BE, self.taro, "be", (),
+                    ActType.BE, self.taro, "be", ()),
+                (ActType.BE, self.taro, "been", (),
+                    ActType.BE, self.taro, "been", ()),
+                (ActType.BE, self.taro, "be", (self.taro,),
+                    ActType.BE, self.taro, "be", (self.taro,)),
                 ]
-        for sub, act, behav, obj in data:
-            with self.subTest(sub=sub, act=act, behav=behav, obj=obj):
-                tmp = Action(sub, act, behav, obj)
+        for act, sub, verb, obj, exp_act, exp_sub, exp_verb, exp_obj in data:
+            with self.subTest(act=act, sub=sub, verb=verb, obj=obj,
+                    exp_act=exp_act, exp_sub=exp_sub, exp_verb=exp_verb, exp_obj=exp_obj):
+                tmp = Action(act, sub, verb, obj)
                 self.assertIsInstance(tmp, Action)
-                self.assertEqual(tmp.subject, sub)
-                self.assertEqual(tmp.act_type, act)
-                self.assertEqual(tmp.behavior, behav)
-                self.assertEqual(tmp.objects, obj)
+                self.assertEqual(tmp.act_type, exp_act)
+                self.assertEqual(tmp.subject, exp_sub)
+                self.assertEqual(tmp.verb, exp_verb)
+                self.assertEqual(tmp.objects, exp_obj)
+                self.assertIsInstance(tmp.descs, Desc)
                 self.assertEqual(tmp.descs.data, ())
-                self.assertEqual(tmp._auxverb, AuxVerb.NONE)
-                self.assertEqual(tmp._flag, "")
-                self.assertEqual(tmp._deflag, "")
-                self.assertEqual(tmp._is_negative, False)
-                self.assertEqual(tmp._is_passive, False)
-                self.assertEqual(tmp._priority, Action.DEFAULT_PRIORITY)
+                self.assertEqual(tmp.auxverb, AuxVerb.NONE)
+                self.assertEqual(tmp.flags, ())
+                self.assertEqual(tmp.deflags, ())
+                self.assertEqual(tmp.is_negative, False)
+                self.assertEqual(tmp.is_passive, False)
+                self.assertEqual(tmp.priority, Action.DEFAULT_PRIORITY)
+
+    def test_auxverb_methods(self):
+        data = [
+                ("can", AuxVerb.CAN),
+                ("may", AuxVerb.MAY),
+                ("must", AuxVerb.MUST),
+                ("should", AuxVerb.SHOULD),
+                ("want", AuxVerb.WANT),
+                ("will", AuxVerb.WILL),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                tmp = self.get_baseaction()
+                self.assertIsInstance(getattr(tmp, v)(), Action)
+                self.assertEqual(tmp.auxverb, expected)
 
     def test_desc(self):
         data = [
-                ("test0",),
-                ("test1", "test is a test"),
-                ("",),
+                (("test",),
+                    ("test",), DescType.DESCRIPTION),
+                (("test", "apple"),
+                    ("test", "apple"), DescType.DESCRIPTION),
+                ("test",
+                    ("test",), DescType.DESCRIPTION),
                 ]
-        for d in data:
-            with self.subTest(d=d):
-                self.act0.desc(*d)
-                self.assertIsInstance(self.act0.descs, Desc)
-                self.assertEqual(self.act0.descs.data, d)
+
+        for v, expected, exp_type in data:
+            with self.subTest(v=v, expected=expected, exp_type=exp_type):
+                tmp = self.get_baseaction()
+                if isinstance(v, tuple):
+                    tmp.desc(*v)
+                else:
+                    tmp.desc(v)
+                self.assertIsInstance(tmp.descs, Desc)
+                self.assertEqual(tmp.descs.desc_type, exp_type)
+                self.assertEqual(tmp.descs.data, expected)
+
+    def test_d(self):
+        data = [
+                (("test",),
+                    ("test",)),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                tmp = self.get_baseaction()
+                tmp.d(*v)
+                self.assertEqual(tmp.descs.data, expected)
 
     def test_negative(self):
-        self.assertFalse(self.act0.is_negative)
-        self.act0.negative()
-        self.assertTrue(self.act0.negative)
-
-    def test_passive(self):
-        self.assertFalse(self.act0.is_passive)
-        self.act0.passive()
-        self.assertTrue(self.act0.is_passive)
-
-    def test_flag(self):
         data = [
-                ("test", "test"),
-                ("1", "1"),
+                (True, True),
+                (None, False),
                 ]
-        for flg, expected in data:
-            with self.subTest(flg=flg, expected=expected):
-                self.act0.set_flag(flg)
-                self.assertEqual(self.act0.flag, expected)
 
-    def test_deflag(self):
-        data = [
-                ("test", "test"),
-                ("1", "1"),
-                ]
-        for flg, expected in data:
-            with self.subTest(flg=flg, expected=expected):
-                self.act0.set_deflag(flg)
-                self.assertEqual(self.act0.deflag, expected)
-
-    def test_priority(self):
-        data_set = [(x, x) for x in range(1, 10)]
-        for p1, p2 in data_set:
-            with self.subTest(p1=p1, p2=p2):
-                self.act0.set_priority(p1)
-                self.assertEqual(self.act0.priority, p2)
-
-    def test_auxverb(self):
-        for v in AuxVerb:
-            with self.subTest(v=v):
-                if v is AuxVerb.CAN:
-                    self.act0.can()
-                elif v is AuxVerb.MAY:
-                    self.act0.may()
-                elif v is AuxVerb.MUST:
-                    self.act0.must()
-                elif v is AuxVerb.NONE:
-                    continue
-                elif v is AuxVerb.SHOULD:
-                    self.act0.should()
-                elif v is AuxVerb.THINK:
-                    self.act0.think()
-                elif v is AuxVerb.WANT:
-                    self.act0.want()
-                elif v is AuxVerb.WILL:
-                    self.act0.will()
-                else:
-                    self.fail("Invalid value in AuxVerb")
-                self.assertEqual(self.act0.auxverb, v)
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                tmp = self.get_baseaction()
+                if v:
+                    tmp.negative()
+                self.assertEqual(tmp.is_negative, expected)
 
     def test_omit(self):
         data = [
-                ("test", None, Action.DEFAULT_PRIORITY),
-                ("test", True, Action.MIN_PRIORITY),
+                (True, Action.MIN_PRIORITY),
+                (None, Action.DEFAULT_PRIORITY),
                 ]
 
-        for v, omt, expected in data:
-            with self.subTest(v=v, omt=omt, expected=expected):
-                tmp = self.taro.explain()
-                if omt:
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                tmp = self.get_baseaction()
+                if v:
                     tmp.omit()
+                self.assertEqual(tmp.priority, expected)
+
+    def test_passive(self):
+        data = [
+                (True, True),
+                (None, False),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                tmp = self.get_baseaction()
+                if v:
+                    tmp.passive()
+                self.assertEqual(tmp.is_passive, expected)
+
+    def test_set_flags(self):
+        data = [
+                (("test",),
+                    ("test",)),
+                (("test", "apple"),
+                    ("test", "apple")),
+                ("test",
+                    ("test",)),
+                (1,
+                    ("1",))
+                ]
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                tmp = self.get_baseaction()
+                if isinstance(v, tuple):
+                    tmp.set_flags(*v)
+                else:
+                    tmp.set_flags(v)
+                self.assertEqual(tmp.flags, expected)
+
+    def test_set_deflag(self):
+        data = [
+                (("test",),
+                    ("test",)),
+                (("test", "apple"),
+                    ("test", "apple")),
+                ("test",
+                    ("test",)),
+                (1,
+                    ("1",))
+                ]
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                tmp = self.get_baseaction()
+                if isinstance(v, tuple):
+                    tmp.set_deflags(*v)
+                else:
+                    tmp.set_deflags(v)
+                self.assertEqual(tmp.deflags, expected)
+
+    def test_priority(self):
+        data = [(x, x) for x in range(1, 10)]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                tmp = self.get_baseaction()
+                tmp.set_priority(v)
                 self.assertEqual(tmp.priority, expected)
 
     def test_tell(self):
         data = [
-                ("test", False, DescType.DESCRIPTION),
-                ("test", True, DescType.DIALOGUE),
+                ("test", False,
+                    ("test",), DescType.DESCRIPTION),
+                ("test", True,
+                    ("test",), DescType.DIALOGUE),
                 ]
 
-        for doc, dial, expected in data:
-            tmp = self.taro.explain()
-            if dial:
-                tmp.tell(doc)
-            else:
-                tmp.desc(doc)
-            self.assertIsInstance(tmp.descs, Desc)
-            self.assertEqual(tmp.descs.desc_type, expected)
+        for doc, dial, expected, exp_type in data:
+            with self.subTest(doc=doc, dial=dial, expected=expected, exp_type=exp_type):
+                tmp = self.get_baseaction()
+                if dial:
+                    tmp.tell(doc)
+                else:
+                    tmp.desc(doc)
+                self.assertEqual(tmp.descs.desc_type, exp_type)
+                self.assertEqual(tmp.descs.data, expected)
 
 
 class ActionGroupTest(unittest.TestCase):
@@ -171,22 +216,28 @@ class ActionGroupTest(unittest.TestCase):
 
     def setUp(self):
         self.taro = _BaseSubject("Taro", "a man")
-        self.act0 = Action(self.taro, ActType.ACT, Behavior.ACT, ())
-        self.act1 = Action(self.taro, ActType.ACT, Behavior.ACT, ())
+
+    def get_baseaction(self):
+        return Action(ActType.BE, self.taro, "be", ())
 
     def test_attributes(self):
         data = [
-                (GroupType.STORY, LangType.JPN, (self.act0,)),
-                (GroupType.STORY, LangType.JPN, (self.act0, self.act1)),
-                (GroupType.SCENE, None, (self.act0,)),
+                (GroupType.STORY, LangType.JPN, (self.get_baseaction(),),
+                    GroupType.STORY, LangType.JPN, 1),
+                (GroupType.STORY, LangType.JPN, (self.get_baseaction(), self.get_baseaction()),
+                    GroupType.STORY, LangType.JPN, 2),
+                (GroupType.SCENE, None, (self.get_baseaction(),),
+                    GroupType.SCENE, LangType.JPN, 1),
                 ]
-        for group, lng, acts in data:
-            with self.subTest(group=group, lng=lng, acts=acts):
+
+        for group, lng, acts, exp_group, exp_lng, exp_acts in data:
+            with self.subTest(group=group, lng=lng, acts=acts,
+                    exp_group=exp_group, exp_lng=exp_lng, exp_acts=exp_acts):
                 tmp = ActionGroup(group_type=group, lang=lng, *acts) if lng else ActionGroup(group_type=group, *acts)
                 self.assertIsInstance(tmp, ActionGroup)
-                self.assertEqual(tmp.group_type, group)
-                self.assertEqual(tmp.lang, lng if lng else LangType.JPN)
-                self.assertEqual(tmp.actions, acts)
+                self.assertEqual(tmp.group_type, exp_group)
+                self.assertEqual(tmp.lang, exp_lng)
+                self.assertEqual(len(tmp.actions), exp_acts)
 
 
 class TagActionTest(unittest.TestCase):
@@ -197,17 +248,23 @@ class TagActionTest(unittest.TestCase):
 
     def test_attributes(self):
         data = [
-                (TagType.COMMENT, "a test"),
-                (TagType.TITLE, ""),
+                (TagType.COMMENT, "test",
+                    TagType.COMMENT, "test"),
+                (TagType.BR, "",
+                    TagType.BR, ""),
+                (TagType.HR, "hr",
+                    TagType.HR, "hr"),
+                (TagType.SYMBOL, "*",
+                    TagType.SYMBOL, "*"),
+                (TagType.TITLE, "test",
+                    TagType.TITLE, "test"),
                 ]
 
-        for tag, note in data:
-            with self.subTest(tag=tag, note=note):
-                tmp = TagAction(tag, note) if note else TagAction(tag)
+        for tag, info, exp_tag, exp_info in data:
+            with self.subTest(tag=tag, info=info, exp_tag=exp_tag, exp_info=exp_info):
+                tmp = TagAction(tag, info)
                 self.assertIsInstance(tmp, TagAction)
                 self.assertEqual(tmp.act_type, ActType.TAG)
-                self.assertEqual(tmp.behavior, Behavior.NONE)
-                self.assertEqual(tmp.objects, ())
-                self.assertEqual(tmp.tag, tag)
-                self.assertEqual(tmp.note, note)
+                self.assertEqual(tmp.tag, exp_tag)
+                self.assertEqual(tmp.tag_info, exp_info)
 

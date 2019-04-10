@@ -4,8 +4,7 @@
 from .sbutils import assert_isint, assert_isstr
 from .action import _BaseAction, ActionGroup, TagAction
 from .enums import GroupType, LangType, TagType
-from .person import Person
-from .subject import DayTime, Item, Stage, Word
+from .subject import Subject, Day, Item, Person, Stage, Word
 
 
 # classes
@@ -47,40 +46,27 @@ class Master(dict):
         else:
             self.__setitem__(key, data)
 
-    def append_day(self, key: str, val):
+    def _append_one(self, key: str, val, prefix: str, subject: Subject):
         assert_isstr(key)
 
-        data = val if isinstance(val, DayTime) else DayTime(*val)
-        self._setattr_with_prefix_if(Master.PREF_DAY, key, data)
+        data = val if isinstance(val, subject) else subject(*val)
+        self._setattr_with_prefix_if(prefix, key, data)
         return self
+
+    def append_day(self, key: str, val):
+        return self._append_one(key, val, Master.PREF_DAY, Day)
 
     def append_item(self, key: str, val):
-        assert_isstr(key)
-
-        data = val if isinstance(val, Item) else Item(*val)
-        self._setattr_with_prefix_if(Master.PREF_ITEM, key, data)
-        return self
+        return self._append_one(key, val, Master.PREF_ITEM, Item)
 
     def append_person(self, key: str, val):
-        assert_isstr(key)
-
-        data = val if isinstance(val, Person) else Person(*val)
-        self._setattr_with_prefix_if(Master.PREF_PERSON, key, data)
-        return self
+        return self._append_one(key, val, Master.PREF_PERSON, Person)
 
     def append_stage(self, key: str, val):
-        assert_isstr(key)
-
-        data = val if isinstance(val, Stage) else Stage(*val)
-        self._setattr_with_prefix_if(Master.PREF_STAGE, key, data)
-        return self
+        return self._append_one(key, val, Master.PREF_STAGE, Stage)
 
     def append_word(self, key: str, val):
-        assert_isstr(key)
-
-        data = val if isinstance(val, Word) else Word(*val)
-        self._setattr_with_prefix_if(Master.PREF_WORD, key, data)
-        return self
+        return self._append_one(key, val, Master.PREF_WORD, Word)
 
     def br(self, lines: int=1) -> TagAction:
         assert_isint(lines)
