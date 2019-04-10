@@ -237,22 +237,125 @@ class MasterTest(unittest.TestCase):
                 self.assertEqual(tmp.lang, exp_lng)
 
     def test_set_days(self):
-        pass
+        data = (
+                ("t1", "test1", 1, 10, 2000, 12, 30, "note"),
+                ("t2", "test2", 1, 10, 2000, 12, 30,),
+                ("t3", "test3", 1, 10, 2000, 12,)
+                )
+        expected = (
+                ("t1", "test1", 1, 10, 2000, 12, 30, "note"),
+                ("t2", "test2", 1, 10, 2000, 12, 30, ""),
+                ("t3", "test3", 1, 10, 2000, 12, 0, ""),
+                )
+       
+        ma = Master("test")
+        ma.set_days(data)
+        for i in range(len(data)):
+            exp = expected[i]
+            k = exp[0]
+            self.assertEqual(ma[k].name, exp[1])
+            self.assertEqual(ma[k].mon, exp[2])
+            self.assertEqual(ma[k].day, exp[3])
+            self.assertEqual(ma[k].year, exp[4])
+            self.assertEqual(ma[k].hour, exp[5])
+            self.assertEqual(ma[k].min, exp[6])
+            self.assertEqual(ma[k].note, exp[7])
 
     def test_set_db(self):
-        pass
+        data_p = (
+                ("p1", "taro", 17, "male", "student"),
+                )
+        data_s = (
+                ("s1", "stage1"),
+                )
+        data_d = (
+                ("d1", "day1"),
+                )
+        data_i = (
+                ("i1", "item1"),
+                )
+        data_w = (
+                ("w1", "word1"),
+                )
+        expected = (
+                ('p1', Person),
+                ('s1', Stage),
+                ('d1', Day),
+                ('i1', Item),
+                ('w1', Word),
+                )
+        ma = Master("test")
+        ma.set_db(data_p, data_s, data_d, data_i, data_w)
+        for k, exp in expected:
+            self.assertIsInstance(ma[k], exp)
 
     def test_set_items(self):
-        pass
+        data = (
+                ("t1", "item1"),
+                ("t2", "item2"),
+                )
+        expected = (
+                ("t1", "item1", ""),
+                ("t2", "item2", ""),
+                )
+        ma = Master("test")
+        ma.set_items(data)
+        for k, name, note in expected:
+            self.assertIsInstance(ma[k], Item)
+            self.assertEqual(ma[k].name, name)
+            self.assertEqual(ma[k].note, note)
 
     def test_set_persons(self):
-        pass
+        data = (
+                ("p1", "Taro", 17, "male", "student"),
+                ("p2", "Hana", 15, "female", "student"),
+                )
+        expected = (
+                ("p1", "Taro", 17, "male", "student", {"me":"私"}, ""),
+                ("p2", "Hana", 15, "female", "student", {"me":"私"}, ""),
+                )
+        ma = Master("test")
+        ma.set_persons(data)
+        for k, name, age, sex, job, calling, note in expected:
+            self.assertIsInstance(ma[k], Person)
+            self.assertEqual(ma[k].name, name)
+            self.assertEqual(ma[k].age, age)
+            self.assertEqual(ma[k].sex, sex)
+            self.assertEqual(ma[k].job, job)
+            self.assertEqual(ma[k].calling, calling)
+            self.assertEqual(ma[k].note, note)
 
     def test_set_stages(self):
-        pass
+        data = (
+                ("s1", "stage1",),
+                ("s2", "stage2"),
+                )
+        expected = (
+                ("s1", "stage1", ""),
+                ("s2", "stage2", ""),
+                )
+        ma = Master("test")
+        ma.set_stages(data)
+        for k, name, note in expected:
+            self.assertIsInstance(ma[k], Stage)
+            self.assertEqual(ma[k].name, name)
+            self.assertEqual(ma[k].note, note)
 
     def test_set_words(self):
-        pass
+        data = (
+                ("w1", "word1"),
+                ("w2", "word2"),
+                )
+        expected = (
+                ("w1", "word1", ""),
+                ("w2", "word2", ""),
+                )
+        ma = Master("test")
+        ma.set_words(data)
+        for k, name, note in expected:
+            self.assertIsInstance(ma[k], Word)
+            self.assertEqual(ma[k].name, name)
+            self.assertEqual(ma[k].note, note)
 
     def test_story(self):
         data = [

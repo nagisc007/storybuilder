@@ -129,6 +129,7 @@ class Master(dict):
         self.set_days(days)
         self.set_items(items)
         self.set_words(words)
+        return self
 
     def set_items(self, li: list):
         for v in li:

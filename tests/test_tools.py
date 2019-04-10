@@ -109,6 +109,7 @@ class PrivateMethodsTest(unittest.TestCase):
                 (self.ma.title("test"), GroupType.SCENE, 1, "**test**"),
                 (self.ma.hr(), GroupType.STORY, 1, "--------" * 9),
                 (self.ma.break_symbol("**"), GroupType.STORY, 1, "\n\n**\n\n"),
+                (self.ma.br(), GroupType.STORY, 1, "\n"),
                 ]
         
         for act, gtype, lv, expected in data:
@@ -122,6 +123,8 @@ class PrivateMethodsTest(unittest.TestCase):
                     "- Taro　　:talk()　　　　/"),
                 (self.taro.talk(self.hanako), LangType.JPN, GroupType.STORY, 1, DEF_PRI, False,
                     "- Taro　　:talk(Hanako)/"),
+                (self.taro.be(), LangType.JPN, GroupType.STORY, 1, 10, False,
+                    ""),
                 ]
 
         for act, lng, gtype, lv, pri, dbg, expected in data:
@@ -190,6 +193,8 @@ class PrivateMethodsTest(unittest.TestCase):
                     4),
                 (self.ma.scene("test", self.taro.talk().d("test"), self.taro.talk().d("test")),
                     8),
+                (self.ma.story("test", self.ma.scene("a", self.taro.talk().d("test"))),
+                    4),
                 ]
 
         for v, expected in data:
@@ -225,6 +230,7 @@ class PrivateMethodsTest(unittest.TestCase):
                 ("$Sだし", self.masao, "俺だし"),
                 ("$hanakoはかわいい", self.misa, "Hanaはかわいい"),
                 ("$Sはあんまりだが$hanakoは美人", self.misa, "私はあんまりだがHanaは美人"),
+                ("$Sのテスト", Word("test"), "$Sのテスト"),
                 ]
 
         for doc, sub, expected in data:
@@ -243,6 +249,8 @@ class PrivateMethodsTest(unittest.TestCase):
                     "--------" * 9),
                 (self.ma.break_symbol("**"), LangType.JPN, GroupType.STORY, 1, False,
                     "\n\n**\n\n"),
+                (self.ma.title("test"), LangType.JPN, GroupType.SCENE, 1, True,
+                    "**test**"),
                 ]
 
         for act, lng, gtype, lv, dbg, expected in data:
@@ -405,7 +413,10 @@ class PrivateMethodsTest(unittest.TestCase):
         data = [
                 (self.ma.story("Test", self.taro.be()),
                     GroupType.STORY, 1, 0, False,
-                    ["# Test\n", "- Taro　　:be()　　　　/"])
+                    ["# Test\n", "- Taro　　:be()　　　　/"]),
+                (self.ma.story("Test", self.ma.scene("A", self.taro.be())),
+                    GroupType.STORY, 1, 0, False,
+                    ["# Test\n", "**A**","    - Taro　　:be()　　　　/", "\n"]),
                 ]
 
         for story, gtype, lv, pri, isdbg, expected in data:
@@ -439,6 +450,9 @@ class PrivateMethodsTest(unittest.TestCase):
                 (self.ma.story(self.taro.talk().d("test"), self.hanako.talk().d("apple"), lang=LangType.ENG),
                     GroupType.COMBI,
                     [" test. apple. "]),
+                (self.ma.story("test", self.ma.scene("a", self.taro.be().d("test"))),
+                    GroupType.STORY,
+                    ["# test\n", "　test。", "\n"])
                 ]
         for v, gtype, expected in data:
             with self.subTest(v=v, gtype=gtype, expected=expected):

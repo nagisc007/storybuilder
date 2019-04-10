@@ -237,7 +237,8 @@ def _desc_str_replaced_tag(descstr: str, subject: Subject) -> str:
         for k, v in subject.calling.items():
             tmp = re.sub(r'\${}'.format(k), v, tmp)
         return re.sub(r'\$S', subject.calling['me'], tmp)
-    return descstr
+    else:
+        return descstr
 
 
 def _description_of_by_tag(act: TagAction, lang: LangType, group_type: GroupType, level: int, is_debug: bool) -> str:
