@@ -37,6 +37,12 @@ def assert_isint(ins) -> bool:
 
 
 def assert_islist(ins) -> bool:
+    assert isinstance(ins, list) or isinstance(ins, tuple), _ASSERT_MSG.format(_instance_name_if(ins), "list or tuple")
+
+    return True
+
+
+def assert_islist_strict(ins) -> bool:
     assert isinstance(ins, list), _ASSERT_MSG.format(_instance_name_if(ins), "list")
 
     return True

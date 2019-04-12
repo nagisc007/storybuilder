@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Story manager class.
 """
-from .sbutils import assert_isint, assert_isstr
+from .sbutils import assert_isint, assert_islist, assert_isstr
 from .action import _BaseAction, ActionGroup, TagAction
 from .enums import GroupType, LangType, TagType
 from .subject import Subject, Day, Item, Person, Stage, Word
@@ -119,34 +119,44 @@ class Master(dict):
         return ActionGroup(lang=lang, group_type=GroupType.SCENE, *tmp)
 
     def set_days(self, li: list):
+        assert_islist(li)
+
         for v in li:
             self.append_day(v[0], v[1:])
         return self
 
-    def set_db(self, persons: list, stages: list, days: list, items: list, words: list):
-        self.set_persons(persons)
-        self.set_stages(stages)
-        self.set_days(days)
-        self.set_items(items)
-        self.set_words(words)
+    def set_db(self, persons: list=None, stages: list=None, days: list=None, items: list=None, words: list=None):
+        self.set_persons(persons if persons else [])
+        self.set_stages(stages if stages else [])
+        self.set_days(days if days else [])
+        self.set_items(items if items else [])
+        self.set_words(words if words else [])
         return self
 
     def set_items(self, li: list):
+        assert_islist(li)
+
         for v in li:
             self.append_item(v[0], v[1:])
         return self
 
     def set_persons(self, li: list):
+        assert_islist(li)
+
         for v in li:
             self.append_person(v[0], v[1:])
         return self
 
     def set_stages(self, li: list):
+        assert_islist(li)
+
         for v in li:
             self.append_stage(v[0], v[1:])
         return self
 
     def set_words(self, li: list):
+        assert_islist(li)
+
         for v in li:
             self.append_word(v[0], v[1:])
         return self
