@@ -6,7 +6,7 @@ from builder.sbutils import print_test_title
 from builder.action import Action, ActionGroup, TagAction
 from builder.enums import ActType, GroupType, LangType, TagType
 from builder.master import Master
-from builder.subject import Person, Stage, Day, Item, Word, Info, Flag
+from builder.subject import Person, Stage, Day, Item, Word, Info, Flag, Nothing, Something
 
 _FILENAME = "master.py"
 
@@ -229,6 +229,14 @@ class MasterTest(unittest.TestCase):
                 self.assertEqual(tmp.tag, tag)
                 self.assertEqual(tmp.tag_info, info)
 
+    def test_info(self):
+        tmp = Master('test')
+        self.assertIsInstance(tmp.info("test"), Info)
+
+    def test_nothing(self):
+        tmp = Master('test')
+        self.assertIsInstance(tmp.nothing(), Nothing)
+
     def test_scene(self):
         data = [
                 ("test1", (self.taro.do(),), LangType.JPN, None,
@@ -405,6 +413,10 @@ class MasterTest(unittest.TestCase):
             self.assertIsInstance(ma[k], Word)
             self.assertEqual(ma[k].name, name)
             self.assertEqual(ma[k].note, note)
+
+    def test_something(self):
+        tmp = Master('test')
+        self.assertIsInstance(tmp.some(), Something)
 
     def test_story(self):
         data = [

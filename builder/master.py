@@ -4,7 +4,7 @@
 from .sbutils import assert_isint, assert_islist, assert_isstr
 from .action import _BaseAction, ActionGroup, TagAction
 from .enums import GroupType, LangType, TagType
-from .subject import Subject, Day, Flag, Item, Person, Stage, Word
+from .subject import Subject, Day, Flag, Item, Person, Stage, Word, Something, Nothing, Info
 
 
 # classes
@@ -108,6 +108,12 @@ class Master(dict):
         """
         return TagAction(TagType.HR, "")
 
+    def info(self, val) -> Info:
+        return Info(val)
+
+    def nothing(self) -> Nothing:
+        return Nothing()
+
     def scene(self, title: str, *args: _BaseAction, lang: LangType=LangType.JPN, is_nobr: bool=False):
         """
         Args:
@@ -171,6 +177,9 @@ class Master(dict):
         for v in li:
             self.append_word(v[0], v[1:])
         return self
+
+    def some(self) -> Something:
+        return Something()
 
     def story(self, title: str, *args: _BaseAction, lang: LangType=LangType.JPN):
         """
