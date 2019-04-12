@@ -6,7 +6,7 @@ from enum import Enum, auto
 from .sbutils import assert_isbool, assert_isclass, assert_islist, assert_istuple
 from .action import Action, ActionGroup, TagAction
 from .commons import infos_of, object_names_of, subject_name_of, verb_with_np_of
-from .subject import Day, Flag, Info, Item, Nothing, Person, Stage, Something, Subject, Word
+from .subject import Day, Flag, Info, Item, Person, Stage, Something, Subject, Word
 
 
 class MatchLv(Enum):
@@ -235,7 +235,7 @@ def _flags_gathered_at_action(act: Action, is_flag: bool) -> list:
     assert_isbool(is_flag)
     
     if is_flag:
-        return list(act.flags)
+        return list(act.flags) + [v for v in act.objects if isinstance(v, Flag)]
     else:
         return list(act.deflags)
 

@@ -3,8 +3,8 @@
 """
 import unittest
 from builder.sbutils import print_test_title
-from builder.action import Action, ActionGroup, TagAction
-from builder.enums import ActType, GroupType, LangType, TagType
+from builder.action import ActionGroup, TagAction
+from builder.enums import ActType, LangType, TagType
 from builder.master import Master
 from builder.subject import Person, Stage, Day, Item, Word, Info, Flag, Nothing, Something
 

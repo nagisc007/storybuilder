@@ -4,7 +4,7 @@
 import unittest
 from builder.sbutils import print_test_title
 from builder.master import Master
-from builder.subject import Person, Day, Info, Item, Nothing, Stage, Something, Word, Flag
+from builder.subject import Person, Day, Info, Item, Stage, Something, Word, Flag
 import builder.testtools as testtools
 from builder.testtools import MatchLv
 
@@ -137,7 +137,7 @@ class PublicMethodsTest(unittest.TestCase):
             with self.subTest(what=what, why=why, how=how, result=result, fuz=fuz,
                     expected=expected):
                 self.assertEqual(testtools.has_outline_infos(self, base_story,
-                    whta, why, how, result, fuz), expected)
+                    what, why, how, result, fuz), expected)
 
     def test_has_the_action(self):
         data = [
@@ -292,6 +292,9 @@ class PrivateMethodsTest(unittest.TestCase):
                 (self.ma.story("test", self.taro.be().set_flags(flag1)),
                     True,
                     [flag1]),
+                (self.ma.story("test", self.taro.be(flag1, flag2)),
+                    True,
+                    [flag1, flag2]),
                 (self.ma.story("test", self.taro.be().set_deflags(flag1)),
                     False,
                     [flag1]),

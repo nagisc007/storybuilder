@@ -4,7 +4,6 @@
 import unittest
 from builder.sbutils import print_test_title
 from builder.action import Action
-from builder.description import Desc
 from builder.enums import ActType, LangType
 from builder.subject import Subject, Person, Something, Item
 import builder.commons as commons

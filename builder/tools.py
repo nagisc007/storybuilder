@@ -12,7 +12,7 @@ from .commons import double_comma_chopped, extraspace_chopped, extraend_chopped
 from .commons import infos_of, object_names_of, subject_name_of
 from .description import Desc
 from .enums import ActType, DescType, GroupType, TagType, LangType
-from .subject import Subject, Person
+from .subject import Subject, Person, Flag
 
 
 # functions
