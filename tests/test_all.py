@@ -50,6 +50,7 @@ def suite():
     # subject
     suite.addTest(unittest.makeSuite(test_subject.SubjectTest))
     suite.addTest(unittest.makeSuite(test_subject.InfoTest))
+    suite.addTest(unittest.makeSuite(test_subject.FlagTest))
     suite.addTest(unittest.makeSuite(test_subject.NothingTest))
     suite.addTest(unittest.makeSuite(test_subject.SomethingTest))
     suite.addTest(unittest.makeSuite(test_subject.PersonTest))

@@ -4,7 +4,7 @@
 import unittest
 from builder.sbutils import print_test_title
 from builder.master import Master
-from builder.subject import Person, Day, Info, Item, Nothing, Stage, Something, Word
+from builder.subject import Person, Day, Info, Item, Nothing, Stage, Something, Word, Flag
 import builder.testtools as testtools
 from builder.testtools import MatchLv
 
@@ -270,9 +270,10 @@ class PrivateMethodsTest(unittest.TestCase):
         self.assertFalse(testtools._fail_message_without_target(self, "test", self.taro.be()))
 
     def test_flags_gathered_at_action(self):
+        flag1, flag2 = Flag("1"), Flag("2")
         data = [
-                (("test",), None, True, ["test"]),
-                (None, ("test", "apple"), False, ["test", "apple"])
+                ((flag1,), None, True, [flag1]),
+                (None, (flag1, flag2), False, [flag1, flag2])
                 ]
 
         for flg, dflg, isflg, expected in data:
@@ -286,16 +287,17 @@ class PrivateMethodsTest(unittest.TestCase):
                         expected)
 
     def test_flags_gathered_in_group(self):
+        flag1, flag2 = Flag(1), Flag(2)
         data = [
-                (self.ma.story("test", self.taro.be().set_flags("test")),
+                (self.ma.story("test", self.taro.be().set_flags(flag1)),
                     True,
-                    ["test"]),
-                (self.ma.story("test", self.taro.be().set_deflags("test")),
+                    [flag1]),
+                (self.ma.story("test", self.taro.be().set_deflags(flag1)),
                     False,
-                    ["test"]),
-                (self.ma.story("test", self.ma.scene("a", self.taro.be().set_flags("test"))),
+                    [flag1]),
+                (self.ma.story("test", self.ma.scene("a", self.taro.be().set_flags(flag1))),
                     True,
-                    ["test"]),
+                    [flag1]),
                 ]
 
         for story, isflg, expected in data:

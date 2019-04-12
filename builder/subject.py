@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Module to build a story.
 """
-from .sbutils import assert_isstr, assert_isint
+from .sbutils import assert_are_int_str, assert_isstr, assert_isint
 from .action import Action 
 from .basesubject import _BaseSubject
 from .enums import ActType
@@ -38,6 +38,15 @@ class Info(Subject):
         assert_isstr(info)
 
         super().__init__(Info._NAME, info)
+
+
+class Flag(Info):
+    """Flag information class.
+    """
+    def __init__(self, info: [str, int]):
+        assert_are_int_str(info)
+
+        super().__init__(info if isinstance(info, str) else str(info))
 
 
 class Nothing(Subject):

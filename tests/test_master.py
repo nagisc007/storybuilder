@@ -6,7 +6,7 @@ from builder.sbutils import print_test_title
 from builder.action import Action, ActionGroup, TagAction
 from builder.enums import ActType, GroupType, LangType, TagType
 from builder.master import Master
-from builder.subject import Person, Stage, Day, Item, Word
+from builder.subject import Person, Stage, Day, Item, Word, Info, Flag
 
 _FILENAME = "master.py"
 
@@ -33,6 +33,17 @@ class MasterTest(unittest.TestCase):
                 self.assertIsInstance(tmp, Master)
                 self.assertEqual(tmp.name, name)
                 self.assertEqual(tmp.note, note)
+
+    def test_append_flag(self):
+        data = [
+                ("test", "test",
+                    "f_test", "test"),
+                ]
+
+        for v, info, key, expected in data:
+            with self.subTest(v=v, info=info, key=key, expected=expected):
+                self.ma.append_flag(v, info)
+                self.assertEqual(self.ma[key].note, expected)
 
     def test_append_person(self):
         data = [
@@ -308,6 +319,24 @@ class MasterTest(unittest.TestCase):
             with self.subTest(p=p, s=s, d=d, i=i, w=w):
                 ma = Master('test')
                 self.assertIsInstance(ma.set_db(p, s, d, i, w), Master)
+
+    def test_set_flags(self):
+        data = (
+                ("test1", "test"),
+                ("test2", "apple"),
+                ("test3", "orange"),
+                )
+        expected = (
+                ("f_test1", "test"),
+                ("f_test2", "apple"),
+                ("f_test3", "orange")
+                )
+        ma = Master("test")
+        ma.set_flags(data)
+
+        for k, info in expected:
+            self.assertIsInstance(ma[k], Flag)
+            self.assertEqual(ma[k].note, info)
 
     def test_set_items(self):
         data = (

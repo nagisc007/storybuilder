@@ -7,6 +7,7 @@ from builder.action import Action, ActionGroup, TagAction
 from builder.basesubject import _BaseSubject
 from builder.description import Desc
 from builder.enums import ActType, AuxVerb, DescType, GroupType, LangType, TagType
+from builder.subject import Flag
 
 
 _FILENAME = "action.py"
@@ -143,13 +144,13 @@ class ActionTest(unittest.TestCase):
     def test_set_flags(self):
         data = [
                 (("test",),
-                    ("test",)),
+                    (Flag("test"),)),
                 (("test", "apple"),
-                    ("test", "apple")),
+                    (Flag("test"), Flag("apple"))),
                 ("test",
-                    ("test",)),
+                    (Flag("test"),)),
                 (1,
-                    ("1",))
+                    (Flag("1"),))
                 ]
         for v, expected in data:
             with self.subTest(v=v, expected=expected):
@@ -158,18 +159,20 @@ class ActionTest(unittest.TestCase):
                     tmp.set_flags(*v)
                 else:
                     tmp.set_flags(v)
-                self.assertEqual(tmp.flags, expected)
+                for f, exp in zip(tmp.flags, expected):
+                    self.assertIsInstance(f, Flag)
+                    self.assertEqual(f.note, exp.note)
 
     def test_set_deflag(self):
         data = [
                 (("test",),
-                    ("test",)),
+                    (Flag("test"),)),
                 (("test", "apple"),
-                    ("test", "apple")),
+                    (Flag("test"), Flag("apple"))),
                 ("test",
-                    ("test",)),
+                    (Flag("test"),)),
                 (1,
-                    ("1",))
+                    (Flag("1"),))
                 ]
         for v, expected in data:
             with self.subTest(v=v, expected=expected):
@@ -178,7 +181,9 @@ class ActionTest(unittest.TestCase):
                     tmp.set_deflags(*v)
                 else:
                     tmp.set_deflags(v)
-                self.assertEqual(tmp.deflags, expected)
+                for f, exp in zip(tmp.deflags, expected):
+                    self.assertIsInstance(f, Flag)
+                    self.assertEqual(f.note, exp.note)
 
     def test_priority(self):
         data = [(x, x) for x in range(1, 10)]

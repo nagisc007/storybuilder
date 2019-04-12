@@ -4,7 +4,7 @@
 import unittest
 from builder.sbutils import print_test_title
 from builder.subject import Subject,Person, Day, Item, Stage, Word
-from builder.subject import Something, Info, Nothing
+from builder.subject import Something, Info, Flag, Nothing
 from builder.subject import Action
 from builder.enums import ActType
 
@@ -91,6 +91,24 @@ class InfoTest(unittest.TestCase):
             self.assertIsInstance(tmp, Info)
             self.assertEqual(tmp.name, exp_name)
             self.assertEqual(tmp.note, exp_note)
+
+
+class FlagTest(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        print_test_title(_FILENAME, "Flag")
+
+    def test_attributes(self):
+        data = [
+                ("test",
+                    "test")
+                ]
+
+        for v, expected in data:
+            tmp = Flag(v)
+            self.assertIsInstance(tmp, Flag)
+            self.assertEqual(tmp.note, expected)
 
 
 class NothingTest(unittest.TestCase):

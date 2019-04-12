@@ -6,6 +6,10 @@
 _ASSERT_MSG = "{} Must be type {}!"
 
 # public functions
+def assert_are_int_str(ins) -> bool:
+    assert isinstance(ins, int) or isinstance(ins, str), _ASSERT_MSG.format(_instance_name_if(ins), "int or str")
+
+
 def assert_isbetween(ins, max_, min_) -> bool:
     assert ins <= max_ and ins >= min_, "Must be between {} to {}".format(max_, min_)
 

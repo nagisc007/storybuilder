@@ -4,7 +4,7 @@
 from .sbutils import assert_isint, assert_islist, assert_isstr
 from .action import _BaseAction, ActionGroup, TagAction
 from .enums import GroupType, LangType, TagType
-from .subject import Subject, Day, Item, Person, Stage, Word
+from .subject import Subject, Day, Flag, Item, Person, Stage, Word
 
 
 # classes
@@ -17,6 +17,7 @@ class Master(dict):
     __setattr__ = dict.__setitem__
 
     PREF_DAY = 'd'
+    PREF_FLAG = 'f'
     PREF_ITEM = 'i'
     PREF_PERSON = 'p'
     PREF_STAGE = 's'
@@ -40,21 +41,24 @@ class Master(dict):
         else:
             return (title,) + args
     
-    def _setattr_with_prefix_if(self, pref: str, key: str, data):
-        if key in self.keys():
+    def _setattr_with_prefix_if(self, pref: str, key: str, data, is_absolute: bool=False):
+        if is_absolute or key in self.keys():
             self.__setitem__(pref + '_' + key, data)
         else:
             self.__setitem__(key, data)
 
-    def _append_one(self, key: str, val, prefix: str, subject: Subject):
+    def _append_one(self, key: str, val, prefix: str, subject: Subject, is_absolute_pref: bool=False):
         assert_isstr(key)
 
         data = val if isinstance(val, subject) else subject(*val)
-        self._setattr_with_prefix_if(prefix, key, data)
+        self._setattr_with_prefix_if(prefix, key, data, is_absolute_pref)
         return self
 
     def append_day(self, key: str, val):
         return self._append_one(key, val, Master.PREF_DAY, Day)
+
+    def append_flag(self, key: str, val: str):
+        return self._append_one(key, [val], Master.PREF_FLAG, Flag, True)
 
     def append_item(self, key: str, val):
         return self._append_one(key, val, Master.PREF_ITEM, Item)
@@ -131,6 +135,13 @@ class Master(dict):
         self.set_days(days if days else [])
         self.set_items(items if items else [])
         self.set_words(words if words else [])
+        return self
+
+    def set_flags(self, li: list):
+        assert_islist(li)
+
+        for v in li:
+            self.append_flag(v[0], v[1])
         return self
 
     def set_items(self, li: list):

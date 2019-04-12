@@ -14,9 +14,9 @@ class Action(_BaseAction):
     Attributes:
         act_type (:enum:`ActType`): an action category type.
         auxverb (:enum:`AuxVerb`): an auxiliary verb.
-        deflags (:tuple:str): a story deflag to associate this action.
+        deflags (:tuple:`_BaseSubject`): a story deflag to associate this action.
         descs (:obj:`_BaseDesc`): descriptions data object.
-        flags (:tuple:str): a story flag to associate this action.
+        flags (:tuple:`_BaseSubject`): a story flag to associate this action.
         is_negative (bool): if True is a negative mode.
         is_passive (bool): if True is a passive mode.
         objects (:tuple:obj:`_BaseSubject`): objects of this action.
@@ -52,8 +52,9 @@ class Action(_BaseAction):
         self.subject = subject
         self.verb = verb
 
-    def _flags_str_tuple_from(self, *args) -> tuple:
-        return tuple(str(v) if isinstance(v, int) else v for v in args)
+    def _flags_data_from(self, *args) -> tuple:
+        from .subject import Flag
+        return tuple(v if isinstance(v, Flag) else Flag(str(v)) for v in args)
 
     def can(self):
         self.auxverb = AuxVerb.CAN
@@ -62,9 +63,15 @@ class Action(_BaseAction):
     def d(self, *args):
         return self.desc(*args)
 
+    def de(self, *args):
+        return self.set_deflags(*args)
+
     def desc(self, *args, is_dialogue: bool=False):
         self.descs = Desc(args, desc_type=DescType.DIALOGUE) if is_dialogue else Desc(args)
         return self
+
+    def f(self, *args):
+        return self.set_flags(*args)
 
     def may(self):
         self.auxverb = AuxVerb.MAY
@@ -93,11 +100,11 @@ class Action(_BaseAction):
     def ps(self): return self.passive()
 
     def set_deflags(self, *args):
-        self.deflags = self._flags_str_tuple_from(*args)
+        self.deflags = self._flags_data_from(*args)
         return self
 
     def set_flags(self, *args):
-        self.flags = self._flags_str_tuple_from(*args)
+        self.flags = self._flags_data_from(*args)
         return self
 
     def set_priority(self, pri):

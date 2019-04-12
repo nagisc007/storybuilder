@@ -7,7 +7,7 @@ from .action import Action
 from .basesubject import _BaseSubject
 from .description import Desc, DescGroup
 from .enums import AuxVerb, DescType, LangType
-from .subject import Info, Nothing, Something
+from .subject import Info, Nothing, Something, Flag
 
 
 # public functions
@@ -59,7 +59,7 @@ def infos_of(act: Action) -> str:
     '''
     assert_isclass(act, Action)
 
-    return "/".join(v.note for v in act.objects if isinstance(v, Info))
+    return "/".join(_info_str_if_flag(v) for v in act.objects if isinstance(v, Info))
 
 
 def infos_from(act: Action) -> set:
@@ -170,6 +170,12 @@ def _endpoint_replaced_if_invalid(target: str, lang: LangType) -> str:
     else:
         tmp = re.sub(r'[,]\.', r'.', target)
         return re.sub(r'[,\.]"', r'"', tmp)
+
+
+def _info_str_if_flag(target: Info) -> str:
+    assert_isclass(target, Info)
+
+    return "[{flag}]({flag})".format(flag=target.note) if isinstance(target, Flag) else target.note
 
 
 def _period_of(lang: LangType) -> str:

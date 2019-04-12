@@ -163,7 +163,7 @@ def _action_info_as_eng(act: Action, group_type: GroupType, is_test: bool) -> st
             verb=verb_with_np_of(act),
             obj="({})".format(object_names_of(act)),
             info=infos_of(act),
-            flag=_flag_info_if(act),
+            flag=_flags_if(act),
             )
 
 
@@ -179,7 +179,7 @@ def _action_info_as_jpn(act: Action, group_type: GroupType, is_test: bool) -> st
             verb=verb_with_np_of(act),
             obj="({})".format(object_names_of(act)),
             info=infos_of(act),
-            flag=_flag_info_if(act),
+            flag=_flags_if(act),
             )
 
 
@@ -304,7 +304,7 @@ def _extra_chopped(target: str, lang: LangType) -> str:
             lang)
 
 
-def _flag_info_if(act: Action) -> str:
+def _flags_if(act: Action) -> str:
     assert_isclass(act, Action)
 
     return _flag_info_of(act, True) + _flag_info_of(act, False)
@@ -314,7 +314,7 @@ def _flag_info_of(act: Action, is_flag: bool) -> str:
     _flags = act.flags if is_flag else act.deflags
     tmp = ""
     for flg in _flags:
-        tmp += "[{de}{flag}]({flag})".format(flag=flg, de="" if is_flag else "D:")
+        tmp += "[{de}{flag}]({flag})".format(flag=flg.note, de="" if is_flag else "D:")
     return tmp
 
 

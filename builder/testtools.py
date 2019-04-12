@@ -3,10 +3,10 @@
 """
 import unittest
 from enum import Enum, auto
-from .sbutils import assert_isbool, assert_isclass, assert_istuple
+from .sbutils import assert_isbool, assert_isclass, assert_islist, assert_istuple
 from .action import Action, ActionGroup, TagAction
 from .commons import infos_of, object_names_of, subject_name_of, verb_with_np_of
-from .subject import Day, Info, Item, Nothing, Person, Stage, Something, Subject, Word
+from .subject import Day, Flag, Info, Item, Nothing, Person, Stage, Something, Subject, Word
 
 
 class MatchLv(Enum):
@@ -21,8 +21,8 @@ def followed_all_flags(test_case: unittest.TestCase, story: ActionGroup) -> bool
     '''
     assert_isclass(story, ActionGroup)
 
-    flags = set(_flags_gathered_in_group(story))
-    deflags = set(_flags_gathered_in_group(story, False))
+    flags = set(_flags_str_converted(_flags_gathered_in_group(story)))
+    deflags = set(_flags_str_converted(_flags_gathered_in_group(story, False)))
     result = flags & deflags
     if len(result) != len(flags):
         test_case.fail("Unsolved flags or deflags: {}".format((flags | deflags) - result))
@@ -222,6 +222,12 @@ def _fail_message_without_target(test_case: unittest.TestCase,
         ))
 
     return False
+
+
+def _flags_str_converted(flags: list) -> list:
+    assert_islist(flags)
+
+    return [v.note for v in flags if isinstance(v, Flag)]
 
 
 def _flags_gathered_at_action(act: Action, is_flag: bool) -> list:

@@ -11,7 +11,7 @@ from builder.action import Action, TagAction, GroupType
 from builder.description import Desc
 from builder.enums import DescType, LangType
 from builder.master import Master
-from builder.subject import Person, Item, Word
+from builder.subject import Person, Item, Word, Flag
 import builder.tools as tools
 
 
@@ -137,6 +137,10 @@ class PrivateMethodsTest(unittest.TestCase):
         data = [
                 (self.taro.talk(), GroupType.STORY, False,
                     "- Taro    :talk()      /"),
+                (self.taro.talk(Flag(1)), GroupType.STORY, False,
+                    "- Taro    :talk()      /[1](1)"),
+                (self.taro.talk(Flag(1)).set_deflags(Flag(2)), GroupType.STORY, False,
+                    "- Taro    :talk()      /[1](1)[D:2](2)"),
                 ]
 
         for act, gtype, istest, expected in data:
@@ -290,11 +294,11 @@ class PrivateMethodsTest(unittest.TestCase):
     def test_extra_chopped(self):
         pass
 
-    def test_flag_info_if(self):
+    def test_flags_if(self):
         data = [
-                ("flag", "deflag", "[flag](flag)[D:deflag](deflag)"),
-                ("flag", "", "[flag](flag)"),
-                ("", "deflag", "[D:deflag](deflag)"),
+                (Flag("flag"), Flag("deflag"), "[flag](flag)[D:deflag](deflag)"),
+                (Flag("flag"), None, "[flag](flag)"),
+                (None, Flag("deflag"), "[D:deflag](deflag)"),
                 ]
 
         for flg, dflg, expected in data:
@@ -306,7 +310,7 @@ class PrivateMethodsTest(unittest.TestCase):
                     tmp = self.taro.talk().set_flags(flg)
                 elif dflg:
                     tmp = self.taro.talk().set_deflags(dflg)
-                self.assertEqual(tools._flag_info_if(tmp), expected)
+                self.assertEqual(tools._flags_if(tmp), expected)
 
     def test_flag_info_of(self):
         data = [
