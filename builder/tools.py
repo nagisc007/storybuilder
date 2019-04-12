@@ -63,6 +63,7 @@ def output_info(story: ActionGroup):
 
 
 def output_story(story: ActionGroup, filename: str, is_action_data: bool=False,
+        is_info_data: bool=False,
         is_out_as_file: bool=False, is_out_chars: bool=False,
         pri_filter: int=Action.MIN_PRIORITY,
         is_debug: bool=False):
@@ -90,13 +91,26 @@ def output_story(story: ActionGroup, filename: str, is_action_data: bool=False,
         output_info(story)
 
     if is_out_as_file:
-        return _output_story_to_file(
-                _story_data_converted(story, is_action_data, pri_filter, is_debug),
-                filename, is_action_data, is_debug)
+        suffix = ""
+        story_data = _story_data_converted(story, is_action_data, pri_filter, is_debug)
+        if is_action_data:
+            suffix = "_a"
+            story_data += _story_flags_info_converted(story)
+        ret = _output_story_to_file(
+                story_data, filename, suffix, is_debug)
+        if is_info_data:
+            _output_story_to_file(["info data", "wip"],
+                    filename, "_i", is_debug)
+        return ret
     else:
-        return _output_story_to_console(
-                _story_data_converted(story, is_action_data, pri_filter, is_debug),
-                is_debug)
+        story_data = _story_data_converted(story, is_action_data, pri_filter, is_debug)
+        if is_action_data:
+            story_data += _story_flags_info_converted(story)
+        ret =  _output_story_to_console(story_data, is_debug)
+        if is_info_data:
+            _output_story_to_console(["info data", "wip"],
+                    is_debug)
+        return ret
 
 
 # private functions
@@ -346,17 +360,17 @@ def _output_story_to_console(story: list, is_debug: bool) -> bool:
     return True
 
 
-def _output_story_to_file(story: list, filename: str, is_action_data: bool, is_debug: bool) -> bool:
+def _output_story_to_file(story: list, filename: str, with_suffix: str, is_debug: bool) -> bool:
     assert_isclass(story, list)
     assert_isstr(filename)
-    assert_isbool(is_action_data)
+    assert_isstr(with_suffix)
     assert_isbool(is_debug)
 
     EXT_MARKDOWN = 'md'
     BUILD_DIR = 'build'
     if not os.path.isdir(BUILD_DIR):
         os.makedirs(BUILD_DIR)
-    fullpath = os.path.join(BUILD_DIR, "{}.{}".format("{}_a".format(filename) if is_action_data else filename, EXT_MARKDOWN))
+    fullpath = os.path.join(BUILD_DIR, "{}{}.{}".format(filename, with_suffix, EXT_MARKDOWN))
     with open(fullpath, 'w') as f:
         idx = 0
         for s in story:
@@ -464,6 +478,52 @@ def _story_data_converted(story: ActionGroup, is_action_data: bool, pri_filter: 
     assert_isbool(is_debug)
 
     return  _story_converted_as_action(story, pri_filter, is_debug) if is_action_data else _story_converted_as_description(story, pri_filter, is_debug)
+
+
+def _story_flags_info_converted(story: ActionGroup) -> list:
+    assert_isclass(story, ActionGroup)
+
+    tmp = _story_flags_info_in_group(story)
+
+    return ["[{0}]:{0}".format(v.note) for v in tmp]
+
+
+def _story_flags_info_at_action(act: Action) -> list:
+    assert_isclass(act, Action)
+
+    tmp = []
+    if isinstance(act.subject, Flag):
+        tmp.append(act.subject)
+    for o in act.objects:
+        if isinstance(o, Flag):
+            tmp.append(o)
+    tmp.extend(act.flags)
+    return tmp
+
+
+def _story_flags_info_in_group(group: ActionGroup) -> list:
+    assert_isclass(group, ActionGroup)
+
+    tmp = []
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            tmp.extend(_story_flags_info_in_group(a))
+        elif isinstance(a, TagAction):
+            continue
+        else:
+            val = _story_flags_info_at_action(a)
+            if val:
+                tmp.extend(val)
+
+    return tmp
+
+
+def _story_info_data_converted(story: ActionGroup, is_debug: bool) -> list:
+    assert_isclass(story, ActionGroup)
+    assert_isbool(is_debug)
+
+    flags = _story_flags_info_converted(story)
+    return ["## Flags\n"] + flags
 
 
 def _story_title_of(act: TagAction, level: int) -> str:

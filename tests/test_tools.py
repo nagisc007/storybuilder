@@ -366,16 +366,16 @@ class PrivateMethodsTest(unittest.TestCase):
 
     def test_output_story_to_file(self):
         data = [
-                (["# test story", "test"], "test_file", True, False,
+                (["# test story", "test"], "test_file", "_a", False,
                     "build/test_file_a.md"),
-                (["# test story", "test"], "test_file", False, False,
+                (["# test story", "test"], "test_file", "", False,
                     "build/test_file.md"),
                 ]
 
-        for story, fname, isact, isdbg, exp_path in data:
-            with self.subTest(story=story, fname=fname, isact=isact, isdbg=isdbg, exp_path=exp_path):
+        for story, fname, suffix, isdbg, exp_path in data:
+            with self.subTest(story=story, fname=fname, suffix=suffix, isdbg=isdbg, exp_path=exp_path):
                 build_path = os.path.join(os.getcwd(), exp_path)
-                self.assertTrue(tools._output_story_to_file(story, fname, isact, isdbg))
+                self.assertTrue(tools._output_story_to_file(story, fname, suffix, isdbg))
                 self.assertTrue(os.path.exists(build_path))
 
     def test_output_with_linenumber(self):
