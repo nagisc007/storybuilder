@@ -5,7 +5,7 @@ import unittest
 from builder.sbutils import print_test_title
 from builder.action import Action
 from builder.enums import ActType, LangType
-from builder.subject import Subject, Person, Something, Item, Nothing
+from builder.subject import Person, Something, Item, Nothing
 import builder.commons as commons
 
 
@@ -132,7 +132,7 @@ class PublicMethodsTest(unittest.TestCase):
 
     def test_something_name_if(self):
         data = [
-                (Subject("test taro", ""), "test taro"),
+                (Person("Taro", 17, "man", "student"), "Taro"),
                 (Something(), "何か")
                 ]
         for obj, expected in data:

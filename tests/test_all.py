@@ -48,7 +48,6 @@ def suite():
     suite.addTest(unittest.makeSuite(test_master.MasterTest))
 
     # subject
-    suite.addTest(unittest.makeSuite(test_subject.SubjectTest))
     suite.addTest(unittest.makeSuite(test_subject.InfoTest))
     suite.addTest(unittest.makeSuite(test_subject.FlagTest))
     suite.addTest(unittest.makeSuite(test_subject.NothingTest))

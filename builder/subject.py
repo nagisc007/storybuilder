@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 """Module to build a story.
 """
+from abc import ABCMeta, abstractmethod
 from .sbutils import assert_are_int_str, assert_isstr, assert_isint
 from .action import Action 
 from .basesubject import _BaseSubject
 from .enums import ActType
 
 
-class Subject(_BaseSubject):
+class Subject(_BaseSubject, metaclass=ABCMeta):
     """Base class for all subjects.
 
     Attributes:
@@ -29,6 +30,10 @@ class Subject(_BaseSubject):
     def objects_from(self, *args):
         return tuple(_info_or_subject_from(v) for v in args)
 
+    @abstractmethod
+    def inherited(self):
+        pass
+
 
 class Info(Subject):
     """Information class.
@@ -38,6 +43,9 @@ class Info(Subject):
         assert_isstr(info)
 
         super().__init__(Info._NAME, info)
+
+    def inherited(self, info: str=None):
+        return Info(info if info else self.note)
 
 
 class Flag(Info):
@@ -56,6 +64,9 @@ class Nothing(Subject):
     def __init__(self):
         super().__init__(Nothing._NAME, "")
 
+    def inherited(self):
+        return Nothing()
+
 
 class Something(Subject):
     """Something class.
@@ -63,6 +74,9 @@ class Something(Subject):
     _NAME = "_something"
     def __init__(self):
         super().__init__(Something._NAME, "")
+
+    def inherited(self):
+        return Something()
 
 
 class Person(Subject):
@@ -177,6 +191,16 @@ class Person(Subject):
 
         return Action(ActType.THINK, self, verb, self.objects_from(*args))
 
+    def inherited(self, name: str=None, age: int=None, sex: str=None, job: str=None,
+            calling: str=None, note: str=None):
+        return Person(
+                name if name else self.name,
+                age if not age is None else self.age,
+                sex if sex else self.sex,
+                job if job else self.job,
+                calling if calling else self.calling,
+                note if note else self.note)
+
 
 class Day(Subject):
     """Day and Time management class.
@@ -219,6 +243,17 @@ class Day(Subject):
         # TODO: elapsed time count
         return Action(ActType.BE, self, "elapse", ())
 
+    def inherited(self, name: str=None, mon: int=None, day: int=None, year: int=None,
+            hour: int=None, min_: int=None, note: str=None):
+        return Day(
+                name if name else self.name,
+                mon if not mon is None else self.mon,
+                day if not day is None else self.day,
+                year if not year is None else self.year,
+                hour if not hour is None else self.hour,
+                min_ if not min_ is None else self.min,
+                note if note else self.note)
+
 
 class Item(Subject):
     """Item class.
@@ -237,6 +272,9 @@ class Item(Subject):
 
     def move(self, *args, verb: str="move"):
         return Action(ActType.MOVE, self, verb, self.objects_from(*args))
+
+    def inherited(self, name: str=None, note: str=None):
+        return Item(name if name else self.name, note if note else self.note)
 
 
 class Stage(Subject):
@@ -257,6 +295,9 @@ class Stage(Subject):
     def move(self, *args, verb: str="move"):
         return Action(ActType.MOVE, self, verb, self.objects_from(*args))
 
+    def inherited(self, name: str=None, note: str=None):
+        return Stage(name if name else self.name, note if note else self.note)
+
 
 class Word(Subject):
     """Word class.
@@ -272,6 +313,9 @@ class Word(Subject):
             note (str, optional): a short description.
         """
         super().__init__(name, note)
+
+    def inherited(self, name: str=None, note: str=None):
+        return Word(name if name else self.name, note if note else self.note)
 
 
 # private functions

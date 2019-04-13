@@ -3,75 +3,13 @@
 """
 import unittest
 from builder.sbutils import print_test_title
-from builder.subject import Subject,Person, Day, Item, Stage, Word
+from builder.subject import Person, Day, Item, Stage, Word
 from builder.subject import Something, Info, Flag, Nothing
 from builder.subject import Action
 from builder.enums import ActType
 
 
 _FILENAME = "subject.py"
-
-
-class SubjectTest(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        print_test_title(_FILENAME, "Subject")
-
-    def setUp(self):
-        self.taro = Subject("Taro")
-
-    def test_attributes(self):
-        data = [
-                ("Taro", "test",
-                    "Taro", "test"),
-                ("Hanako", "",
-                    "Hanako", ""),
-                ]
-
-        for name, note, exp_name, exp_note in data:
-            with self.subTest(name=name, note=note, exp_name=exp_name, exp_note=exp_note):
-                tmp = Subject(name, note) if note else Subject(name)
-                self.assertIsInstance(tmp, Subject)
-                self.assertEqual(tmp.name, exp_name)
-                self.assertEqual(tmp.note, exp_note)
-
-    def test_be_do_explain(self):
-        sub = Subject("test")
-        data = [
-                ("be", (sub,), "",
-                    ActType.BE, self.taro, "be", (sub,)),
-                ("do", (sub,), "",
-                    ActType.DO, self.taro, "do", (sub,)),
-                ("explain", (sub,), "",
-                    ActType.EXPLAIN, self.taro, "explain", (sub,)),
-                ]
-
-        for attr, obj, verb, exp_type, exp_sub, exp_verb, exp_obj in data:
-            with self.subTest(attr=attr, obj=obj, verb=verb,
-                    exp_type=exp_type, exp_sub=exp_sub, exp_verb=exp_verb, exp_obj=exp_obj):
-                doing = getattr(self.taro, attr)
-                tmp = doing(*obj, verb=verb) if verb else doing(*obj)
-                self.assertIsInstance(tmp, Action)
-                self.assertEqual(tmp.act_type, exp_type)
-                self.assertEqual(tmp.subject, exp_sub)
-                self.assertEqual(tmp.verb, exp_verb)
-                self.assertEqual(tmp.objects, exp_obj)
-
-    def test_objects_from(self):
-        sub = Subject("Taro")
-        data = [
-                ((sub,),
-                    (sub,)),
-                (("test",),
-                    (Info("test"),)),
-                ]
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                test = Subject("test")
-                tmp = test.objects_from(*v)
-                for t, exp in zip(tmp, expected):
-                    self.assertEqual(type(t), type(exp))
 
 
 class InfoTest(unittest.TestCase):
@@ -154,7 +92,7 @@ class PersonTest(unittest.TestCase):
         print_test_title(_FILENAME, "Person")
 
     def setUp(self):
-        self.taro = Subject("Taro")
+        self.taro = Person("Taro", 17, "male", "student")
         self.hanako = Person("Hanako", 17, "female", "student")
 
     def test_attributes(self):
