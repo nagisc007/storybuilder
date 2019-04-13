@@ -5,7 +5,7 @@ import unittest
 from builder.sbutils import print_test_title
 from builder.action import Action
 from builder.enums import ActType, LangType
-from builder.subject import Subject, Person, Something, Item
+from builder.subject import Subject, Person, Something, Item, Nothing
 import builder.commons as commons
 
 
@@ -86,7 +86,14 @@ class PublicMethodsTest(unittest.TestCase):
                 self.assertEqual(commons.infos_of(tmp), expected)
 
     def test_infos_from(self):
-        pass
+        data = [
+                (self.taro.be("test"),
+                    ["test"]),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(commons.infos_from(v), set(expected))
 
     def test_object_names_of(self):
         data = [
@@ -95,6 +102,8 @@ class PublicMethodsTest(unittest.TestCase):
                 (self.taro.be(self.hanako, self.item),
                     "Hanako/stick"),
                 (self.taro.be("test"),
+                    ""),
+                (self.taro.be(Nothing()),
                     ""),
                 ]
 

@@ -211,6 +211,33 @@ def _comment_of(act: TagAction) -> str:
     return "<!--{}-->".format(act.tag_info)
 
 
+def _count_act_type_in_group(group: ActionGroup, act_type: ActType) -> int:
+    assert_isclass(group, ActionGroup)
+    assert_isclass(act_type, ActType)
+
+    tmp = 0
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            tmp += _count_act_type_in_group(a, act_type)
+        else:
+            tmp += 1 if a.act_type is act_type else 0
+    return tmp
+
+
+def _count_actions_in_group(group: ActionGroup) -> int:
+    assert_isclass(group, ActionGroup)
+
+    tmp = 0
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            tmp += _count_actions_in_group(a)
+        elif isinstance(a, TagAction):
+            continue
+        else:
+            tmp += 1
+    return tmp
+
+
 def _count_desc_at_action(act: Action) -> int:
     assert_isclass(act, Action)
 
@@ -396,6 +423,42 @@ def _scene_title_of(act: TagAction) -> str:
     return "**{}**".format(act.tag_info)
 
 
+def _story_action_data_percent_converted(story: ActionGroup) -> list:
+    assert_isclass(story, ActionGroup)
+
+    total_acts = _count_actions_in_group(story)
+    types_acts = {
+            ActType.BE: _count_act_type_in_group(story, ActType.BE),
+            ActType.BEHAV: _count_act_type_in_group(story, ActType.BEHAV),
+            ActType.DEAL: _count_act_type_in_group(story, ActType.DEAL),
+            ActType.DO: _count_act_type_in_group(story, ActType.DO),
+            ActType.EXPLAIN: _count_act_type_in_group(story, ActType.EXPLAIN),
+            ActType.FEEL: _count_act_type_in_group(story, ActType.FEEL),
+            ActType.LOOK: _count_act_type_in_group(story, ActType.LOOK),
+            ActType.MOVE: _count_act_type_in_group(story, ActType.MOVE),
+            ActType.TALK: _count_act_type_in_group(story, ActType.TALK),
+            ActType.THINK: _count_act_type_in_group(story, ActType.THINK),
+            }
+    def act_percent(char, atype, total):
+        return "- {}: {:.2f}%".format(
+                char,
+                types_acts[atype] / total * 100
+                )
+    return ["## Actions\n",
+            "- Total: {}".format(total_acts),
+            act_percent("be", ActType.BE, total_acts),
+            act_percent("behav", ActType.BEHAV, total_acts),
+            act_percent("deal", ActType.DEAL, total_acts),
+            act_percent("do", ActType.DO, total_acts),
+            act_percent("explain", ActType.EXPLAIN, total_acts),
+            act_percent("feel", ActType.FEEL, total_acts),
+            act_percent("look", ActType.LOOK, total_acts),
+            act_percent("move", ActType.MOVE, total_acts),
+            act_percent("talk", ActType.TALK, total_acts),
+            act_percent("think", ActType.THINK, total_acts),
+            ]
+
+
 def _story_converted_as_action(story: ActionGroup, pri_filter: int, is_debug: bool) -> list:
     '''
     Args:
@@ -525,8 +588,10 @@ def _story_info_data_converted(story: ActionGroup, is_debug: bool) -> list:
     assert_isbool(is_debug)
 
     chars = ["## Characters\n", "- Total: {}".format(_count_descriptions(story))]
+    actions = _story_action_data_percent_converted(story)
     flags = ["## Flags\n"] +  _story_flags_info_converted(story)
-    return chars + flags
+
+    return chars + actions + flags
 
 
 def _story_title_of(act: TagAction, level: int) -> str:
