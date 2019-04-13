@@ -163,6 +163,38 @@ class PublicMethodsTest(unittest.TestCase):
             with self.subTest(story=story, target=target, expected=expected):
                 self.assertEqual(testtools.has_the_day(story, target), expected)
 
+    def test_has_the_keyword(self):
+        story = self.ma.story("Test",
+                self.taro.be("test"), self.taro.talk("apple"),
+                )
+        data = [
+                ("test", True),
+                ("tes", True),
+                ("orange", False),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(testtools.has_the_keyword(story, v), expected)
+
+    def test_has_the_keyword_in_descriptions(self):
+        story = self.ma.story("Test",
+                self.taro.be().d("this is an apple"),
+                self.taro.be().tell("My favorite is her"),
+                )
+        data = [
+                ("this", True),
+                ("apple", True),
+                ("her", True),
+                ("orange", False),
+                ("app", True),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(testtools.has_the_keyword_in_descriptions(
+                    story, v), expected)
+
     def test_has_the_item(self):
         data = [
                 (self.ma.story(self.taro.be(self.item)), self.item,

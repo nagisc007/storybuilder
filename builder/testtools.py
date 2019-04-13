@@ -6,6 +6,7 @@ from enum import Enum, auto
 from .sbutils import assert_isbool, assert_isclass, assert_islist, assert_istuple
 from .action import Action, ActionGroup, TagAction
 from .commons import infos_of, object_names_of, subject_name_of, verb_with_np_of
+from .description import Desc, DescGroup
 from .subject import Day, Flag, Info, Item, Person, Stage, Something, Subject, Word
 
 
@@ -153,6 +154,22 @@ def has_the_item(story: ActionGroup, target: Item) -> bool:
     assert_isclass(target, Item)
 
     return _has_the_subject_in_group(story, Item, target)
+
+
+def has_the_keyword(story: ActionGroup, target: [str, Subject]) -> bool:
+    '''Check if the keyword in the story.
+    '''
+    assert_isclass(story, ActionGroup)
+
+    return _has_the_keyword_in_group(story, target if isinstance(target, Subject) else Info(target))
+
+
+def has_the_keyword_in_descriptions(story: ActionGroup, target: [str, Subject]) -> bool:
+    '''Check if the keyword in the story descriptions.
+    '''
+    assert_isclass(story, ActionGroup)
+
+    return _has_the_keyword_in_desc_in_group(story, target if isinstance(target, Subject) else Info(target))
 
 
 def has_the_person(story: ActionGroup, target: Person) -> bool:
@@ -306,6 +323,125 @@ def _has_the_action_in_group(group: ActionGroup, target: Action, matchlv: MatchL
             else:
                 if _near_eq_the_action(a, target, True):
                     return True
+    else:
+        return False
+
+
+def _has_the_keyword_at_action(act: Action, target: Subject) -> bool:
+    assert_isclass(act, Action)
+    assert_isclass(target, Subject)
+
+    if isinstance(target, Info):
+        return _has_the_keyword_at_action_as_info(act, target)
+    else:
+        return _has_the_keyword_at_action_as_subject(act, target)
+
+
+def _has_the_keyword_at_action_as_info(act: Action, target: Info) -> bool:
+    assert_isclass(act, Action)
+    assert_isclass(target, Info)
+
+    if target.note in act.subject.name \
+            or target.note in act.subject.note:
+        return True
+    for o in act.objects:
+        if target.note in o.name \
+                or target.note in o.note:
+            return True
+    else:
+        return False
+
+
+def _has_the_keyword_at_action_as_subject(act: Action, target: Subject) -> bool:
+    assert_isclass(act, Action)
+    assert_isclass(target, Subject)
+
+    if target.name in act.subject.name \
+            or target.name in act.subject.note:
+        return True
+    for o in act.objects:
+        if target.name in o.name \
+                or target.name in o.note:
+            return True
+    else:
+        return False
+
+
+def _has_the_keyword_in_group(group: ActionGroup, target: Subject) -> bool:
+    assert_isclass(group, ActionGroup)
+    assert_isclass(target, Subject)
+
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_the_keyword_in_group(a, target):
+                return True
+        elif isinstance(a, TagAction):
+            continue
+        else:
+            if _has_the_keyword_at_action(a, target):
+                return True
+    else:
+        return False
+
+
+def _has_the_keyword_in_desc(desc: Desc, target: Subject) -> bool:
+    assert_isclass(desc, Desc)
+    assert_isclass(target, Subject)
+
+    if isinstance(target, Info):
+        for d in desc.data:
+            if target.note in d:
+                return True
+        else:
+            return False
+    else:
+        for d in desc.data:
+            if target.name in d or target.note in d:
+                return True
+        else:
+            return False
+
+
+
+def _has_the_keyword_in_desc_group(group: DescGroup, target: Subject) -> bool:
+    assert_isclass(group, DescGroup)
+    assert_isclass(target, Subject)
+
+    for d in group.descriptions:
+        if isinstance(d, DescGroup):
+            if _has_the_keyword_in_desc_group(d, target):
+                return True
+        else:
+            if _has_the_keyword_in_desc(d, target):
+                return True
+    else:
+        return False
+
+
+def _has_the_keyword_in_desc_at_action(act: Action, target: Subject) -> bool:
+    assert_isclass(act, Action)
+    assert_isclass(target, Subject)
+    
+    if isinstance(act.descs, DescGroup):
+        if _has_the_keyword_in_desc_group(act.descs, target):
+            return True
+    else:
+        return _has_the_keyword_in_desc(act.descs, target)
+
+
+def _has_the_keyword_in_desc_in_group(group: ActionGroup, target: Subject) -> bool:
+    assert_isclass(group, ActionGroup)
+    assert_isclass(target, Subject)
+
+    for a in group.actions:
+        if isinstance(a, ActionGroup):
+            if _has_the_keyword_in_desc_in_group(a, target):
+                return True
+        elif isinstance(a, TagAction):
+            continue
+        else:
+            if _has_the_keyword_in_desc_at_action(a, target):
+                return True
     else:
         return False
 

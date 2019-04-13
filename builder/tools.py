@@ -16,7 +16,7 @@ from .subject import Subject, Person, Flag
 
 
 # functions
-def build_to_story(story: ActionGroup):
+def build_to_story(story: ActionGroup): # pragma: no cover
     '''Build a story.
 
     Args:
@@ -33,7 +33,7 @@ def build_to_story(story: ActionGroup):
             options.charcount, options.priority, options.debug)
 
 
-def options_parsed():
+def options_parsed(): # pragma: no cover
     '''Get and setting a commandline option.
 
     Returns:

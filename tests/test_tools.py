@@ -475,6 +475,17 @@ class PrivateMethodsTest(unittest.TestCase):
                 self.assertEqual(tools._story_data_converted(story, isact, pri, isdbg),
                         expected)
 
+    def test_story_flags_info_converted(self):
+        data = [
+                (self.ma.story("test",
+                    self.taro.be(Flag("taro"))),
+                    ["[taro]:taro"]),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(tools._story_flags_info_converted(v), expected)
+
     def test_story_title_of(self):
         ma = Master('test')
 
