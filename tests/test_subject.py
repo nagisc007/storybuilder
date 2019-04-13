@@ -215,9 +215,34 @@ class DayTest(unittest.TestCase):
                 self.assertEqual(tmp.min, exp_mi)
                 self.assertEqual(tmp.note, exp_note)
 
-    @unittest.skip("in preparation")
     def test_elapse(self):
-        pass
+        BASE_NAME = "testday"
+        BASE_MON = 10
+        BASE_DAY = 10
+        BASE_YEAR = 2000
+        BASE_HOUR = 12
+        BASE_MIN = 30
+        BASE_NOTE = "test"
+        data = [
+                (1, 1, 1, 1, 1, "apple",
+                    BASE_MON + 1, BASE_DAY + 1, BASE_YEAR + 1, BASE_HOUR + 1, BASE_MIN + 1,
+                    "apple"),
+                ]
+
+        for mon, day, year, hour, minu, note, exp_mon, exp_day, exp_year, exp_hour, exp_minu, exp_note in data:
+            with self.subTest(mon=mon, day=day, year=year, hour=hour, minu=minu, note=note,
+                    exp_mon=exp_mon, exp_day=exp_day, exp_year=exp_year,
+                    exp_hour=exp_hour, exp_minu=exp_minu, exp_note=exp_note):
+                tmp = Day(BASE_NAME, BASE_MON, BASE_DAY, BASE_YEAR, BASE_HOUR, BASE_MIN, BASE_NOTE)
+                act = tmp.elapse(mon, day, year, hour, minu, note)
+                self.assertIsInstance(act, Action)
+                self.assertEqual(act.subject.name, tmp.name)
+                self.assertEqual(act.subject.mon, exp_mon)
+                self.assertEqual(act.subject.day, exp_day)
+                self.assertEqual(act.subject.year, exp_year)
+                self.assertEqual(act.subject.hour, exp_hour)
+                self.assertEqual(act.subject.min, exp_minu)
+                self.assertEqual(act.subject.note, exp_note)
 
 
 class ItemTest(unittest.TestCase):

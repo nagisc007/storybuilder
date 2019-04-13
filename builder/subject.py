@@ -239,9 +239,26 @@ class Day(Subject):
         self.mon = mon
         self.year = year
 
-    def elapse(self):
-        # TODO: elapsed time count
-        return Action(ActType.BE, self, "elapse", ())
+    def elapse(self, mon: int=None, day: int=None, year: int=None,
+            hour: int=None, min_: int=None, note: str=None):
+        etime = self.elapsed_day(mon, day, year, hour, min_, note)
+        return Action(ActType.BE, etime, "elapse", self.objects_from((etime,)))
+
+    def elapsed_info(self, mon: int=None, day: int=None, year: int=None,
+            hour: int=None, min_: int=None):
+        return Info(self.elapsed_day().time_str())
+
+    def elapsed_day(self, mon: int=None, day: int=None, year: int=None,
+            hour: int=None, min_: int=None, note: str=None):
+        return self.inherited(
+                self.name,
+                self.mon + (mon if not mon is None else 0),
+                self.day + (day if not day is None else 0),
+                self.year + (year if not year is None else 0),
+                self.hour + (hour if not hour is None else 0),
+                self.min + (min_ if not min_ is None else 0),
+                note if note else self.note,
+                )
 
     def inherited(self, name: str=None, mon: int=None, day: int=None, year: int=None,
             hour: int=None, min_: int=None, note: str=None):
@@ -254,6 +271,14 @@ class Day(Subject):
                 min_ if not min_ is None else self.min,
                 note if note else self.note)
 
+    def time_str(self) -> str:
+        return "{year}/{mon}/{day}-{hour}:{minu}".format(
+                year=self.year,
+                mon=self.mon,
+                day=self.day,
+                hour=self.hour,
+                minu=self.min,
+                )
 
 class Item(Subject):
     """Item class.
