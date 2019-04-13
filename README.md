@@ -1,5 +1,6 @@
 # storybuilder
 ![Build Status](https://travis-ci.org/nagisc007/storybuilder.svg?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/nagisc007/storybuilder/badge.svg)](https://coveralls.io/github/nagisc007/storybuilder)
 
 A tester and generator for a structure of a story.
 
