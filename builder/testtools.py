@@ -7,6 +7,7 @@ from .sbutils import assert_isbool, assert_isclass, assert_islist, assert_istupl
 from .action import Action, ActionGroup, TagAction
 from .commons import infos_of, object_names_of, subject_name_of, verb_with_np_of
 from .description import Desc, DescGroup
+from .enums import ActType
 from .subject import Day, Flag, Info, Item, Person, Stage, Something, Subject, Word
 
 
@@ -17,6 +18,21 @@ class MatchLv(Enum):
 
 
 # public functions
+def exists_looking(story: ActionGroup, target: Person) -> bool:
+    assert_isclass(story, ActionGroup)
+
+    for a in story.actions:
+        if isinstance(a, ActionGroup):
+            if exists_looking(a, target):
+                return True
+        elif isinstance(a, TagAction):
+            continue
+        else:
+            if _is_same_subjects(a.subject, target) and a.act_type is ActType.EXPLAIN:
+                return True
+    return False
+
+
 def followed_all_flags(test_case: unittest.TestCase, story: ActionGroup) -> bool:
     '''Check if all flags and deflags.
     '''
