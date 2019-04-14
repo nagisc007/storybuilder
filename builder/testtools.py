@@ -3,11 +3,12 @@
 """
 import unittest
 from enum import Enum, auto
-from .sbutils import assert_isbool, assert_isclass, assert_islist, assert_istuple
+from .sbutils import assert_isbool, assert_isclass, assert_islist, assert_issubclass, assert_istuple
 from .action import Action, ActionGroup, TagAction
 from .commons import infos_of, object_names_of, subject_name_of, verb_with_np_of
 from .description import Desc, DescGroup
 from .enums import ActType
+from .master import Master
 from .subject import Day, Flag, Info, Item, Person, Stage, Something, Subject, Word
 
 
@@ -18,12 +19,34 @@ class MatchLv(Enum):
 
 
 # public functions
-def exists_looking(story: ActionGroup, target: Person) -> bool:
+def exists_looking(story: ActionGroup, targets: tuple) -> bool:
     assert_isclass(story, ActionGroup)
+    assert_islist(targets)
+
+    ret = True
+    for target in targets:
+        if not exists_looking_of_the_subject(story, target):
+            ret = False
+    return ret
+
+
+def exists_looking_from_master(story: ActionGroup, master: Master) -> bool:
+    assert_isclass(story, ActionGroup)
+    assert_isclass(master, Master)
+
+    persons = _subjects_gathered_from_master(master, Person)
+    stages = _subjects_gathered_from_master(master, Stage)
+
+    return exists_looking(story, persons + stages)
+
+
+def exists_looking_of_the_subject(story: ActionGroup, target: Subject) -> bool:
+    assert_isclass(story, ActionGroup)
+    assert_isclass(target, Subject)
 
     for a in story.actions:
         if isinstance(a, ActionGroup):
-            if exists_looking(a, target):
+            if exists_looking_of_the_subject(a, target):
                 return True
         elif isinstance(a, TagAction):
             continue
@@ -603,3 +626,9 @@ def _near_eq_subjects(subject: Subject, target: Subject) -> bool:
     return isinstance(subject, Something) or isinstance(target, Something) \
             or _is_same_subjects(subject, target)
 
+
+def _subjects_gathered_from_master(master: Master, subcls: Subject) -> list:
+    assert_isclass(master, Master)
+    assert_issubclass(subcls, Subject)
+    
+    return [master[k] for k in master.keys() if isinstance(master[k], subcls)]

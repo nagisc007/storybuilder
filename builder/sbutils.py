@@ -58,6 +58,10 @@ def assert_isobject(ins) -> bool:
     return True
 
 
+def assert_issubclass(subcls, cls) -> bool:
+    assert issubclass(subcls, cls), _ASSERT_MSG.format(subcls, "subclass")
+
+
 def assert_isstr(ins) -> bool:
     assert isinstance(ins, str), _ASSERT_MSG.format(_instance_name_if(ins), "str")
 

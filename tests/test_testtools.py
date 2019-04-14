@@ -27,6 +27,49 @@ class PublicMethodsTest(unittest.TestCase):
         self.item = Item("A test")
         self.word = Word("A test")
 
+    def test_exists_looking(self):
+        story = self.ma.story("test",
+                self.taro.explain(), self.hanako.be(),
+                self.ma.scene("A", self.stage.explain()))
+        data = [
+                ((self.taro,),
+                    True),
+                ((self.taro, self.stage),
+                    True),
+                ((self.taro, self.hanako),
+                    False),
+                ((self.item,),
+                    False),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(testtools.exists_looking(story, v), expected)
+
+    def test_exists_looking_from_master(self):
+        ma = Master('test')
+        ma.append_person("taro", self.taro)
+        ma.append_person("hanako", self.hanako)
+        ma.append_stage("stage", self.stage)
+
+        data = [
+                (ma.story('test', ma.taro.explain(), ma.hanako.explain(),
+                    ma.stage.explain()),
+                    True),
+                (ma.story('fail1', ma.taro.talk(), ma.hanako.explain(),
+                    ma.stage.explain()),
+                    False),
+                (ma.story('fail2', ma.taro.talk(), ma.hanako.be(),
+                    ma.stage.explain()),
+                    False),
+                (ma.story('fail3', ma.taro.explain(ma.hanako), ma.taro.talk(ma.stage)),
+                    False),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(testtools.exists_looking_from_master(v, ma), expected)
+
     @unittest.expectedFailure
     def test_followed_all_flags(self):
         data = [
