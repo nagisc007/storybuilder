@@ -244,6 +244,35 @@ class DayTest(unittest.TestCase):
                 self.assertEqual(act.subject.min, exp_minu)
                 self.assertEqual(act.subject.note, exp_note)
 
+    def test_elapsed(self):
+        base_day = {"mon": 10, "day": 5, "year": 2000, "hour": 12, "min": 30, "note": "base"}
+        data = [
+                (("test",), 1, 1, 1, 1, 1, "a test", True,
+                    ("test",), 11, 6, 2001, 13, 31, "a test"),
+                (("test", "apple"), 1, 1, 1, 1, 1, "not added", False,
+                    ("test", "apple"), 1, 1, 1, 1, 1, "not added"),
+                ]
+
+        for v, mon, day, year, hour, min, note, isadd, exp_v, exp_mon, exp_day, exp_year, exp_hour, exp_min, exp_note in data:
+            with self.subTest(v=v, mon=mon, day=day, year=year, hour=hour, min=min, note=note, isadd=isadd,
+                    exp_v=exp_v, exp_mon=exp_mon, exp_day=exp_day, exp_year=exp_year,
+                    exp_hour=exp_hour, exp_min=exp_min, exp_note=exp_note):
+                test_day = Day("test", base_day["mon"], base_day["day"], base_day["year"],
+                        base_day["hour"], base_day["min"], base_day["note"])
+                tmp = test_day.elapsed(*v, mon=mon, day=day, year=year, hour=hour, min=min, note=note, is_added=isadd)
+                self.assertIsInstance(tmp, Action)
+                self.assertEqual(tmp.act_type, ActType.EXPLAIN)
+                for o, exp in zip(tmp.objects, exp_v):
+                    self.assertEqual(o.note, exp)
+                self.assertIsInstance(tmp.subject, Day)
+                self.assertEqual(tmp.subject.name, "test")
+                self.assertEqual(tmp.subject.mon, exp_mon)
+                self.assertEqual(tmp.subject.day, exp_day)
+                self.assertEqual(tmp.subject.year, exp_year)
+                self.assertEqual(tmp.subject.hour, exp_hour)
+                self.assertEqual(tmp.subject.min, exp_min)
+                self.assertEqual(tmp.subject.note, exp_note)
+
 
 class ItemTest(unittest.TestCase):
 

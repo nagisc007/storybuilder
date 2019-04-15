@@ -239,24 +239,34 @@ class Day(Subject):
         self.mon = mon
         self.year = year
 
+    def _val_if_isNone_0(self, val: [int, None]) -> int:
+        return val if not val is None else 0
+
     def elapse(self, mon: int=None, day: int=None, year: int=None,
-            hour: int=None, min_: int=None, note: str=None):
-        etime = self.elapsed_day(mon, day, year, hour, min_, note)
+            hour: int=None, min: int=None, note: str=None):
+        etime = self.elapsed_day(mon, day, year, hour, min, note)
         return Action(ActType.BE, etime, "elapse", self.objects_from((etime,)))
 
+    def elapsed(self, *args, mon: int=None, day: int=None, year: int=None,
+            hour: int=None, min: int=None, note: str=None, is_added: bool=True):
+        eday = self.elapsed_day(mon, day, year, hour, min, note, is_added)
+        return eday.explain(*args)
+
     def elapsed_info(self, mon: int=None, day: int=None, year: int=None,
-            hour: int=None, min_: int=None):
-        return Info(self.elapsed_day().time_str())
+            hour: int=None, min: int=None, note: str=None, is_added: bool=True):
+        return Info(self.elapsed_day(mon, day, year, hhour, min, note, is_added).time_str())
 
     def elapsed_day(self, mon: int=None, day: int=None, year: int=None,
-            hour: int=None, min_: int=None, note: str=None):
+            hour: int=None, min: int=None, note: str=None, is_added: bool=True):
+        def added_if(val, _is_added):
+            return val if _is_added else 0
         return self.inherited(
                 self.name,
-                self.mon + (mon if not mon is None else 0),
-                self.day + (day if not day is None else 0),
-                self.year + (year if not year is None else 0),
-                self.hour + (hour if not hour is None else 0),
-                self.min + (min_ if not min_ is None else 0),
+                added_if(self.mon, is_added) + self._val_if_isNone_0(mon),
+                added_if(self.day, is_added) + self._val_if_isNone_0(day),
+                added_if(self.year, is_added) + self._val_if_isNone_0(year),
+                added_if(self.hour, is_added) + self._val_if_isNone_0(hour),
+                added_if(self.min, is_added) + self._val_if_isNone_0(min),
                 note if note else self.note,
                 )
 
