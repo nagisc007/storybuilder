@@ -58,8 +58,9 @@ def options_parsed(): # pragma: no cover
 def output_info(story: ActionGroup):
     assert_isclass(story, ActionGroup)
 
-    totals = _count_descriptions(story)
-    print("Characters:\n    Total: {}".format(totals))
+    total = _count_descriptions(story)
+    estimated = _count_estimated_descs(story)
+    print("Characters:\n    Total: {}\n    Estimated: {}".format(total, estimated))
 
 
 def output_story(story: ActionGroup, filename: str, is_action_data: bool=False,
@@ -224,6 +225,23 @@ def _count_act_type_in_group(group: ActionGroup, act_type: ActType) -> int:
     return tmp
 
 
+def _count_act_types(group: ActionGroup) -> dict:
+    return {
+            ActType.BE: _count_act_type_in_group(group, ActType.BE),
+            ActType.BEHAV: _count_act_type_in_group(group, ActType.BEHAV),
+            ActType.DEAL: _count_act_type_in_group(group, ActType.DEAL),
+            ActType.DO: _count_act_type_in_group(group, ActType.DO),
+            ActType.EXPLAIN: _count_act_type_in_group(group, ActType.EXPLAIN),
+            ActType.FEEL: _count_act_type_in_group(group, ActType.FEEL),
+            ActType.LOOK: _count_act_type_in_group(group, ActType.LOOK),
+            ActType.MOVE: _count_act_type_in_group(group, ActType.MOVE),
+            ActType.TAG: _count_act_type_in_group(group, ActType.TAG),
+            ActType.TALK: _count_act_type_in_group(group, ActType.TALK),
+            ActType.TEST: _count_act_type_in_group(group, ActType.TEST),
+            ActType.THINK: _count_act_type_in_group(group, ActType.THINK),
+            }
+
+
 def _count_actions_in_group(group: ActionGroup) -> int:
     assert_isclass(group, ActionGroup)
 
@@ -262,6 +280,21 @@ def _count_descriptions(story: ActionGroup) -> int:
     assert_isclass(story, ActionGroup)
 
     return _count_desc_in_group(story)
+
+
+def _count_estimated_descs(story: ActionGroup, base_num: int=10) -> int:
+    act_types = _count_act_types(story)
+    be = act_types[ActType.BE] * 1
+    behav = act_types[ActType.BEHAV] * 1
+    deal = act_types[ActType.DEAL] * 2
+    do = act_types[ActType.DO] * 2
+    explain = act_types[ActType.EXPLAIN] * 4
+    feel = act_types[ActType.FEEL] * 2
+    look = act_types[ActType.LOOK] * 4
+    move = act_types[ActType.MOVE] * 2
+    talk = act_types[ActType.TALK] * 4
+    think = act_types[ActType.THINK] * 4
+    return sum([be, behav, deal, do, explain, feel, look, move, talk, think]) * base_num
 
 
 def _desc_head_of(desc: Desc, lang: LangType) -> str:
@@ -587,7 +620,8 @@ def _story_info_data_converted(story: ActionGroup, is_debug: bool) -> list:
     assert_isclass(story, ActionGroup)
     assert_isbool(is_debug)
 
-    chars = ["## Characters\n", "- Total: {}".format(_count_descriptions(story))]
+    chars = ["## Characters\n", "- Total: {}".format(_count_descriptions(story)),
+            "- Estimated: {}".format(_count_estimated_descs(story))]
     actions = _story_action_data_percent_converted(story)
     flags = ["## Flags\n"] +  _story_flags_info_converted(story)
 

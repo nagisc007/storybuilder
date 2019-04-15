@@ -54,10 +54,10 @@ class PublicMethodsTest(unittest.TestCase):
         pass
 
     def test_output_info(self):
-        _BASEMSG = "Characters:\n    Total: {}\n"
+        _BASEMSG = "Characters:\n    Total: {}\n    Estimated: {}\n"
         data = [
                 (self.ma.story("test", self.taro.be()),
-                    _BASEMSG.format(0))
+                    _BASEMSG.format(0, 10))
                 ]
 
         for story, expected in data:
@@ -492,6 +492,7 @@ class PrivateMethodsTest(unittest.TestCase):
                     self.taro.be(Flag("apple"))),
                     False,
                     ["## Characters\n", "- Total: 0",
+                        "- Estimated: 10",
                         "## Actions\n", "- Total: 1",
                         "- be: 100.00%",
                         "- behav: 0.00%",
@@ -508,6 +509,7 @@ class PrivateMethodsTest(unittest.TestCase):
                     self.taro.be().d("test apple")),
                     False,
                     ["## Characters\n", "- Total: 9",
+                        "- Estimated: 10",
                         "## Actions\n", "- Total: 1",
                         "- be: 100.00%",
                         "- behav: 0.00%",
@@ -525,6 +527,7 @@ class PrivateMethodsTest(unittest.TestCase):
                     self.taro.talk().d("apple")),
                     False,
                     ["## Characters\n", "- Total: 9",
+                        "- Estimated: 50",
                         "## Actions\n", "- Total: 2",
                         "- be: 50.00%",
                         "- behav: 0.00%",
@@ -543,6 +546,7 @@ class PrivateMethodsTest(unittest.TestCase):
                     self.taro.talk().d("apple"))),
                     False,
                     ["## Characters\n", "- Total: 9",
+                        "- Estimated: 50",
                         "## Actions\n", "- Total: 2",
                         "- be: 50.00%",
                         "- behav: 0.00%",
