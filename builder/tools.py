@@ -29,8 +29,14 @@ def build_to_story(story: ActionGroup): # pragma: no cover
     FILE_NAME = "story"
     options = options_parsed()
     file_name = options.filename if options.filename else FILE_NAME
-    return output_story(story, file_name, options.action, options.build,
-            options.charcount, options.priority, options.debug)
+    return output_story(story,
+            file_name,
+            options.action,
+            options.info,
+            options.build,
+            options.charcount,
+            options.priority,
+            options.debug)
 
 
 def options_parsed(): # pragma: no cover
