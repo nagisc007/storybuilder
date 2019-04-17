@@ -318,20 +318,26 @@ class Stage(Subject):
     Attributes:
         name (str): a stage name.
         note (str): a short description.
+        parent (obj:`Stage`): a parent stage.
     """
-    def __init__(self, name: str, note: str=""):
+    def __init__(self, name: str, note: str="", parent=None):
         """
         Args:
             name (str): a stage name.
             note (str, optional): a short description.
+            parent (obj:`Stage`): a parent stage.
         """
         super().__init__(name, note)
+        self.parent = parent
 
     def move(self, *args, verb: str="move"):
         return Action(ActType.MOVE, self, verb, self.objects_from(*args))
 
     def inherited(self, name: str=None, note: str=None):
-        return Stage(name if name else self.name, note if note else self.note)
+        return Stage(name if name else self.name, note if note else self.note, parent=self)
+
+    def insided(self, name: str=None, note: str=None):
+        return self.inherited(name, note)
 
 
 class Word(Subject):

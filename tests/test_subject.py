@@ -328,19 +328,24 @@ class StageTest(unittest.TestCase):
 
 
     def test_attributes(self):
+        stage1 = Stage("base", "a base stage")
         data = [
-                ("test", "a note",
-                    "test", "a note"),
-                ("test", "",
-                    "test", ""),
+                ("test", "a note", None,
+                    "test", "a note", None),
+                ("test", "", None,
+                    "test", "", None),
+                ("child", "a child", stage1,
+                    "child", "a child", stage1),
                 ]
 
-        for name, note, exp_name, exp_note in data:
-            with self.subTest(name=name, note=note, exp_name=exp_name, exp_note=exp_note):
-                tmp = Stage(name, note) if note else Stage(name)
+        for name, note, parent, exp_name, exp_note, exp_parent in data:
+            with self.subTest(name=name, note=note, parent=parent,
+                    exp_name=exp_name, exp_note=exp_note, exp_parent=exp_parent):
+                tmp = Stage(name, note, parent) if note else Stage(name)
                 self.assertIsInstance(tmp, Stage)
                 self.assertEqual(tmp.name, exp_name)
                 self.assertEqual(tmp.note, exp_note)
+                self.assertEqual(tmp.parent, exp_parent)
 
     def test_move(self):
         data = [
@@ -359,6 +364,19 @@ class StageTest(unittest.TestCase):
                 self.assertEqual(tmp.verb, exp_verb)
                 self.assertEqual(tmp.objects, exp_obj)
 
+    def test_insided(self):
+        data = [
+                ("test", "a note",
+                    "test", "a note"),
+                ]
+
+        for name, note, exp_name, exp_note in data:
+            with self.subTest(name=name, note=note, exp_name=exp_name, exp_note=exp_note):
+                tmp = Stage("base", "a base")
+                testtmp = tmp.insided(name, note)
+                self.assertIsInstance(testtmp, Stage)
+                self.assertEqual(testtmp.name, exp_name)
+                self.assertEqual(testtmp.note, exp_note)
 
 
 class WordTest(unittest.TestCase):
