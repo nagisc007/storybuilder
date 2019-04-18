@@ -135,6 +135,8 @@ class PersonTest(unittest.TestCase):
                     ActType.THINK, self.hanako, "know", (self.taro,)),
                 ("look", (self.taro,), "",
                     ActType.LOOK, self.hanako, "look", (self.taro,)),
+                ("meet", (self.taro,), "",
+                    ActType.LOOK, self.hanako, "meet", (self.taro,)),
                 ("move", (self.taro,), "",
                     ActType.MOVE, self.hanako, "move", (self.taro,)),
                 ("remember", (self.taro,), "",

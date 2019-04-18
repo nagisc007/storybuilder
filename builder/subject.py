@@ -168,6 +168,11 @@ class Person(Subject):
 
         return Action(ActType.LOOK, self, verb, self.objects_from(*args))
 
+    def meet(self, *args, verb: str="meet"):
+        assert_isstr(verb)
+
+        return Action(ActType.LOOK, self, verb, self.objects_from(*args))
+
     def move(self, *args, verb: str="move"):
         assert_isstr(verb)
 
