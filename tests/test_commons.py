@@ -26,50 +26,6 @@ class PublicMethodsTest(unittest.TestCase):
     def test_descriptions_of(self):
         pass
 
-    def test_double_comma_chopped(self):
-        data = [
-                ("　これを。。ただしく。。", LangType.JPN,
-                    "　これを。ただしく。"),
-                (" This is a pen.. the pen. ", LangType.ENG,
-                    " This is a pen. the pen. "),
-                ]
-
-        for v, lng, expected in data:
-            with self.subTest(v=v, lng=lng, expected=expected):
-                self.assertEqual(commons.double_comma_chopped(v, lng), expected)
-
-    def test_extraend_chopped(self):
-        data = [
-                ("！。", LangType.JPN,
-                    "！"),
-                ("？。", LangType.JPN,
-                    "？"),
-                ("!. ", LangType.ENG,
-                    "!"),
-                ("?. ", LangType.ENG,
-                    "?")
-                ]
-
-        for v, lng, expected in data:
-            with self.subTest(v=v, lng=lng, expected=expected):
-                self.assertEqual(commons.extraend_chopped(v, lng), expected)
-
-    def test_extraspace_chopped(self):
-        data = [
-                ("　これを。　ただしくする。", LangType.JPN,
-                    "　これを。ただしくする。"),
-                (" This is a pen.  the pen. ", LangType.ENG,
-                    " This is a pen. the pen. "),
-                ("　これを。、ただしくして。", LangType.JPN,
-                    "　これを。ただしくして。"),
-                ("「これを」　正しくする。", LangType.JPN,
-                    "「これを」正しくする。"),
-                ]
-
-        for v, lng, expected in data:
-            with self.subTest(v=v, lng=lng, expected=expected):
-                self.assertEqual(commons.extraspace_chopped(v, lng), expected)
-
     def test_infos_of(self):
         taro = Person("Taro", 17, "male", "student")
         data = [

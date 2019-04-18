@@ -8,10 +8,10 @@ import re
 from .sbutils import assert_isclass, assert_isbool, assert_isint, assert_isstr
 from .action import Action, ActionGroup, TagAction
 from .commons import descriptions_of, verb_with_np_of 
-from .commons import double_comma_chopped, extraspace_chopped, extraend_chopped
 from .commons import infos_of, object_names_of, subject_name_of
 from .description import Desc
 from .enums import ActType, DescType, GroupType, TagType, LangType
+from .strutils import double_comma_chopped, extraspace_chopped, extraend_chopped
 from .subject import Subject, Person, Flag
 
 

@@ -7,6 +7,7 @@ from .action import Action
 from .basesubject import _BaseSubject
 from .description import Desc, DescGroup
 from .enums import AuxVerb, DescType, LangType
+from .strutils import double_comma_chopped, extraend_chopped, extraspace_chopped
 from .subject import Info, Nothing, Something, Flag
 
 
@@ -18,35 +19,6 @@ def descriptions_of(act: Action, lang: LangType) -> str:
     else:
         return _desc_of(act.descs, lang)
 
-
-def double_comma_chopped(target: str, lang: LangType) -> str:
-    assert_isstr(target)
-    assert_isclass(lang, LangType)
-
-    if lang is LangType.JPN:
-        return re.sub(r'([、。]){2}', r'\1', target)
-    else:
-        return re.sub(r'([,\.]){2}', r'\1', target)
-
-
-def extraend_chopped(target: str, lang: LangType) -> str:
-    assert_isstr(target)
-    assert_isclass(lang, LangType)
-
-    if lang is LangType.JPN:
-        return re.sub(r'([！？])。$', r'\1', target)
-    else:
-        return re.sub(r'([!?])\. $', r'\1', target)
-
-
-def extraspace_chopped(target: str, lang: LangType) -> str:
-    assert_isstr(target)
-    assert_isclass(lang, LangType)
-
-    if lang is LangType.JPN:
-        return re.sub(r'([。」])[　、](.)', r'\1\2', target)
-    else:
-        return re.sub(r' +', r' ', target)
 
 
 def infos_of(act: Action) -> str:

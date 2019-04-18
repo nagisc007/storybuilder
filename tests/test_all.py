@@ -10,6 +10,7 @@ import test_commons
 import test_description
 import test_enums
 import test_master
+import test_strutils
 import test_subject
 import test_testtools
 import test_tools
@@ -46,6 +47,9 @@ def suite():
 
     # master
     suite.addTest(unittest.makeSuite(test_master.MasterTest))
+
+    # strutils
+    suite.addTest(unittest.makeSuite(test_strutils.PublicMethodTest))
 
     # subject
     suite.addTest(unittest.makeSuite(test_subject.InfoTest))
