@@ -70,8 +70,12 @@ def output_info(story: ActionGroup,
     assert_isclass(story, ActionGroup)
 
     total = _count_descriptions(story, pri_filter)
+    total_full = _count_descriptions(story, pri_filter, True)
     estimated = _count_estimated_descs(story, pri_filter, base_num)
-    print("Characters:\n    Total: {}\n    Estimated: {}".format(total, estimated))
+    print("Characters:\n    Total: {total}({full})\n    Estimated: {estimated}".format(
+        total=total,
+        full=total_full,
+        estimated=estimated))
 
 
 def output_story(story: ActionGroup, filename: str, is_action_data: bool=False,
@@ -270,36 +274,40 @@ def _count_actions_in_group(group: ActionGroup) -> int:
     return tmp
 
 
-def _count_desc_at_action(act: Action, pri_filter: int) -> int:
+def _count_desc_at_action(act: Action, pri_filter: int, is_full: bool) -> int:
     assert_isclass(act, Action)
     assert_isint(pri_filter)
+    assert_isbool(is_full)
 
     if act.priority < pri_filter:
         return 0
     else:
-        return sum([len(_desc_excepted_symbols(v)) for v in act.descs.data if not act.act_type in (ActType.TAG, ActType.TEST)])
+        commas = len(act.descs.data) if is_full else 0
+        return sum([len(_desc_excepted_symbols(v)) for v in act.descs.data if not act.act_type in (ActType.TAG, ActType.TEST)]) + commas
 
 
-def _count_desc_in_group(group: ActionGroup, pri_filter: int) -> int:
+def _count_desc_in_group(group: ActionGroup, pri_filter: int, is_full: bool) -> int:
     assert_isclass(group, ActionGroup)
     assert_isint(pri_filter)
+    assert_isbool(is_full)
 
     tmp = []
     for a in group.actions:
         if isinstance(a, ActionGroup):
-            tmp.append(_count_desc_in_group(a, pri_filter))
+            tmp.append(_count_desc_in_group(a, pri_filter, is_full))
         elif isinstance(a, TagAction):
             continue
         else:
-            tmp.append(_count_desc_at_action(a, pri_filter))
+            tmp.append(_count_desc_at_action(a, pri_filter, is_full))
     return sum(tmp)
 
 
-def _count_descriptions(story: ActionGroup, pri_filter: int) -> int:
+def _count_descriptions(story: ActionGroup, pri_filter: int, is_full: bool=False) -> int:
     assert_isclass(story, ActionGroup)
     assert_isint(pri_filter)
+    assert_isbool(is_full)
 
-    return _count_desc_in_group(story, pri_filter)
+    return _count_desc_in_group(story, pri_filter, is_full)
 
 
 def _count_estimated_descs(story: ActionGroup, pri_filter: int, base_num: int) -> int:
@@ -576,7 +584,7 @@ def _story_converted_as_description_in_group(group: ActionGroup, group_type: Gro
 
 def _story_data_converted(story: ActionGroup, is_action_data: bool, pri_filter: int, is_debug: bool) -> list:
     '''Story data converter.
-    
+
     Args:
         story (:obj:`ActionGroup`): a story action group.
         is_action_data (bool): if True, output as an action data.
@@ -636,7 +644,8 @@ def _story_info_data_converted(story: ActionGroup, pri_filter: int, is_debug: bo
     assert_isint(pri_filter)
     assert_isbool(is_debug)
 
-    chars = ["## Characters\n", "- Total: {}".format(_count_descriptions(story, pri_filter)),
+    chars = ["## Characters\n", "- Total: {}({})".format(_count_descriptions(story, pri_filter),
+        _count_descriptions(story, pri_filter, True)),
             "- Estimated: {}".format(_count_estimated_descs(story, pri_filter, _BASE_DESC_SIZE))]
     actions = _story_action_data_percent_converted(story, pri_filter)
     flags = ["## Flags\n"] +  _story_flags_info_converted(story)

@@ -54,10 +54,10 @@ class PublicMethodsTest(unittest.TestCase):
         pass
 
     def test_output_info(self):
-        _BASEMSG = "Characters:\n    Total: {}\n    Estimated: {}\n"
+        _BASEMSG = "Characters:\n    Total: {}({})\n    Estimated: {}\n"
         data = [
                 (self.ma.story("test", self.taro.be()),
-                    _BASEMSG.format(0, 10))
+                    _BASEMSG.format(0, 0, 10))
                 ]
 
         for story, expected in data:
@@ -180,41 +180,43 @@ class PrivateMethodsTest(unittest.TestCase):
 
     def test_count_desc_at_action(self):
         data = [
-                (self.taro.talk().d("test\n"), 4),
-                (self.taro.talk().d("test", "apple"), 9),
-                (self.taro.talk().d(""), 0),
-                (self.taro.talk().d("おはよう"), 4),
-                (self.taro.talk().d("　おはよう。"), 5),
+                (self.taro.talk().d("test\n"), False, 4),
+                (self.taro.talk().d("test", "apple"), False, 9),
+                (self.taro.talk().d(""), False, 0),
+                (self.taro.talk().d("おはよう"), False, 4),
+                (self.taro.talk().d("　おはよう。"), False, 5),
+                (self.taro.talk().d("おはよう"), True, 5),
+                (self.taro.talk().d("おはよう", "こんばん"), True, 10),
                 ]
 
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                self.assertEqual(tools._count_desc_at_action(v, 5), expected)
+        for v, isfull, expected in data:
+            with self.subTest(v=v, isfull=isfull, expected=expected):
+                self.assertEqual(tools._count_desc_at_action(v, 5, isfull), expected)
 
     def test_count_desc_in_group(self):
         data = [
                 (self.ma.scene("test", self.taro.talk().d("test")),
-                    4),
+                    False, 4),
                 (self.ma.scene("test", self.taro.talk().d("test"), self.taro.talk().d("test")),
-                    8),
+                    False, 8),
                 (self.ma.story("test", self.ma.scene("a", self.taro.talk().d("test"))),
-                    4),
+                    False, 4),
                 ]
 
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
-                self.assertEqual(tools._count_desc_in_group(v, 5), expected)
+        for v, isfull, expected in data:
+            with self.subTest(v=v, isfull=isfull, expected=expected):
+                self.assertEqual(tools._count_desc_in_group(v, 5, isfull), expected)
 
     def test_count_descriptions(self):
         data = [
                 (self.ma.scene("test", self.taro.talk().d("test")),
-                    4),
+                    False, 4),
                 (self.ma.scene("test", self.taro.talk().d("test"), self.taro.talk().d("test")),
-                    8),
+                    False, 8),
                 ]
 
-        for v, expected in data:
-            with self.subTest(v=v, expected=expected):
+        for v, isfull, expected in data:
+            with self.subTest(v=v, isfull=isfull, expected=expected):
                 self.assertEqual(tools._count_descriptions(v, 5), expected)
 
     def test_desc_head_of(self):
@@ -491,7 +493,7 @@ class PrivateMethodsTest(unittest.TestCase):
                 (self.ma.story("test",
                     self.taro.be(Flag("apple"))),
                     False,
-                    ["## Characters\n", "- Total: 0",
+                    ["## Characters\n", "- Total: 0(0)",
                         "- Estimated: 10",
                         "## Actions\n", "- Total: 1",
                         "- be: 100.00%",
@@ -508,7 +510,7 @@ class PrivateMethodsTest(unittest.TestCase):
                 (self.ma.story("test",
                     self.taro.be().d("test apple")),
                     False,
-                    ["## Characters\n", "- Total: 9",
+                    ["## Characters\n", "- Total: 9(10)",
                         "- Estimated: 10",
                         "## Actions\n", "- Total: 1",
                         "- be: 100.00%",
@@ -526,7 +528,7 @@ class PrivateMethodsTest(unittest.TestCase):
                     self.taro.be().d("test"),
                     self.taro.talk().d("apple")),
                     False,
-                    ["## Characters\n", "- Total: 9",
+                    ["## Characters\n", "- Total: 9(11)",
                         "- Estimated: 50",
                         "## Actions\n", "- Total: 2",
                         "- be: 50.00%",
@@ -545,7 +547,7 @@ class PrivateMethodsTest(unittest.TestCase):
                     self.taro.be().d("test"),
                     self.taro.talk().d("apple"))),
                     False,
-                    ["## Characters\n", "- Total: 9",
+                    ["## Characters\n", "- Total: 9(11)",
                         "- Estimated: 50",
                         "## Actions\n", "- Total: 2",
                         "- be: 50.00%",
