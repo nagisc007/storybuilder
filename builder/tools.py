@@ -15,6 +15,9 @@ from .strutils import double_comma_chopped, extraspace_chopped, extraend_chopped
 from .subject import Subject, Person, Flag
 
 
+_BASE_DESC_SIZE = 10
+
+
 # functions
 def build_to_story(story: ActionGroup): # pragma: no cover
     '''Build a story.
@@ -61,11 +64,13 @@ def options_parsed(): # pragma: no cover
     return (args)
 
 
-def output_info(story: ActionGroup):
+def output_info(story: ActionGroup,
+        pri_filter: int=Action.MIN_PRIORITY,
+        base_num: int=_BASE_DESC_SIZE):
     assert_isclass(story, ActionGroup)
 
-    total = _count_descriptions(story)
-    estimated = _count_estimated_descs(story)
+    total = _count_descriptions(story, pri_filter)
+    estimated = _count_estimated_descs(story, pri_filter, base_num)
     print("Characters:\n    Total: {}\n    Estimated: {}".format(total, estimated))
 
 
@@ -95,7 +100,7 @@ def output_story(story: ActionGroup, filename: str, is_action_data: bool=False,
     assert_isbool(is_debug)
 
     if is_out_chars:
-        output_info(story)
+        output_info(story, pri_filter)
 
     if is_out_as_file:
         suffix = ""
@@ -107,7 +112,7 @@ def output_story(story: ActionGroup, filename: str, is_action_data: bool=False,
                 story_data, filename, suffix, is_debug)
         if is_info_data:
             _output_story_to_file(
-                    _story_info_data_converted(story, is_debug),
+                    _story_info_data_converted(story, pri_filter, is_debug),
                     filename, "_i", is_debug)
         return ret
     else:
@@ -117,7 +122,7 @@ def output_story(story: ActionGroup, filename: str, is_action_data: bool=False,
         ret =  _output_story_to_console(story_data, is_debug)
         if is_info_data:
             _output_story_to_console(
-                    _story_info_data_converted(story, is_debug),
+                    _story_info_data_converted(story, pri_filter, is_debug),
                     is_debug)
         return ret
 
@@ -218,33 +223,36 @@ def _comment_of(act: TagAction) -> str:
     return "<!--{}-->".format(act.tag_info)
 
 
-def _count_act_type_in_group(group: ActionGroup, act_type: ActType) -> int:
+def _count_act_type_in_group(group: ActionGroup, act_type: ActType, pri_filter: int) -> int:
     assert_isclass(group, ActionGroup)
     assert_isclass(act_type, ActType)
+    assert_isint(pri_filter)
 
     tmp = 0
     for a in group.actions:
         if isinstance(a, ActionGroup):
-            tmp += _count_act_type_in_group(a, act_type)
+            tmp += _count_act_type_in_group(a, act_type, pri_filter)
+        elif isinstance(a, Action) and a.priority < pri_filter:
+            continue
         else:
             tmp += 1 if a.act_type is act_type else 0
     return tmp
 
 
-def _count_act_types(group: ActionGroup) -> dict:
+def _count_act_types(group: ActionGroup, pri_filter: int) -> dict:
     return {
-            ActType.BE: _count_act_type_in_group(group, ActType.BE),
-            ActType.BEHAV: _count_act_type_in_group(group, ActType.BEHAV),
-            ActType.DEAL: _count_act_type_in_group(group, ActType.DEAL),
-            ActType.DO: _count_act_type_in_group(group, ActType.DO),
-            ActType.EXPLAIN: _count_act_type_in_group(group, ActType.EXPLAIN),
-            ActType.FEEL: _count_act_type_in_group(group, ActType.FEEL),
-            ActType.LOOK: _count_act_type_in_group(group, ActType.LOOK),
-            ActType.MOVE: _count_act_type_in_group(group, ActType.MOVE),
-            ActType.TAG: _count_act_type_in_group(group, ActType.TAG),
-            ActType.TALK: _count_act_type_in_group(group, ActType.TALK),
-            ActType.TEST: _count_act_type_in_group(group, ActType.TEST),
-            ActType.THINK: _count_act_type_in_group(group, ActType.THINK),
+            ActType.BE: _count_act_type_in_group(group, ActType.BE, pri_filter),
+            ActType.BEHAV: _count_act_type_in_group(group, ActType.BEHAV, pri_filter),
+            ActType.DEAL: _count_act_type_in_group(group, ActType.DEAL, pri_filter),
+            ActType.DO: _count_act_type_in_group(group, ActType.DO, pri_filter),
+            ActType.EXPLAIN: _count_act_type_in_group(group, ActType.EXPLAIN, pri_filter),
+            ActType.FEEL: _count_act_type_in_group(group, ActType.FEEL, pri_filter),
+            ActType.LOOK: _count_act_type_in_group(group, ActType.LOOK, pri_filter),
+            ActType.MOVE: _count_act_type_in_group(group, ActType.MOVE, pri_filter),
+            ActType.TAG: _count_act_type_in_group(group, ActType.TAG, pri_filter),
+            ActType.TALK: _count_act_type_in_group(group, ActType.TALK, pri_filter),
+            ActType.TEST: _count_act_type_in_group(group, ActType.TEST, pri_filter),
+            ActType.THINK: _count_act_type_in_group(group, ActType.THINK, pri_filter),
             }
 
 
@@ -262,34 +270,44 @@ def _count_actions_in_group(group: ActionGroup) -> int:
     return tmp
 
 
-def _count_desc_at_action(act: Action) -> int:
+def _count_desc_at_action(act: Action, pri_filter: int) -> int:
     assert_isclass(act, Action)
+    assert_isint(pri_filter)
 
-    return sum([len(_desc_excepted_symbols(v)) for v in act.descs.data if not act.act_type in (ActType.TAG, ActType.TEST)])
+    if act.priority < pri_filter:
+        return 0
+    else:
+        return sum([len(_desc_excepted_symbols(v)) for v in act.descs.data if not act.act_type in (ActType.TAG, ActType.TEST)])
 
 
-def _count_desc_in_group(group: ActionGroup) -> int:
+def _count_desc_in_group(group: ActionGroup, pri_filter: int) -> int:
     assert_isclass(group, ActionGroup)
+    assert_isint(pri_filter)
 
     tmp = []
     for a in group.actions:
         if isinstance(a, ActionGroup):
-            tmp.append(_count_desc_in_group(a))
+            tmp.append(_count_desc_in_group(a, pri_filter))
         elif isinstance(a, TagAction):
             continue
         else:
-            tmp.append(_count_desc_at_action(a))
+            tmp.append(_count_desc_at_action(a, pri_filter))
     return sum(tmp)
 
 
-def _count_descriptions(story: ActionGroup) -> int:
+def _count_descriptions(story: ActionGroup, pri_filter: int) -> int:
     assert_isclass(story, ActionGroup)
+    assert_isint(pri_filter)
 
-    return _count_desc_in_group(story)
+    return _count_desc_in_group(story, pri_filter)
 
 
-def _count_estimated_descs(story: ActionGroup, base_num: int=10) -> int:
-    act_types = _count_act_types(story)
+def _count_estimated_descs(story: ActionGroup, pri_filter: int, base_num: int) -> int:
+    assert_isclass(story, ActionGroup)
+    assert_isint(pri_filter)
+    assert_isint(base_num)
+
+    act_types = _count_act_types(story, pri_filter)
     be = act_types[ActType.BE] * 1
     behav = act_types[ActType.BEHAV] * 1
     deal = act_types[ActType.DEAL] * 2
@@ -462,22 +480,13 @@ def _scene_title_of(act: TagAction) -> str:
     return "**{}**".format(act.tag_info)
 
 
-def _story_action_data_percent_converted(story: ActionGroup) -> list:
+def _story_action_data_percent_converted(story: ActionGroup,
+        pri_filter: int) -> list:
     assert_isclass(story, ActionGroup)
+    assert_isint(pri_filter)
 
     total_acts = _count_actions_in_group(story)
-    types_acts = {
-            ActType.BE: _count_act_type_in_group(story, ActType.BE),
-            ActType.BEHAV: _count_act_type_in_group(story, ActType.BEHAV),
-            ActType.DEAL: _count_act_type_in_group(story, ActType.DEAL),
-            ActType.DO: _count_act_type_in_group(story, ActType.DO),
-            ActType.EXPLAIN: _count_act_type_in_group(story, ActType.EXPLAIN),
-            ActType.FEEL: _count_act_type_in_group(story, ActType.FEEL),
-            ActType.LOOK: _count_act_type_in_group(story, ActType.LOOK),
-            ActType.MOVE: _count_act_type_in_group(story, ActType.MOVE),
-            ActType.TALK: _count_act_type_in_group(story, ActType.TALK),
-            ActType.THINK: _count_act_type_in_group(story, ActType.THINK),
-            }
+    types_acts = _count_act_types(story, pri_filter)
     def act_percent(char, atype, total):
         return "- {}: {:.2f}%".format(
                 char,
@@ -622,13 +631,14 @@ def _story_flags_info_in_group(group: ActionGroup) -> list:
     return tmp
 
 
-def _story_info_data_converted(story: ActionGroup, is_debug: bool) -> list:
+def _story_info_data_converted(story: ActionGroup, pri_filter: int, is_debug: bool) -> list:
     assert_isclass(story, ActionGroup)
+    assert_isint(pri_filter)
     assert_isbool(is_debug)
 
-    chars = ["## Characters\n", "- Total: {}".format(_count_descriptions(story)),
-            "- Estimated: {}".format(_count_estimated_descs(story))]
-    actions = _story_action_data_percent_converted(story)
+    chars = ["## Characters\n", "- Total: {}".format(_count_descriptions(story, pri_filter)),
+            "- Estimated: {}".format(_count_estimated_descs(story, pri_filter, _BASE_DESC_SIZE))]
+    actions = _story_action_data_percent_converted(story, pri_filter)
     flags = ["## Flags\n"] +  _story_flags_info_converted(story)
 
     return chars + actions + flags

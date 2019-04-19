@@ -189,7 +189,7 @@ class PrivateMethodsTest(unittest.TestCase):
 
         for v, expected in data:
             with self.subTest(v=v, expected=expected):
-                self.assertEqual(tools._count_desc_at_action(v), expected)
+                self.assertEqual(tools._count_desc_at_action(v, 5), expected)
 
     def test_count_desc_in_group(self):
         data = [
@@ -203,7 +203,7 @@ class PrivateMethodsTest(unittest.TestCase):
 
         for v, expected in data:
             with self.subTest(v=v, expected=expected):
-                self.assertEqual(tools._count_desc_in_group(v), expected)
+                self.assertEqual(tools._count_desc_in_group(v, 5), expected)
 
     def test_count_descriptions(self):
         data = [
@@ -215,7 +215,7 @@ class PrivateMethodsTest(unittest.TestCase):
 
         for v, expected in data:
             with self.subTest(v=v, expected=expected):
-                self.assertEqual(tools._count_descriptions(v), expected)
+                self.assertEqual(tools._count_descriptions(v, 5), expected)
 
     def test_desc_head_of(self):
         data = [
@@ -563,7 +563,7 @@ class PrivateMethodsTest(unittest.TestCase):
 
         for v, isdbg, expected in data:
             with self.subTest(v=v, isdbg=isdbg, expected=expected):
-                self.assertEqual(tools._story_info_data_converted(v, isdbg), expected)
+                self.assertEqual(tools._story_info_data_converted(v, 5, isdbg), expected)
 
     def test_story_title_of(self):
         ma = Master('test')
