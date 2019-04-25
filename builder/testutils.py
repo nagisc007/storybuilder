@@ -71,7 +71,7 @@ def exists_outline_infos_by_data(case: unittest.TestCase,
     for title, story, what, why, how, res, isfuzzy in data:
         with case.subTest(title=title, story=story, what=what, why=why,
                 how=how, res=res, isfuzzy=isfuzzy):
-            case.assertTrue(exists_outline_infos(story, what, why, how,
+            case.assertTrue(exists_outline_infos(case, story, what, why, how,
                 res, isfuzzy))
 
 
