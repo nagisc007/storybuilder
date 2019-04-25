@@ -250,18 +250,16 @@ def _output_story_as_descriptions(story: list, lang: em.LangType, filename: str,
         return _output_to_console(tmp, is_debug)
 
 
-def _output_story_as_info(story: list, filename: str, asfile: bool,
-        is_debug: bool) -> bool: # pragma: no cover
+def _output_story_as_info(story: list, lang: em.LangType, filename: str,
+        asfile: bool, is_debug: bool) -> bool: # pragma: no cover
     '''
     Story info:
         * total description characters
         * act type percents
     '''
-    _output_charcounts(story)
-    _output_acttype_percents(story)
     # flags
     # 各種db
-    tmp = []
+    tmp = _charcount_from(story, lang) + _acttypes_percents_from(story)
     if asfile:
         return _output_to_file(tmp, filename, "_i", is_debug)
     else:
