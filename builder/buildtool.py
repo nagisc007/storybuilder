@@ -225,7 +225,7 @@ def _output_story_as_actinfo(story: list, lang: em.LangType, filename: str, asfi
         * action infos
     '''
     # contents heads
-    actinfos = _actinfo_from(story, 1, lang, is_debug)
+    actinfos = _actinfo_from(story, lang, is_debug)
     # flags
     tmp = actinfos
     if asfile:
