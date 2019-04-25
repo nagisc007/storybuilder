@@ -5,9 +5,17 @@ from . import action as act
 from . import assertion as ast
 from . import basesubject as bs
 from . import enums as em
+from . import info as inf
 
 
 # public methods
+def contains_the_action_in(story: list, target: act.Action) -> bool:
+    for v in ast.is_list(story):
+        if _contains_the_action_(v, target):
+            return True
+    return False
+
+
 def count_acts(story: list) -> int:
     tmp = 0
     for v in ast.is_list(story):
@@ -73,6 +81,47 @@ def has_the_subject_in(story: list, target: bs.BaseSubject) -> bool:
 
 
 # private methods
+def _compare_objects_with_something(origin: act.Action, target: act.Action) -> bool:
+    mismatches = 0
+    for t in target.objects:
+        for o in origin.objects:
+            if _contains_object(o, t):
+                break
+        else:
+            mismatches += 1
+    origin_somethings = _count_subjects_(origin.objects, inf.Something)
+    target_somethings = _count_subjects_(target.objects, inf.Something)
+    return mismatches - abs(target_somethings - origin_somethings) <= 0
+
+
+def _contains_object(origin: bs.BaseSubject, target: bs.BaseSubject) -> bool:
+    if isinstance(target, inf.Info):
+        return isinstance(origin, inf.Info) and target.note in origin.note
+    else:
+        return origin == target
+
+
+def _contains_the_action_(val, target: act.Action) -> bool:
+    if isinstance(val, act.ActionGroup):
+        return _contains_the_action_in_group(val, target)
+    elif isinstance(val, act.TagAction):
+        return False
+    elif isinstance(val, act.Action):
+        return val.act_type is ast.is_instance(target, act.Action).act_type \
+                and val.subject == target.subject \
+                and val.auxverb is target.auxverb \
+                and _compare_objects_with_something(val, target)
+    else:
+        return False
+
+
+def _contains_the_action_in_group(group: act.ActionGroup, target: act.Action) -> bool:
+    for a in ast.is_instance(group, act.ActionGroup).actions:
+        if _contains_the_action_(a, target):
+            return True
+    return False
+
+
 def _count_acts_from_(val) -> int:
     if isinstance(val, act.ActionGroup):
         return _count_acts_from_in_group(val)
@@ -123,9 +172,12 @@ def _count_subjects_(val, subcls: bs.BaseSubject) -> int:
     elif isinstance(val, act.Action):
         tmp = 1 if isinstance(val.subject, ast.is_subclass(subcls, bs.BaseSubject)) else 0
         return tmp + len([v for v in val.objects if isinstance(v, subcls)])
+    elif isinstance(val, bs.BaseSubject):
+        return 1 if isinstance(val, ast.is_subclass(subcls, bs.BaseSubject)) else 0
+    elif isinstance(val, list) or isinstance(val, tuple):
+        return count_subjects_in(val, subcls)
     else:
         return 0
-
 
 def _count_subjects_in_group(group: act.ActionGroup, subcls: bs.BaseSubject) -> int:
     tmp = 0

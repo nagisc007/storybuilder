@@ -50,16 +50,17 @@ def exists_outline_infos(case: unittest.TestCase,
     # TODO: fuzzy match implement
     is_succeeded = True
     ERR_MSG = "is not exists!"
-    if not ayz.has_the_action_in(story, what):
+    checker = ayz.contains_the_action_in if is_fuzzy else ayz.has_the_action_in
+    if not checker(story, what):
         case.fail(f"Purpose: {ERR_MSG}")
         is_succeeded = False
-    if not ayz.has_the_action_in(story, why):
+    if not checker(story, why):
         case.fail(f"Reason: {ERR_MSG}")
         is_succeeded = False
-    if not ayz.has_the_action_in(story, how):
+    if not checker(story, how):
         case.fail(f"Process: {ERR_MSG}")
         is_succeeded = False
-    if not ayz.has_the_action_in(story, res):
+    if not checker(story, res):
         case.fail(f"Result: {ERR_MSG}")
         is_succeeded = False
 

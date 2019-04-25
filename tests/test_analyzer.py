@@ -7,6 +7,7 @@ from builder import action as act
 from builder import enums as em
 from builder import person as psn
 from builder import item as itm
+from builder import info as inf
 from builder import analyzer as ayz
 
 
@@ -22,6 +23,25 @@ class PublicMethodsTest(unittest.TestCase):
     def setUp(self):
         self.taro = psn.Person("Taro", 17, "male", "student")
         self.box = itm.Item("Box", "a box")
+        self.stick = itm.Item("Stick", "a stick")
+
+    def test_contains_the_action_in(self):
+        data = [
+                ((self.taro.be(self.box),),
+                    self.taro.be(self.box), True),
+                ((self.taro.be(self.box),),
+                    self.taro.be(), True),
+                ((self.taro.be(),),
+                    self.taro.be(self.box), False),
+                ((self.taro.be(self.box),),
+                    self.taro.be(inf.Something()), True),
+                ((self.taro.be(self.box, inf.Something()),),
+                    self.taro.be(self.box, self.stick), True),
+                ]
+
+        for v, target, expected in data:
+            with self.subTest(v=v, target=target, expected=expected):
+                self.assertEqual(ayz.contains_the_action_in(v, target), expected)
 
     def test_count_acttypes(self):
         data = [
@@ -56,6 +76,8 @@ class PublicMethodsTest(unittest.TestCase):
         data = [
                 ((taro1,),
                     psn.Person, 1),
+                ((inf.Something(), inf.Info("test")),
+                    inf.Something, 1),
                 ]
 
         for v, target, expected in data:

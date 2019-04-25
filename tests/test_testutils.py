@@ -8,6 +8,7 @@ from builder import enums as em
 from builder import person as psn
 from builder import day as dy
 from builder import stage as stg
+from builder import info as inf
 from builder import item as itm
 from builder import testutils as tutl
 
@@ -52,8 +53,17 @@ class PublicMethodsTest(unittest.TestCase):
     def test_exists_outline_infos(self):
         data = [
                 ((self.taro.go(), self.taro.talk(), self.taro.meet(self.hanako), self.taro.ask()),
-                    self.taro.go(), self.taro.talk(), self.taro.meet(self.hanako), self.taro.ask(),
-                False, False, True),
+                    self.taro.go(), self.taro.talk(),
+                    self.taro.meet(self.hanako), self.taro.ask(),
+                    False, False, True),
+                ((self.taro.be(), self.taro.talk(self.hanako), self.taro.go()),
+                    self.taro.go(), self.taro.be(),
+                    self.taro.talk(), self.taro.go(),
+                    False, True, False),
+                ((self.taro.be(), self.taro.talk(self.hanako), self.taro.go()),
+                    self.taro.go(), self.taro.be(),
+                    self.taro.talk(), self.taro.go(),
+                    True, False, True),
                 ]
 
         for v, what, why, how, res, fuz, isfail, expected in data:
