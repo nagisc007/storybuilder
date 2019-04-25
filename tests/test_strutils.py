@@ -2,62 +2,136 @@
 """Test for strutils.py
 """
 import unittest
-from builder.sbutils import print_test_title
-from builder.enums import LangType
-import builder.strutils as strutils
+from builder.testutils import print_test_title
+from builder import enums as em
+from builder import strutils as utl
 
 
 _FILENAME = "strutils.py"
 
 
-class PublicMethodTest(unittest.TestCase):
+class PublicMethodsTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         print_test_title(_FILENAME, "public methods")
 
+    def test_comment_tag_from(self):
+        data = [
+                ("test", "<!--test-->"),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(utl.comment_tag_from(v), expected)
+
     def test_double_comma_chopped(self):
         data = [
-                ("　これを。。ただしく。。", LangType.JPN,
+                ("　これを。。ただしく。。", em.LangType.JPN,
                     "　これを。ただしく。"),
-                (" This is a pen.. the pen. ", LangType.ENG,
+                (" This is a pen.. the pen. ", em.LangType.ENG,
                     " This is a pen. the pen. "),
                 ]
 
-        for v, lng, expected in data:
-            with self.subTest(v=v, lng=lng, expected=expected):
-                self.assertEqual(strutils.double_comma_chopped(v, lng), expected)
+        for v, lang, expected in data:
+            with self.subTest(v=v, lang=lang, expected=expected):
+                self.assertEqual(utl.double_comma_chopped(v, lang), expected)
+
+    def test_em_tag_from(self):
+        data = [
+                ("test", 1, "_test_"),
+                ("test", 2, "**test**"),
+                ("test", 3, "***test***"),
+                ]
+
+        for v, lv, expected in data:
+            with self.subTest(v=v, lv=lv, expected=expected):
+                self.assertEqual(utl.em_tag_from(v, lv), expected)
 
     def test_extraend_chopped(self):
         data = [
-                ("！。", LangType.JPN,
+                ("！。", em.LangType.JPN,
                     "！"),
-                ("？。", LangType.JPN,
+                ("？。", em.LangType.JPN,
                     "？"),
-                ("!. ", LangType.ENG,
+                ("!. ", em.LangType.ENG,
                     "!"),
-                ("?. ", LangType.ENG,
+                ("?. ", em.LangType.ENG,
                     "?")
                 ]
 
-        for v, lng, expected in data:
-            with self.subTest(v=v, lng=lng, expected=expected):
-                self.assertEqual(strutils.extraend_chopped(v, lng), expected)
+        for v, lang, expected in data:
+            with self.subTest(v=v, lang=lang, expected=expected):
+                self.assertEqual(utl.extraend_chopped(v, lang), expected)
 
     def test_extraspace_chopped(self):
         data = [
-                ("　これを。　ただしくする。", LangType.JPN,
+                ("　これを。　ただしくする。", em.LangType.JPN,
                     "　これを。ただしくする。"),
-                (" This is a pen.  the pen. ", LangType.ENG,
+                (" This is a pen.  the pen. ", em.LangType.ENG,
                     " This is a pen. the pen. "),
-                ("　これを。、ただしくして。", LangType.JPN,
+                ("　これを。、ただしくして。", em.LangType.JPN,
                     "　これを。ただしくして。"),
-                ("「これを」　正しくする。", LangType.JPN,
+                ("「これを」　正しくする。", em.LangType.JPN,
                     "「これを」正しくする。"),
                 ]
 
-        for v, lng, expected in data:
-            with self.subTest(v=v, lng=lng, expected=expected):
-                self.assertEqual(strutils.extraspace_chopped(v, lng), expected)
+        for v, lang, expected in data:
+            with self.subTest(v=v, lang=lang, expected=expected):
+                self.assertEqual(utl.extraspace_chopped(v, lang), expected)
 
+    def test_head_tag_from(self):
+        data = [
+                ("test", 1, "# test"),
+                ("test", 2, "## test"),
+                ]
 
+        for v, lv, expected in data:
+            with self.subTest(v=v, lv=lv, expected=expected):
+                self.assertEqual(utl.head_tag_from(v, lv), expected)
+
+    def test_hr_tag_from(self):
+        data = [
+                (1, "--------"),
+                (2, "--------"*2),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(utl.hr_tag_from(v), expected)
+
+    def test_link_tag_from(self):
+        data = [
+                ("test", "apple", "[test](apple)"),
+                ]
+
+        for v, link, expected in data:
+            with self.subTest(v=v, link=link, expected=expected):
+                self.assertEqual(utl.link_tag_from(v, link), expected)
+
+    def test_quote_tag_from(self):
+        data = [
+                ("test", "> test"),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(utl.quote_tag_from(v), expected)
+
+    def test_reflink_tag_from(self):
+        data = [
+                ("test", "[test]:test"),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(utl.reflink_tag_from(v), expected)
+
+    def test_strike_tag_from(self):
+        data = [
+                ("test", "~~test~~"),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(utl.strike_tag_from(v), expected)

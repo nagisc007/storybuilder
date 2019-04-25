@@ -1,70 +1,48 @@
 # -*- coding: utf-8 -*-
 """Define descriptions.
 """
-from .sbutils import assert_isclass, assert_istuple
-from .enums import DescType
+from . import assertion as ast
+from . import basedescription as bd
+from . import enums as em
 
 
-class _BaseDesc(object):
-    """Base description class.
-
-    Attributes:
-        desc_type (:enum:`DescType`): a description type.
-    """
-    def __init__(self, desc_type: DescType):
-        """
-        Args:
-            desc_type (:enum:`DescType`): a description type.
-        """
-        assert_isclass(desc_type, DescType)
-
-        self.desc_type = desc_type
-        self.data = None
-
-
-class Desc(_BaseDesc):
+class Desc(bd.BaseDesc):
     """Description class.
 
     Attributes:
         desc_type (:enum:`DescType`): a description type.
         data (:tuple:str): description data.
     """
-    def __init__(self, descs, desc_type: DescType=DescType.DESCRIPTION):
+    def __init__(self, *args, desc_type: em.DescType=em.DescType.DESCRIPTION):
         """
         Args:
-            descs (:tuple:str): description strings.
+            *args ([str, tuple]): description strings.
             desc_type (:enum:`DescType`, optional): a description type.
         """
-        assert_isclass(desc_type, DescType)
-
+        from . import parser
         super().__init__(desc_type)
-        self.data = self._data_from(descs)
-
-    def _data_from(self, descs) -> tuple:
-        if descs:
-            if isinstance(descs, str):
-                return (descs,)
-            else:
-                assert_istuple(descs)
-                return descs
-        return ()
+        self.data = parser.str_to_tuple_from_args(args)
 
 
-class DescGroup(_BaseDesc):
+class DescGroup(bd.BaseDesc):
     """Description group class.
 
     Attributes:
         desc_type (:enum:`DescType`): a group type.
         descriptions (:tuple:`Desc`): descriptions.
     """
-    def __init__(self, *args: _BaseDesc, base_type: DescType=DescType.DESCRIPTION):
+    def __init__(self, *args: bd.BaseDesc, base_type: em.DescType=em.DescType.DESCRIPTION):
         """
         Args:
-            *args (_BaseDesc): descriptions in this container.
+            *args (:obj:`BaseDesc`): descriptions in this container.
             base_type (:enum:`DescType`): a basic type for this container.
         """
-        assert_isclass(base_type, DescType)
-
         super().__init__(base_type)
-        self.descriptions = args
+        self.descriptions = args # TODO: check and build data
 
+
+class NoDesc(bd.BaseDesc):
+    """Specific description that have nothing.
+    """
+    def __init__(self):
+        super().__init__(em.DescType.NONE)

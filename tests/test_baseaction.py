@@ -2,10 +2,9 @@
 """Test for basesubject.py
 """
 import unittest
-from builder.sbutils import print_test_title
-from builder.baseaction import _BaseAction
-from builder.enums import ActType
-
+from builder.testutils import print_test_title
+from builder import baseaction as ba
+from builder import enums as em
 
 _FILENAME = "baseaction.py"
 
@@ -18,11 +17,12 @@ class BaseActionTest(unittest.TestCase):
 
     def test_attributes(self):
         data = [
-                (ActType.BE, ActType.BE),
+                (em.ActType.BE, em.ActType.BE),
                 ]
 
         for v, expected in data:
-            tmp = _BaseAction(v)
-            self.assertIsInstance(tmp, _BaseAction)
-            self.assertEqual(tmp.act_type, expected)
+            with self.subTest(v=v, expected=expected):
+                tmp = ba.BaseAction(v)
+                self.assertIsInstance(tmp, ba.BaseAction)
+                self.assertEqual(tmp.act_type, expected)
 

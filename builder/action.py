@@ -1,173 +1,104 @@
 # -*- coding: utf-8 -*-
 """Define an action class.
 """
-from .sbutils import assert_isclass, assert_isstr, assert_isbetween
-from .description import Desc
-from .enums import ActType, DescType, AuxVerb, GroupType, LangType, TagType
-from .baseaction import _BaseAction
-from .basesubject import _BaseSubject
+from . import assertion as ast
+from . import description as ds
+from . import enums as em
+from . import baseaction as ba
+from . import basesubject as bs
 
 
-class Action(_BaseAction):
+class Action(ba.BaseAction):
     """A general action class.
 
     Attributes:
         act_type (:enum:`ActType`): an action category type.
         auxverb (:enum:`AuxVerb`): an auxiliary verb.
-        deflags (:tuple:`_BaseSubject`): a story deflag to associate this action.
-        descs (:obj:`_BaseDesc`): descriptions data object.
-        flags (:tuple:`_BaseSubject`): a story flag to associate this action.
-        is_negative (bool): if True is a negative mode.
-        is_passive (bool): if True is a passive mode.
-        objects (:tuple:obj:`_BaseSubject`): objects of this action.
-        priority (int): a action priotiry.
-        subject (:obj:`_BaseSubject`): a subject of this action.
-        verb (str): a action verb.
+        description (:obj:`BaseDesc`): an associated description.
+        objects (:tuple:obj:`BaseSubject`): an action objects.
+        priority (int): an action priotiry.
+        subject (:obj:`BaseSubject`): an action subject.
+        verb (str): an action verb.
     """
-    DEFAULT_PRIORITY = 5
-    MAX_PRIORITY = 10
-    MIN_PRIORITY = 0
+    PRIORITY_DEFAULT = 5
+    PRIORITY_MAX = 10
+    PRIORITY_MIN = 0
 
-    def __init__(self, act_type: ActType, subject: _BaseSubject, verb: str, objects: tuple):
+    def __init__(self, act_type: em.ActType, subject: bs.BaseSubject, verb: str, auxverb: em.AuxVerb,
+            objects: tuple):
         """
         Args:
             act_type (:enum:`ActType`): an action type.
-            subject (:obj:`_BaseSubject`): a subject.
+            subject (:obj:`BaseSubject`): a subject.
             verb (str): an action verbs.
+            auxverb (:enum:`AuxVerb`): an auxiliary verb.
             objects (:tuple:obj:`_BaseSubject`): objects.
         """
-        assert_isclass(act_type, ActType)
-        assert_isclass(subject, _BaseSubject)
-        assert_isstr(verb)
-
         super().__init__(act_type)
-        self.auxverb = AuxVerb.NONE
-        self.deflags = ()
-        self.flags = ()
-        self.is_negative = False
-        self.is_passive = False
-        self.priority = Action.DEFAULT_PRIORITY
-        self.descs = Desc("")
-        self.objects = objects
-        self.subject = subject
-        self.verb = verb
-
-    def _flags_data_from(self, *args) -> tuple:
-        from .subject import Flag
-        return tuple(v if isinstance(v, Flag) else Flag(str(v)) for v in args)
-
-    def can(self):
-        self.auxverb = AuxVerb.CAN
-        return self
+        self.auxverb = ast.is_instance(auxverb, em.AuxVerb)
+        self.priority = Action.PRIORITY_DEFAULT
+        self.descs = ds.NoDesc()
+        self.objects = objects # check and build data
+        self.subject = ast.is_instance(subject, bs.BaseSubject)
+        self.verb = ast.is_str(verb)
 
     def d(self, *args):
         return self.desc(*args)
 
-    def de(self, *args):
-        return self.set_deflags(*args)
-
-    def desc(self, *args, is_dialogue: bool=False):
-        self.descs = Desc(args, desc_type=DescType.DIALOGUE) if is_dialogue else Desc(args)
+    def desc(self, *args):
+        self.description = ds.Desc(*args)
         return self
-
-    def f(self, *args):
-        return self.set_flags(*args)
-
-    def may(self):
-        self.auxverb = AuxVerb.MAY
-        return self
-
-    def must(self):
-        self.auxverb = AuxVerb.MUST
-        return self
-
-    def negative(self):
-        self.is_negative = True
-        return self
-
-    def non(self): return self.negative()
 
     def omit(self):
         """Set minimum priority.
         """
-        self.priority = Action.MIN_PRIORITY
+        self.priority = Action.PRIORITY_MIN
         return self
 
-    def passive(self):
-        self.is_passive = True
+    def pri(self, pri):
+        self.priority = ast.is_between(pri, Action.PRIORITY_MAX, Action.PRIORITY_MIN)
         return self
 
-    def ps(self): return self.passive()
-
-    def set_deflags(self, *args):
-        self.deflags = self._flags_data_from(*args)
-        return self
-
-    def set_flags(self, *args):
-        self.flags = self._flags_data_from(*args)
-        return self
-
-    def set_priority(self, pri):
-        assert_isbetween(pri, Action.MAX_PRIORITY, Action.MIN_PRIORITY)
-
-        self.priority = pri
-        return self
-
-    def should(self):
-        self.auxverb = AuxVerb.SHOULD
-        return self
+    def t(self, *args):
+        return self.tell(*args)
 
     def tell(self, *args):
-        self.desc(*args, is_dialogue=True)
-        return self
-
-    def want(self):
-        self.auxverb = AuxVerb.WANT
-        return self
-
-    def will(self):
-        self.auxverb = AuxVerb.WILL
+        self.description = ds.Desc(*args, desc_type=em.DescType.DIALOGUE)
         return self
 
 
-class ActionGroup(_BaseAction):
+class ActionGroup(ba.BaseAction):
     """Action grouping class.
 
     Attributes:
-        actions (:tuple:obj:`Action`): action lists.
-        group_type (:enum:`GroupType`): a group type.
+        act_type (:enum:`ActType`): a type of this group.
+        actions (:tuple:obj:`Action`): actions.
+        group_type (:enum:`GroupType`): a type of this group.
         lang (:enum:`LangType`): a language type.
     """
-    CLS_NAME = "_actiongroup"
-
-    def __init__(self, *args: Action, group_type: GroupType, lang: LangType=LangType.JPN):
+    def __init__(self, *args: Action, group_type: em.GroupType, lang: em.LangType=em.LangType.JPN):
         """
         Args:
             *args (:tuple:obj:`Action`): actions
             group_type (:enum:`GroupType`): a group type.
             lang (:enum:`LangType`, optional): a language type.
         """
-        assert_isclass(group_type, GroupType)
-        assert_isclass(lang, LangType)
-
-        super().__init__(ActType.GROUP)
-        self.actions = args
-        self.group_type = group_type
-        self.lang = lang
+        super().__init__(em.ActType.GROUP)
+        self.actions = args # TODO: check and build data
+        self.group_type = ast.is_instance(group_type, em.GroupType)
+        self.lang = ast.is_instance(lang, em.LangType)
 
 
-class TagAction(_BaseAction):
+class TagAction(ba.BaseAction):
     """Action class for tag specialized.
 
     Attributes:
+        act_type (:enum:`ActType`): a type of this tag.
         tag (:enum:`TagType`): a tag type.
-        tag_info (str): a tag information.
+        info (str): a tag information.
     """
-    def __init__(self, tag: TagType, tag_info: str=""):
-        super().__init__(ActType.TAG)
-        assert_isclass(tag, TagType)
-        assert_isstr(tag_info)
-        
-        self.tag = tag
-        self.tag_info = tag_info
+    def __init__(self, tag: em.TagType, info: str=""):
+        super().__init__(em.ActType.TAG)
+        self.tag = ast.is_instance(tag, em.TagType)
+        self.info = ast.is_str(info)
 

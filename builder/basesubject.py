@@ -1,26 +1,23 @@
 # -*- coding: utf-8 -*-
 """Define a base subject class.
 """
-from .sbutils import assert_isstr
+from . import assertion as ast
+from . import sobject as so
 
 
-class _BaseSubject(object):
+class BaseSubject(so.SObject):
     """Base subject class.
 
     Attributes:
         name (str): a name of this subject.
         note (str): a short description.
     """
-    CLS_NAME = "_basesubject"
-    def __init__(self, name: str, note: str=""):
+    def __init__(self, name: str, note: str):
         """
         Args:
             name (str): the name or title.
-            note (str, optional): a short description.
+            note (str): a short description.
         """
-        assert_isstr(name)
-        assert_isstr(note)
-
-        self.name = name
-        self.note = note
+        self.name = ast.is_str(name)
+        self.note = ast.is_str(note)
 

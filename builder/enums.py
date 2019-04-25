@@ -5,7 +5,7 @@ from enum import Enum, auto
 
 
 class ActType(Enum):
-    """Act type enum.
+    """Action types.
     """
     BE = auto() # state type
     BEHAV = auto() # behavior type
@@ -16,6 +16,7 @@ class ActType(Enum):
     GROUP = auto() # for groups
     LOOK = auto() # look type
     MOVE = auto() # move type
+    NONE = auto() # none type
     TAG = auto() # for tags
     TALK = auto() # talk type
     TEST = auto() # test type
@@ -32,6 +33,7 @@ class ActType(Enum):
                 self.GROUP.value: "GROUP",
                 self.LOOK.value: "LOOK",
                 self.MOVE.value: "MOVE",
+                self.NONE.value: "NONE",
                 self.TAG.value: "TAG",
                 self.TALK.value: "TALK",
                 self.TEST.value: "TEST",
@@ -40,7 +42,7 @@ class ActType(Enum):
 
 
 class AuxVerb(Enum):
-    """Auxiliary verb type enum.
+    """Auxiliary verb types.
     """
     CAN = auto()
     MAY = auto()
@@ -72,10 +74,10 @@ class DescType(Enum):
 
     def __str__(self) -> str:
         return {
-                self.DESCRIPTION.value: "_DESCRIPTION",
-                self.DIALOGUE.value: "_DIALOGUE",
-                self.NONE.value: "_NONE",
-                self.TAG.value: "_TAG",
+                self.DESCRIPTION.value: "DESCRIPTION",
+                self.DIALOGUE.value: "DIALOGUE",
+                self.NONE.value: "NONE",
+                self.TAG.value: "TAG",
                 }[self.value]
 
 
@@ -83,14 +85,14 @@ class GroupType(Enum):
     """Action group type enum.
     """
     COMBI = auto()
+    NONE = auto()
     SCENE = auto()
-    STORY = auto()
 
     def __str__(self) -> str:
         return {
-                self.COMBI.value: "_COMBI",
-                self.SCENE.value: "_SCENE",
-                self.STORY.value: "_STORY",
+                self.COMBI.value: "COMBI",
+                self.NONE.value: "NONE",
+                self.SCENE.value: "SCENE",
                 }[self.value]
 
 
@@ -99,11 +101,13 @@ class LangType(Enum):
     """
     ENG = auto()
     JPN = auto()
+    NONE = auto()
 
     def __str__(self) -> str:
         return {
-                self.ENG.value: "_ENG",
-                self.JPN.value: "_JPN",
+                self.ENG.value: "ENG",
+                self.JPN.value: "JPN",
+                self.NONE.value: "NONE",
                 }[self.value]
 
 
@@ -112,18 +116,22 @@ class TagType(Enum):
     """
     BR = auto()
     COMMENT = auto()
+    HEAD1 = auto()
+    HEAD2 = auto()
+    HEAD3 = auto()
     HR = auto()
     NONE = auto()
     SYMBOL = auto()
-    TITLE = auto()
 
     def __str__(self) -> str:
         return {
-                self.BR.value: "_BR",
-                self.COMMENT.value: "_COMMENT",
-                self.HR.value: "_HR",
-                self.NONE.value: "_NONE",
-                self.TITLE.value: "_TITLE",
-                self.SYMBOL.value: "_SYMBOL",
+                self.BR.value: "BR",
+                self.COMMENT.value: "COMMENT",
+                self.HEAD1.value: "HEAD1",
+                self.HEAD2.value: "HEAD2",
+                self.HEAD3.value: "HEAD3",
+                self.HR.value: "HR",
+                self.NONE.value: "NONE",
+                self.SYMBOL.value: "SYMBOL",
                 }[self.value]
 

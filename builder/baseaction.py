@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
 """Define basic action class.
 """
-from .sbutils import assert_isclass
-from .enums import ActType
+from . import assertion as ast
+from . import sobject as so
+from . import enums as em
 
 
-class _BaseAction(object):
+class BaseAction(so.SObject):
     """Base action class.
 
     Attributes:
         act_type (:enum:`ActType`): a type of action.
     """
-    def __init__(self, act_type: ActType):
+    def __init__(self, act_type: em.ActType):
         """
         Args:
             act_type (:enum:`ActType`): a type of action.
         """
-        assert_isclass(act_type, ActType)
-
-        self.act_type = act_type
+        self.act_type = ast.is_instance(act_type, em.ActType)
 
