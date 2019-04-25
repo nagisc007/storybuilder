@@ -35,7 +35,7 @@ class ActionTest(unittest.TestCase):
                 self.assertEqual(tmp.subject, exp_sub)
                 self.assertEqual(tmp.verb, exp_verb)
                 self.assertEqual(tmp.objects, exp_obj)
-                self.assertIsInstance(tmp.descs, act.ds.NoDesc)
+                self.assertIsInstance(tmp.description, act.ds.NoDesc)
                 self.assertEqual(tmp.auxverb, exp_aux)
                 self.assertEqual(tmp.priority, act.Action.PRIORITY_DEFAULT)
 

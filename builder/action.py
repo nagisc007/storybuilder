@@ -37,7 +37,7 @@ class Action(ba.BaseAction):
         super().__init__(act_type)
         self.auxverb = ast.is_instance(auxverb, em.AuxVerb)
         self.priority = Action.PRIORITY_DEFAULT
-        self.descs = ds.NoDesc()
+        self.description = ds.NoDesc()
         self.objects = objects # check and build data
         self.subject = ast.is_instance(subject, bs.BaseSubject)
         self.verb = ast.is_str(verb)
