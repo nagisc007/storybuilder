@@ -109,7 +109,7 @@ def _is_all_actions_(val) -> bool:
 
 
 def _is_all_actions_in_group(group: act.ActionGroup) -> bool:
-    for a in ast.is_instance(group, act.ActionGroup):
+    for a in ast.is_instance(group, act.ActionGroup).actions:
         if not _is_all_actions_(a):
             return False
     return True

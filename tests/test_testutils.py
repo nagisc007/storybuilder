@@ -76,6 +76,9 @@ class PublicMethodsTest(unittest.TestCase):
                     True),
                 ((self.taro,),
                     False),
+                ((act.ActionGroup(self.taro.be(), self.taro.be(),
+                    group_type=em.GroupType.SCENE),),
+                    True),
                 ]
 
         for v, expected in data:
