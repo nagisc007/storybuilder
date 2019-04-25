@@ -158,7 +158,7 @@ def _descs_from(story: list, lang: em.LangType, is_debug: bool) -> list:
     tmp = []
     for v in ast.is_list(story):
         tmp.extend(_descs_from_(v, lang, is_debug))
-    return tmp
+    return [sutl.paragraph_head_inserted(v, lang) for v in tmp]
 
 
 def _descs_from_in_group(group: act.ActionGroup, lang: em.LangType,

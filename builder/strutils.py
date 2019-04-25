@@ -73,6 +73,13 @@ def link_tag_from(target: str, link: str) -> str:
     return "[{}]({})".format(ast.is_str(target), ast.is_str(link))
 
 
+def paragraph_head_inserted(target: str, lang: em.LangType) -> str:
+    if lang is em.LangType.JPN:
+        return target if re.match(r'\A「', target) else "　" + target
+    else:
+        return target if re.match(r'\A"', target) else " " + target
+
+
 def quote_tag_from(target: str) -> str:
     return "> {}".format(ast.is_str(target))
 

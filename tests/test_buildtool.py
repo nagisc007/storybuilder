@@ -104,13 +104,19 @@ class PrivateMethodsTest(unittest.TestCase):
         data = [
                 ((taro.be().d("test"),),
                     em.LangType.ENG, False,
-                    ["test."]),
+                    [" test."]),
                 ((taro.be().d("test", "apple"),),
                     em.LangType.ENG, False,
-                    ["test, apple."]),
+                    [" test, apple."]),
                 ((taro.be().d("test", "apple"),),
                     em.LangType.JPN, False,
-                    ["test、apple。"]),
+                    ["　test、apple。"]),
+                ((taro.be().t("test", "apple"),),
+                    em.LangType.ENG, False,
+                    ['"test, apple"']),
+                ((taro.be().t("test", "apple"),),
+                    em.LangType.JPN, False,
+                    ["「test、apple」"]),
                 ]
 
         for v, lang, dbg, expected in data:
