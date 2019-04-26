@@ -135,6 +135,8 @@ def _descs_count_from_(val, lang: em.LangType) -> int:
     elif isinstance(val, act.Action):
         return len(sutl.str_space_chopped(
             ps.description_from_action(val, lang)))
+    elif isinstance(val, list) or isinstance(val, tuple):
+        return _descs_from(val, lang)
     else:
         return 0
 

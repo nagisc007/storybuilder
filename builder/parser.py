@@ -181,7 +181,7 @@ def _story_filtered_by_pri_in_group(group: act.ActionGroup, pri_filter: int) -> 
     tmp = []
     for a in ast.is_instance(group, act.ActionGroup).actions:
         tmp.extend(_story_filtered_by_pri_(a, pri_filter))
-    return tmp
+    return [group.inherited(*tmp)]
 
 
 def _subjects_retrieved_from_(val, subcls: bs.BaseSubject) -> list:

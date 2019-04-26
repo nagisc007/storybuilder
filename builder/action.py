@@ -88,6 +88,11 @@ class ActionGroup(ba.BaseAction):
         self.group_type = ast.is_instance(group_type, em.GroupType)
         self.lang = ast.is_instance(lang, em.LangType)
 
+    def inherited(self, *args):
+        return ActionGroup(*args,
+                group_type=self.group_type,
+                lang=self.lang)
+
 
 class TagAction(ba.BaseAction):
     """Action class for tag specialized.
