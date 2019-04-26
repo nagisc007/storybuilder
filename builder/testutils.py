@@ -8,6 +8,8 @@ from . import analyzer as ayz
 from . import person as psn
 from . import day as dy
 from . import stage as stg
+from . import parser as ps
+from . import enums as em
 
 
 # public methods
@@ -50,18 +52,20 @@ def exists_outline_infos(case: unittest.TestCase,
     # TODO: fuzzy match implement
     is_succeeded = True
     ERR_MSG = "is not exists!"
+    baselang = em.LangType.JPN
     checker = ayz.contains_the_action_in if is_fuzzy else ayz.has_the_action_in
+    formatmsg = lambda x: ps.actinfo_from_action(x, 0, baselang, False)
     if not checker(story, what):
-        case.fail(f"Purpose: {ERR_MSG}")
+        case.fail(f"Purpose: {formatmsg(what)}/{ERR_MSG}")
         is_succeeded = False
     if not checker(story, why):
-        case.fail(f"Reason: {ERR_MSG}")
+        case.fail(f"Reason: {formatmsg(why)}/{ERR_MSG}")
         is_succeeded = False
     if not checker(story, how):
-        case.fail(f"Process: {ERR_MSG}")
+        case.fail(f"Process: {formatmsg(how)}/{ERR_MSG}")
         is_succeeded = False
     if not checker(story, res):
-        case.fail(f"Result: {ERR_MSG}")
+        case.fail(f"Result: {formatmsg(res)}/{ERR_MSG}")
         is_succeeded = False
 
     return is_succeeded
