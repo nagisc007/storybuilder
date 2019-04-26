@@ -80,7 +80,7 @@ def _actinfo_from_in_group(group: act.ActionGroup, lv: int, lang: em.LangType,
         tmp.extend(_actinfo_from_(a, lv, lang, is_debug))
     if group.group_type is em.GroupType.COMBI:
         # TODO: action info combined mark
-        return tmp
+        return [sutl.ul_tag_replaced(sutl.ul_tag_space_removed(tmp[0]))] + tmp[1:]
     else:
         return tmp
 

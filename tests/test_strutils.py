@@ -135,3 +135,34 @@ class PublicMethodsTest(unittest.TestCase):
         for v, expected in data:
             with self.subTest(v=v, expected=expected):
                 self.assertEqual(utl.strike_tag_from(v), expected)
+
+    def test_ul_tag_from(self):
+        data = [
+                ("test", 1, "    - test"),
+                ("test", 2, "        - test"),
+                ]
+
+        for v, lv, expected in data:
+            with self.subTest(v=v, lv=lv, expected=expected):
+                self.assertEqual(utl.ul_tag_from(v, lv), expected)
+
+    def test_ul_tag_space_removed(self):
+        data = [
+                ("    - test", 1, "- test"),
+                ("        - test", 2, "- test"),
+                ("        - test", 1, "    - test"),
+                ]
+
+        for v, lv, expected in data:
+            with self.subTest(v=v, lv=lv, expected=expected):
+                self.assertEqual(utl.ul_tag_space_removed(v, lv), expected)
+
+    def test_ul_tag_replaced(self):
+        data = [
+                ("- test", "*", "* test"),
+                ("+ test", "-", "- test"),
+                ]
+
+        for v, mark, expected in data:
+            with self.subTest(v=v, mark=mark, expected=expected):
+                self.assertEqual(utl.ul_tag_replaced(v, mark), expected)

@@ -99,3 +99,20 @@ def strike_tag_from(target: str) -> str:
 def ul_tag_from(target: str, space: int=0) -> str:
     return "{}- {}".format("    " * ast.is_int(space), ast.is_str(target))
 
+
+def ul_tag_space_removed(target: str, space: int=1) -> str:
+    if space == 1:
+        return re.sub(r'\A    ( *[\-\+\*] )', r'\1', target)
+    elif space == 2:
+        return re.sub(r'\A        ( *[\-\+\*] )', r'\1', target)
+    else:
+        return re.sub(r'\A *([\-\+\*] )', r'\1', target)
+
+
+def ul_tag_replaced(target: str, mark: str='+') -> str:
+    if mark == '+':
+        return re.sub(r'[\-\+\*] ', r'+ ', target)
+    elif mark == '*':
+        return re.sub(r'[\-\+\*] ', r'* ', target)
+    else:
+        return re.sub(r'[\-\+\*] ', r'- ', target)
