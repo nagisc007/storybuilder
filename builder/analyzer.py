@@ -244,7 +244,7 @@ def _has_the_subject(val, target: bs.BaseSubject) -> bool:
         return val.subject == ast.is_instance(target, bs.BaseSubject) \
                 or len([v for v in val.objects if v == target]) >= 1
     elif isinstance(val, list) or isinstance(val, tuple):
-        return has_the_subject_in(val)
+        return has_the_subject_in(val, target)
     else:
         return False
 
