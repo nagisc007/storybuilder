@@ -105,6 +105,8 @@ def _is_all_actions_(val) -> bool:
         return True
     elif isinstance(val, act.Action):
         return True
+    elif isinstance(val, list) or isinstance(val, tuple):
+        return is_all_actions_in(val)
     else:
         return False
 
