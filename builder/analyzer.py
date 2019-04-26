@@ -111,6 +111,8 @@ def _contains_the_action_(val, target: act.Action) -> bool:
                 and val.subject == target.subject \
                 and val.auxverb is target.auxverb \
                 and _compare_objects_with_something(val, target)
+    elif isinstance(val, list) or isinstance(val, tuple):
+        return contains_the_action_in(val, target)
     else:
         return False
 
@@ -129,6 +131,8 @@ def _count_acts_from_(val) -> int:
         return 0
     elif isinstance(val, act.Action):
         return 1
+    elif isinstance(val, list) or isinstance(val, tuple):
+        return count_acts(val)
     return 0
 
 
@@ -146,6 +150,8 @@ def _count_acttype_(val, actype: em.ActType) -> int:
         return 0
     elif isinstance(val ,act.Action):
         return 1 if val.act_type is actype else 0
+    elif isinstance(val, list) or isinstance(val, tuple):
+        return count_acttypes(val, acttype)
     else:
         return 0
 
@@ -194,6 +200,8 @@ def _has_a_subject_(val, subcls: bs.BaseSubject) -> bool:
     elif isinstance(val, act.Action):
         return isinstance(val.subject, ast.is_subclass(subcls, bs.BaseSubject)) \
                 or len([v for v in val.objects if isinstance(v, subcls)]) >= 1
+    elif isinstance(val, list) or isinstance(val, tuple):
+        return has_a_subject_in(val, subcls)
     else:
         return False
 
@@ -213,6 +221,8 @@ def _has_the_action_(val, target: act.Action) -> bool:
         return False
     elif isinstance(val, act.Action):
         return val == ast.is_instance(target, act.Action)
+    elif isinstance(val, list) or isinstance(val, tuple):
+        return has_the_action_in(val, target)
     else:
         return False
 
@@ -233,6 +243,8 @@ def _has_the_subject(val, target: bs.BaseSubject) -> bool:
     elif isinstance(val, act.Action):
         return val.subject == ast.is_instance(target, bs.BaseSubject) \
                 or len([v for v in val.objects if v == target]) >= 1
+    elif isinstance(val, list) or isinstance(val, tuple):
+        return has_the_subject_in(val)
     else:
         return False
 
