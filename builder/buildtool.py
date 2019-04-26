@@ -54,8 +54,8 @@ def build_to_story(story: list, lang: em.LangType) -> bool: # pragma: no cover
 # private methods
 def _actinfo_from_(val, lv: int, lang: em.LangType, is_debug: bool) -> list:
     if isinstance(val, act.ActionGroup):
-        lv2 += 1 if val.group_type is em.GroupType.COMBI else 0
-        return _actinfo_from_in_group(val, lv2, lang, is_debug)
+        deeplv = 1 if val.group_type is em.GroupType.COMBI else 0
+        return _actinfo_from_in_group(val, lv + deeplv, lang, is_debug)
     elif isinstance(val, act.TagAction):
         v = ps.actinfo_from_tag(val)
         return [v] if v else []
