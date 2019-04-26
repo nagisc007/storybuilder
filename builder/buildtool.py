@@ -8,6 +8,7 @@ from . import assertion as ast
 from . import action as act
 from . import analyzer as ayz
 from . import enums as em
+from . import info as inf
 from . import parser as ps
 from . import strutils as sutl
 
@@ -201,6 +202,14 @@ def _estimated_description_count_from(story: list, lang: em.LangType) -> int:
         acttypes[em.ActType.THINK] * 4,
             ]) * _BASEMENT
 
+
+def _flags_info_from(story: list):
+    flags = ps.subjects_retrieved_from(story, inf.Flag)
+    # TODO: check flag and deflag, so display relations
+    #deflags = ps.subjects_retrieved_from(story, inf.Deflag)
+    return ["## Flags"] + [ps.flag_linkinfo_of(v) for v in flags]
+
+
 def _options_parsed(): # pragma: no cover
     '''Get and setting a commandline option.
 
@@ -240,11 +249,11 @@ def _output_story_as_actinfo(story: list, lang: em.LangType, filename: str, asfi
     '''
     Action infos:
         * action infos
+        * flags info
     '''
     # contents heads
     actinfos = _actinfo_from(story, lang, is_debug)
-    # flags
-    tmp = actinfos
+    tmp = actinfos + _flags_info_from(story)
     if asfile:
         return _output_to_file(tmp, filename, "_a", is_debug)
     else:
@@ -276,7 +285,8 @@ def _output_story_as_info(story: list, lang: em.LangType, filename: str,
     '''
     # flags
     # 各種db
-    tmp = _charcount_from(story, lang) + _acttypes_percents_from(story)
+    tmp = _charcount_from(story, lang) + _acttypes_percents_from(story)\
+            + _flags_info_from(story)
     if asfile:
         return _output_to_file(tmp, filename, "_i", is_debug)
     else:

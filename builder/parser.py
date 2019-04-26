@@ -48,6 +48,8 @@ def actobject_from(val) -> bs.BaseSubject:
 
 
 def actobject_name_of(obj: bs.BaseSubject) -> str:
+    if isinstance(obj, inf.Flag) or isinstance(obj, inf.Deflag):
+        return flag_info_of(obj)
     if isinstance(obj, inf.Info):
         return obj.note
     elif isinstance(obj, inf.Nothing):
@@ -110,6 +112,22 @@ def description_from_tag(ac: act.TagAction) -> str:
         return sutl.hr_tag_from()
     elif ac.tag is em.TagType.SYMBOL:
         return f"\n{ac.info}\n"
+    else:
+        return ""
+
+
+def flag_info_of(val: [inf.Flag, inf.Deflag]) -> str:
+    if isinstance(val, inf.Deflag):
+        return f"[D:{val.note}]({val.note})"
+    elif isinstance(val, inf.Flag):
+        return f"[{val.note}]({val.note})"
+    else:
+        return ""
+
+
+def flag_linkinfo_of(val: [inf.Flag, inf.Deflag]) -> str:
+    if isinstance(val, inf.Flag) or isinstance(val, inf.Deflag):
+        return f"[{val.note}]:{val.note}"
     else:
         return ""
 

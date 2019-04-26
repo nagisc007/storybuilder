@@ -28,7 +28,7 @@ class Flag(Info):
         return Flag(info)
 
 
-class Deflag(Flag):
+class Deflag(Info):
     """Resolved flag information.
     """
     def __init__(self, info: str):

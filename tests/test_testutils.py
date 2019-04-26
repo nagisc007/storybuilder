@@ -78,7 +78,20 @@ class PublicMethodsTest(unittest.TestCase):
                         res, fuz), expected)
 
     def test_followed_all_flags(self):
-        pass
+        flg1, flg2 = inf.Flag("1"), inf.Flag("2")
+        dflg1, dflg2 = inf.Deflag("1"), inf.Deflag("2")
+        data = [
+                ((self.taro.be(flg1),),
+                    False),
+                ((self.taro.be(dflg1),),
+                    False),
+                ((self.taro.be(flg1), self.taro.be(dflg1)),
+                    True),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(tutl.followed_all_flags(v), expected)
 
     def test_is_all_actions_in(self):
         data = [

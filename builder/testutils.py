@@ -8,6 +8,7 @@ from . import analyzer as ayz
 from . import person as psn
 from . import day as dy
 from . import stage as stg
+from . import info as inf
 from . import parser as ps
 from . import enums as em
 
@@ -80,9 +81,10 @@ def exists_outline_infos_by_data(case: unittest.TestCase,
                 res, isfuzzy))
 
 
-def followed_all_flags() -> bool:
-    # TODO: implement
-    return False
+def followed_all_flags(story: list) -> bool:
+    flags = ps.subjects_retrieved_from(story, inf.Flag)
+    deflags = ps.subjects_retrieved_from(story, inf.Deflag)
+    return set([v.note for v in flags]) == set([v.note for v in deflags])
 
 
 def is_all_actions_in(story: list) -> bool:
