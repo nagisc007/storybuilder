@@ -238,6 +238,10 @@ def _subjects_retrieved_from_(val, subcls: bs.BaseSubject) -> list:
     elif isinstance(val, act.Action):
         tmp = [val.subject] if isinstance(ast.is_instance(val, act.Action).subject, ast.is_subclass(subcls, bs.BaseSubject)) else []
         return tmp + [v for v in val.objects if isinstance(v, subcls)]
+    elif isinstance(val, list) or isinstance(val, tuple):
+        return subjects_retrieved_from(val, subcls)
+    else:
+        return []
 
 
 def _subjects_retrieved_from_in_group(group: act.ActionGroup, subcls: bs.BaseSubject) -> list:
