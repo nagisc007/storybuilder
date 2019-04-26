@@ -78,7 +78,11 @@ def _actinfo_from_in_group(group: act.ActionGroup, lv: int, lang: em.LangType,
     tmp = []
     for a in ast.is_instance(group, act.ActionGroup).actions:
         tmp.extend(_actinfo_from_(a, lv, lang, is_debug))
-    return tmp
+    if group.group_type is em.GroupType.COMBI:
+        # TODO: action info combined mark
+        return tmp
+    else:
+        return tmp
 
 
 def _acttypes_percents_from(story: list) -> list:
@@ -113,6 +117,14 @@ def _charcount_from(story: list, lang: em.LangType) -> list:
             f"- Total: {total}",
             f"- Estimated: {estimated}",
             ]
+
+
+def _descs_combined_with_validated(val: list, lang: em.LangType) -> str:
+    return sutl.double_comma_chopped(
+            sutl.extraend_chopped(
+                sutl.extraspace_chopped(
+            "".join(val),
+            lang), lang), lang)
 
 
 def _descs_count_from_(val, lang: em.LangType) -> int:
@@ -166,7 +178,10 @@ def _descs_from_in_group(group: act.ActionGroup, lang: em.LangType,
     tmp = []
     for a in ast.is_instance(group, act.ActionGroup).actions:
         tmp.extend(_descs_from_(a, lang, is_debug))
-    return tmp
+    if group.group_type is em.GroupType.COMBI:
+        return [_descs_combined_with_validated(tmp, lang)]
+    else:
+        return tmp
 
 
 def _estimated_description_count_from(story: list, lang: em.LangType) -> int:
