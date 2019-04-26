@@ -20,7 +20,7 @@ class Subject(bs.BaseSubject, metaclass=ABCMeta):
 
     def act(self, *args, act_type: em.ActType, verb: str):
         # TODO: check and build objects data and aux verb
-        auxverb = em.AuxVerb.NONE
+        auxverb = _auxverb_from_objects(args)
         return act.Action(act_type, self, verb, auxverb,
                 _actobjects_valid_converted(args))
 
@@ -39,6 +39,16 @@ class Subject(bs.BaseSubject, metaclass=ABCMeta):
 
 
 # private methods
+def _auxverb_from_objects(args: tuple) -> em.AuxVerb:
+    from . import parser as ps
+    for a in ast.is_tuple(args):
+        tmp = ps.auxverb_from(a)
+        if not tmp is em.AuxVerb.NONE:
+            return tmp
+    else:
+        return em.AuxVerb.NONE
+
+
 def _actobjects_valid_converted(args: tuple) -> tuple:
     from . import parser as ps
-    return tuple(ps.actobject_from(v) for v in ast.is_tuple(args))
+    return tuple(ps.actobject_from(v) for v in ast.is_tuple(args) if not v in em.AuxVerb.tags())

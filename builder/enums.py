@@ -63,6 +63,16 @@ class AuxVerb(Enum):
                 self.WILL.value: "WILL",
                 }[self.value]
 
+    def tags() -> tuple:
+        return (
+                "$can",
+                "$may",
+                "$must",
+                "$should",
+                "$want",
+                "$will",
+                )
+
 
 class DescType(Enum):
     """Description type enum.

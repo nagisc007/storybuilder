@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Utility for parsing, converting and more.
 """
+from typing import Any
 from . import assertion as ast
 from . import action as act
 from . import basesubject as bs
@@ -60,6 +61,32 @@ def actobject_name_of(obj: bs.BaseSubject) -> str:
 
 def actobject_names_from(ac: act.Action) -> str:
     return "/".join([actobject_name_of(v) for v in ast.is_instance(ac, act.Action).objects])
+
+
+def auxverb_from(val) -> em.AuxVerb:
+    if isinstance(val, em.AuxVerb):
+        return val
+    elif isinstance(val, str):
+        return auxverb_type_from_tag(val)
+    else:
+        return em.AuxVerb.NONE
+
+
+def auxverb_type_from_tag(val: str) -> em.AuxVerb:
+    if val == "$can":
+        return em.AuxVerb.CAN
+    elif val == "$may":
+        return em.AuxVerb.MAY
+    elif val == "$must":
+        return em.AuxVerb.MUST
+    elif val == "$should":
+        return em.AuxVerb.SHOULD
+    elif val == "$want":
+        return em.AuxVerb.WANT
+    elif val == "$will":
+        return em.AuxVerb.WILL
+    else:
+        return em.AuxVerb.NONE
 
 
 def description_from_action(ac: act.Action, lang: em.LangType) -> str:
