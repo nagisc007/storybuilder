@@ -143,13 +143,13 @@ def _count_acts_from_in_group(group: act.ActionGroup) -> int:
     return tmp
 
 
-def _count_acttype_(val, actype: em.ActType) -> int:
+def _count_acttype_(val, acttype: em.ActType) -> int:
     if isinstance(val, act.ActionGroup):
         return _count_acttype_from_in_group(val, acttype)
     elif isinstance(val, act.TagAction):
         return 0
     elif isinstance(val ,act.Action):
-        return 1 if val.act_type is actype else 0
+        return 1 if val.act_type is acttype else 0
     elif isinstance(val, list) or isinstance(val, tuple):
         return _count_acttype_from(val, acttype)
     else:
