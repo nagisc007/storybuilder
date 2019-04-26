@@ -151,7 +151,7 @@ def _count_acttype_(val, actype: em.ActType) -> int:
     elif isinstance(val ,act.Action):
         return 1 if val.act_type is actype else 0
     elif isinstance(val, list) or isinstance(val, tuple):
-        return count_acttypes(val, acttype)
+        return _count_acttype_from(val, acttype)
     else:
         return 0
 
