@@ -90,17 +90,7 @@ def description_from_tag(ac: act.TagAction) -> str:
 def story_filtered_by_priority(story: list, pri_filter: int) -> list:
     tmp = []
     for v in ast.is_list(story):
-        if isinstance(v, act.ActionGroup):
-            tmp.extend(_story_filtered_by_pri_in_group(v, pri_filter))
-        elif isinstance(v, act.TagAction):
-            tmp.append(v)
-        elif isinstance(v, act.Action):
-            if v.priority >= pri_filter:
-                tmp.append(v)
-        elif isinstance(story, list) or isinstance(story, tuple):
-            tmp.extend(story_filtered_by_priority(story, pri_filter))
-        else:
-            return []
+        tmp.extend(_story_filtered_by_pri_(v, pri_filter))
     return tmp
 
 
@@ -174,18 +164,23 @@ def _desc_as_dialogue_from(dsc: act.ds.Desc, lang: em.LangType) -> str:
             lang)
 
 
+def _story_filtered_by_pri_(val, pri_filter: int) -> list:
+    if isinstance(val, act.ActionGroup):
+        return _story_filtered_by_pri_in_group(val, pri_filter)
+    elif isinstance(val, act.TagAction):
+        return [val]
+    elif isinstance(val, act.Action):
+        return [val] if val.priority >= pri_filter else []
+    elif isinstance(val, list) or isinstance(val, tuple):
+        return story_filtered_by_priority(val, pri_filter)
+    else:
+        return []
+
+
 def _story_filtered_by_pri_in_group(group: act.ActionGroup, pri_filter: int) -> list:
     tmp = []
     for a in ast.is_instance(group, act.ActionGroup).actions:
-        if isinstance(a, act.ActionGroup):
-            tmp.extend(_story_filtered_by_pri_in_group(a, pri_filter))
-        elif isinstance(a, act.TagAction):
-            tmp.append(a)
-        elif isinstance(a, act.Action):
-            if a.priority >= pri_filter:
-                tmp.append(a)
-        else:
-            return []
+        tmp.extend(_story_filtered_by_pri_(a, pri_filter))
     return tmp
 
 
