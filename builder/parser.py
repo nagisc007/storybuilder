@@ -13,7 +13,7 @@ from . import strutils as sutl
 # public methods
 def actinfo_from_action(ac: act.Action, lv: int, lang: em.LangType, is_debug: bool) -> str:
     space = "\u3000" if lang is em.LangType.JPN else " "
-    return "{test}{lihead}{subject:{space}<8s}:{verb}/{obj}".format(
+    return "{test}{lihead}{subject:{space}<8s}:{verb: <12s}/{obj}".format(
             test="> " if is_debug else "",
             lihead=sutl.ul_tag_from("", lv),
             subject=ac.subject.name,

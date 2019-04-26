@@ -35,13 +35,13 @@ class PrivateMethodsTest(unittest.TestCase):
         data = [
                 ((self.taro.be(),),
                     em.LangType.ENG, False,
-                    ["- Taro    :be/"]),
+                    ["- Taro    :be          /"]),
                 ((self.taro.be(), self.hanako.have(self.box)),
                     em.LangType.ENG, False,
-                    ["- Taro    :be/", "- Hanako  :have/Box",]),
+                    ["- Taro    :be          /", "- Hanako  :have        /Box",]),
                 ((self.taro.talk(self.hanako, "好き"),),
                     em.LangType.JPN, False,
-                    ["- Taro　　　　:talk/Hanako/好き"])
+                    ["- Taro　　　　:talk        /Hanako/好き"])
                 ]
 
         for v, lang, dbg, expected in data:

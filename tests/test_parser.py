@@ -34,15 +34,15 @@ class PublicMethodsTest(unittest.TestCase):
     def test_actinfo_from_action(self):
         data = [
                 (self.taro.be(), 0, em.LangType.ENG, False,
-                    "- Taro    :be/"),
+                    "- Taro    :be          /"),
                 (self.taro.have(self.box), 0, em.LangType.ENG, False,
-                    "- Taro    :have/Box"),
+                    "- Taro    :have        /Box"),
                 (self.taro.do(self.test), 0, em.LangType.ENG, False,
-                    "- Taro    :do/Test"),
+                    "- Taro    :do          /Test"),
                 (self.taro.talk(self.something), 1, em.LangType.ENG, False,
-                    "    - Taro    :talk/X"),
+                    "    - Taro    :talk        /X"),
                 (self.taro.ask(self.hanako, self.test), 0, em.LangType.ENG, False,
-                    "- Taro    :ask/Hanako/Test"),
+                    "- Taro    :ask         /Hanako/Test"),
                 ]
 
         for v, lv, lang, dbg, expected in data:
