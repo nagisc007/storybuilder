@@ -175,7 +175,8 @@ def titles_retrieved_from(story: list) -> list:
 
 
 def verb_from(ac: act.Action) -> str:
-    return ast.is_instance(ac, act.Action).verb
+    auxverb = "" if ast.is_instance(ac, act.Action).auxverb is em.AuxVerb.NONE else str(ac.auxverb) + "_"
+    return f"{auxverb}{ac.verb}"
 
 
 # private methods
