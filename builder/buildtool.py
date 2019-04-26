@@ -91,7 +91,7 @@ def _acttypes_percents_from(story: list) -> list:
     def act_percent(char, atype):
         return "- {}: {:.2f}%".format(
                 char,
-                acttypes[atype] / total * 100
+                acttypes[atype] / total * 100 if total else 0
                 )
     return [
             "## Actions",

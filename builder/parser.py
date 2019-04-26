@@ -97,6 +97,8 @@ def story_filtered_by_priority(story: list, pri_filter: int) -> list:
         elif isinstance(v, act.Action):
             if v.priority >= pri_filter:
                 tmp.append(v)
+        elif isinstance(story, list) or isinstance(story, tuple):
+            tmp.extend(story_filtered_by_priority(story, pri_filter))
         else:
             return []
     return tmp
