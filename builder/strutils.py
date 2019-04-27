@@ -76,6 +76,13 @@ def paragraph_head_inserted(target: str, lang: em.LangType) -> str:
         return target if re.match(r'\A[ #"\-\*]', target) else " " + target
 
 
+def punctuation_duplicated_chopped(target: str, lang: em.LangType) -> str:
+    if lang is em.LangType.JPN:
+        return re.sub(r'。、', r'。', target)
+    else:
+        return re.sub(r'\.,', r'.', target)
+
+
 def quote_tag_from(target: str) -> str:
     return "> {}".format(ast.is_str(target))
 

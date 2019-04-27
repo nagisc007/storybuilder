@@ -121,11 +121,7 @@ def _charcount_from(story: list, lang: em.LangType) -> list:
 
 
 def _descs_combined_with_validated(val: list, lang: em.LangType) -> str:
-    return sutl.double_comma_chopped(
-            sutl.extraend_chopped(
-                sutl.extraspace_chopped(
-            "".join(val),
-            lang), lang), lang)
+    return _description_validated("".join(val))
 
 
 def _descs_count_from_(val, lang: em.LangType) -> int:
@@ -163,7 +159,8 @@ def _descs_from_(val, lang: em.LangType, is_debug: bool) -> list:
         v = ps.description_from_tag(val)
         return [v] if v else []
     elif isinstance(val, act.Action):
-        desc_conv = lambda x: ps.description_from_action(x, lang)
+        desc_conv = lambda x: _description_validated(
+                ps.description_from_action(x, lang), lang)
         v = sutl.str_replaced_tag(desc_conv(val),
                 val.subject.calling) if hasattr(val.subject, 'calling') else desc_conv(val)
         return [v] if v else []
@@ -189,6 +186,15 @@ def _descs_from_in_group(group: act.ActionGroup, lang: em.LangType,
         return [_descs_combined_with_validated(tmp, lang)]
     else:
         return tmp
+
+
+def _description_validated(target: str, lang: em.LangType) -> str:
+    return sutl.punctuation_duplicated_chopped(
+            sutl.double_comma_chopped(
+                sutl.extraend_chopped(
+                    sutl.extraspace_chopped(
+            target,
+            lang), lang), lang), lang)
 
 
 def _estimated_description_count_from(story: list, lang: em.LangType) -> int:
