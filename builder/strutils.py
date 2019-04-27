@@ -87,9 +87,11 @@ def period_added_if_none(target: str, lang: em.LangType) -> str:
 
 def punctuation_duplicated_chopped(target: str, lang: em.LangType) -> str:
     if lang is em.LangType.JPN:
-        return re.sub(r'。、', r'。', target)
+        return re.sub(r'、。', r'、',
+                re.sub(r'。、', r'。', target))
     else:
-        return re.sub(r'\.,', r'.', target)
+        return re.sub(r',\.', r',',
+                re.sub(r'\.,', r'.', target))
 
 
 def quote_tag_from(target: str) -> str:
