@@ -168,9 +168,9 @@ def _descs_formatted_estar_style(output: list) -> list:
         current_is_dialogue = re.match(r'\A「', v)
         if is_dialogue != current_is_dialogue:
             tmp.append("\n")
-        is_dialogue = current_is_dialogue
         tmp.append(v)
         tmp.append("\n")
+        is_dialogue = current_is_dialogue
     return tmp
 
 
