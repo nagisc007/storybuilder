@@ -4,6 +4,7 @@
 from __future__ import print_function
 import os
 import argparse
+import re
 from . import assertion as ast
 from . import action as act
 from . import analyzer as ayz
@@ -31,6 +32,7 @@ def build_to_story(story: list, lang: em.LangType) -> bool: # pragma: no cover
     is_succeeded = True
     as_file = options.build
     pri_filter = options.priority
+    formattype = options.format
     is_debug = options.debug
     story_filtered = ps.story_filtered_by_priority(story, pri_filter)
 
@@ -39,7 +41,8 @@ def build_to_story(story: list, lang: em.LangType) -> bool: # pragma: no cover
             is_succeeded = False
 
     if options.description:
-        if not _output_story_as_descriptions(story_filtered, lang, filename, as_file, is_debug):
+        if not _output_story_as_descriptions(story_filtered, lang, filename, as_file, formattype,
+                is_debug):
             is_succeeded = False
 
     if options.info:
@@ -152,6 +155,33 @@ def _descs_count_from_in_group(group: act.ActionGroup, lang: em.LangType) -> int
     return tmp
 
 
+def _descs_formatted_estar_style(output: list) -> list:
+    '''Estar style format
+
+    NOTE:
+        * 通常の文章なら次に１行空行
+        * 地の文から台詞に切り替わる、逆、は２行空行
+    '''
+    tmp = []
+    is_dialogue = True
+    for v in ast.is_list(output):
+        tmp.append(v)
+        tmp.append("\n")
+        current_is_dialogue = re.match(r'\A「', v)
+        if is_dialogue != current_is_dialogue:
+            tmp.append("\n")
+        is_dialogue = current_is_dialogue
+    return tmp
+
+
+def _descs_formatted_smartphone_style(output: list) -> list:
+    tmp = []
+    for v in ast.is_list(output):
+        tmp.append(v)
+        tmp.append("\n")
+    return tmp
+
+
 def _descs_from_(val, lang: em.LangType, is_debug: bool) -> list:
     if isinstance(val, act.ActionGroup):
         return _descs_from_in_group(val, lang, is_debug)
@@ -232,9 +262,10 @@ def _options_parsed(): # pragma: no cover
     parser.add_argument('-b', '--build', help="build and output as a file", action='store_true')
     parser.add_argument('-d', '--description', help="output as descriptions", action='store_true')
     parser.add_argument('-i', '--info', help="display with informations", action='store_true')
-    parser.add_argument('-f', '--filename', help="advanced output file name")
+    parser.add_argument('-f', '--filename', help="advanced output file name", type=str)
     parser.add_argument('-p', '--priority', help="output an action filtered priorities", type=int, default=act.Action.PRIORITY_DEFAULT)
     parser.add_argument('--debug', help="with a debug mode", action='store_true')
+    parser.add_argument('--format', help='format style', type=str)
 
     # get result
     args = parser.parse_args()
@@ -271,15 +302,21 @@ def _output_story_as_actinfo(story: list, lang: em.LangType, filename: str, asfi
 
 
 def _output_story_as_descriptions(story: list, lang: em.LangType, filename: str,
-        asfile: bool, is_debug: bool) -> bool: # pragma: no cover
+        asfile: bool, formattype: str, is_debug: bool) -> bool: # pragma: no cover
     '''
     Descriptions:
         * descriptions
     '''
-    # TODO: 各種フォーマット選択
     # contents heads
     descriptions = _descs_from(story, lang, is_debug)
-    tmp = descriptions
+    desc_formatted = []
+    if formattype in ('phone', 'smart', 'smartphone'):
+        desc_formatted = _descs_formatted_smartphone_style(descriptions)
+    elif formattype in ('estar',):
+        desc_formatted = _descs_formatted_estar_style(descriptions)
+    else:
+        desc_formatted = descriptions
+    tmp = desc_formatted
     if asfile:
         return _output_to_file(tmp, filename, "", is_debug)
     else:
