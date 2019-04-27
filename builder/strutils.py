@@ -16,7 +16,7 @@ def comment_tag_from(target: str) -> str:
 
 
 def description_from(target: str, lang: em.LangType) -> str:
-    return f'{target}。' if lang is em.LangType.JPN else f'{target}.'
+    return period_added_if_none(target, lang)
 
 
 def dialogue_from(target: str, lang: em.LangType) -> str:
@@ -74,6 +74,13 @@ def paragraph_head_inserted(target: str, lang: em.LangType) -> str:
         return target if re.match(r'\A[　#「\-\*]', target) else "　" + target
     else:
         return target if re.match(r'\A[ #"\-\*]', target) else " " + target
+
+
+def period_added_if_none(target: str, lang: em.LangType) -> str:
+    if lang is em.LangType.JPN:
+        return target if re.match(r'\Z、', target) else target + "。"
+    else:
+        return target if re.match(r'\Z,', target) else target + "."
 
 
 def punctuation_duplicated_chopped(target: str, lang: em.LangType) -> str:
