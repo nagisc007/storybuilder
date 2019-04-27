@@ -121,7 +121,7 @@ def _charcount_from(story: list, lang: em.LangType) -> list:
 
 
 def _descs_combined_with_validated(val: list, lang: em.LangType) -> str:
-    return _description_validated("".join(val))
+    return _description_validated("".join(val), lang)
 
 
 def _descs_count_from_(val, lang: em.LangType) -> int:
