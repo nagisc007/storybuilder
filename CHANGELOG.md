@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.2.0] - 2019-04-27
 ### Added
 - Analyzer methods from tools
 - Parser methods from tools
@@ -142,7 +144,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Example story as usage.
 - Output story as markdown.
 
-[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/nagisc007/storybuilder/releases/v0.2.0
 [0.1.0]: https://github.com/nagisc007/storybuilder/releases/v0.1.0
 [0.0.9]: https://github.com/nagisc007/storybuilder/releases/v0.0.9
 [0.0.8]: https://github.com/nagisc007/storybuilder/releases/v0.0.8
