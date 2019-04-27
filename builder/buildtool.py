@@ -165,7 +165,7 @@ def _descs_formatted_estar_style(output: list) -> list:
     tmp = []
     is_dialogue = False
     for v in ast.is_list(output):
-        current_is_dialogue = re.match(r'\A「', v)
+        current_is_dialogue = v.startswith('「')
         pre = "" if is_dialogue == current_is_dialogue else "\n"
         tmp.append(pre + v + "\n")
         is_dialogue = current_is_dialogue
