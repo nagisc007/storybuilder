@@ -29,9 +29,11 @@ def double_comma_chopped(target: str, lang: em.LangType=em.LangType.JPN) -> str:
         、、｜。。 → 、｜。
     '''
     if ast.is_instance(lang, em.LangType) is em.LangType.JPN:
-        return re.sub(r'([、。]){2}', r'\1', ast.is_str(target))
+        return re.sub(r'(。)+', r'\1',
+                re.sub(r'(、)+', r'\1', ast.is_str(target)))
     else:
-        return re.sub(r'([,\.]){2}', r'\1', ast.is_str(target))
+        return re.sub(r'(\.)+', r'\1',
+                re.sub(r'(,|\.)+', r'\1', ast.is_str(target)))
 
 
 def em_tag_from(target: str, lv: int=1) -> str:

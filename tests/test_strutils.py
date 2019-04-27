@@ -59,8 +59,12 @@ class PublicMethodsTest(unittest.TestCase):
         data = [
                 ("　これを。。ただしく。。", em.LangType.JPN,
                     "　これを。ただしく。"),
+                ("　これを、、ただしく、、", em.LangType.JPN,
+                    "　これを、ただしく、"),
                 (" This is a pen.. the pen. ", em.LangType.ENG,
                     " This is a pen. the pen. "),
+                ("これは、。変わらず。、", em.LangType.JPN,
+                    "これは、。変わらず。、"),
                 ]
 
         for v, lang, expected in data:
