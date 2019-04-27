@@ -16,6 +16,16 @@ class PublicMethodsTest(unittest.TestCase):
     def setUpClass(cls):
         print_test_title(_FILENAME, "public methods")
 
+    def test_comma_by(self):
+        data = [
+                (em.LangType.JPN, "、"),
+                (em.LangType.ENG, ", "),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(utl.comma_by(v), expected)
+
     def test_comment_tag_from(self):
         data = [
                 ("test", "<!--test-->"),
@@ -24,6 +34,26 @@ class PublicMethodsTest(unittest.TestCase):
         for v, expected in data:
             with self.subTest(v=v, expected=expected):
                 self.assertEqual(utl.comment_tag_from(v), expected)
+
+    def test_description_from(self):
+        data = [
+                ("test", em.LangType.ENG, 'test.'),
+                ("test", em.LangType.JPN, "test。"),
+                ]
+
+        for v, lang, expected in data:
+            with self.subTest(v=v, lang=lang, expected=expected):
+                self.assertEqual(utl.description_from(v, lang), expected)
+
+    def test_dialogue_from(self):
+        data = [
+                ("test", em.LangType.ENG, '"test"'),
+                ("test", em.LangType.JPN, "「test」"),
+                ]
+
+        for v, lang, expected in data:
+            with self.subTest(v=v, lang=lang, expected=expected):
+                self.assertEqual(utl.dialogue_from(v, lang), expected)
 
     def test_double_comma_chopped(self):
         data = [
@@ -109,6 +139,23 @@ class PublicMethodsTest(unittest.TestCase):
             with self.subTest(v=v, link=link, expected=expected):
                 self.assertEqual(utl.link_tag_from(v, link), expected)
 
+    def test_paragraph_head_inserted(self):
+        data = [
+                ("test", em.LangType.ENG, " test"),
+                ("test", em.LangType.JPN, "　test"),
+                ("「test」", em.LangType.JPN, "「test」"),
+                ('"test"', em.LangType.ENG, '"test"'),
+                ("# test", em.LangType.ENG, "# test"),
+                ("- test", em.LangType.ENG, "- test"),
+                (" # test", em.LangType.ENG, " # test"),
+                ("    - test", em.LangType.ENG, "    - test"),
+                ("　test", em.LangType.JPN, "　test"),
+                ]
+
+        for v, lang, expected in data:
+            with self.subTest(v=v, lang=lang, expected=expected):
+                self.assertEqual(utl.paragraph_head_inserted(v, lang), expected)
+
     def test_quote_tag_from(self):
         data = [
                 ("test", "> test"),
@@ -126,6 +173,29 @@ class PublicMethodsTest(unittest.TestCase):
         for v, expected in data:
             with self.subTest(v=v, expected=expected):
                 self.assertEqual(utl.reflink_tag_from(v), expected)
+
+    def test_str_replaced_tag(self):
+        data = [
+                ("test", {"t":"test"}, "me", "$", "test"),
+                ("$kotest", {"ko":"test"}, "me", "$", "testtest"),
+                ("$S apple", {"a":"apple"}, "me", "$", "$S apple"),
+                ("$S apple", {"me":"test"}, "me", "S", "test apple"),
+                ]
+
+        for v, dct, key, pfx, expected in data:
+            with self.subTest(v=v, dct=dct, key=key, pfx=pfx, expected=expected):
+                self.assertEqual(utl.str_replaced_tag(v, dct, key, pfx), expected)
+
+    def test_str_space_chopped(self):
+        data = [
+                (" test", "test"),
+                (" t e s t", "test"),
+                ("　test", "test"),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(utl.str_space_chopped(v), expected)
 
     def test_strike_tag_from(self):
         data = [

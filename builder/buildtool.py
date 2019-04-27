@@ -163,8 +163,12 @@ def _descs_from_(val, lang: em.LangType, is_debug: bool) -> list:
         v = ps.description_from_tag(val)
         return [v] if v else []
     elif isinstance(val, act.Action):
-        v = ps.description_from_action(val, lang)
+        desc_conv = lambda x: ps.description_from_action(x, lang)
+        v = sutl.str_replaced_tag(desc_conv(val),
+                val.subject.calling) if hasattr(val.subject, 'calling') else desc_conv(val)
         return [v] if v else []
+    elif isinstance(val, (list, tuple)):
+        return _descs_from(val, lang, is_debug)
     else:
         return []
 
