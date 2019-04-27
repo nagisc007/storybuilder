@@ -163,7 +163,7 @@ def _descs_formatted_estar_style(output: list) -> list:
         * 地の文から台詞に切り替わる、逆、は２行空行
     '''
     tmp = []
-    is_dialogue = True
+    is_dialogue = False
     for v in ast.is_list(output):
         current_is_dialogue = re.match(r'\A「', v)
         if is_dialogue != current_is_dialogue:
