@@ -34,19 +34,19 @@ class PrivateMethodsTest(unittest.TestCase):
     def test_action_from(self):
         data = [
                 ((self.taro.be(),),
-                    em.LangType.ENG, False,
+                    0, em.LangType.ENG, False,
                     ["- Taro    :be          /"]),
                 ((self.taro.be(), self.hanako.have(self.box)),
-                    em.LangType.ENG, False,
+                    0, em.LangType.ENG, False,
                     ["- Taro    :be          /", "- Hanako  :have        /Box",]),
                 ((self.taro.talk(self.hanako, "好き"),),
-                    em.LangType.JPN, False,
+                    0, em.LangType.JPN, False,
                     ["- Taro　　　　:talk        /Hanako/好き"])
                 ]
 
-        for v, lang, dbg, expected in data:
-            with self.subTest(v=v, lang=lang, dbg=dbg, expected=expected):
-                self.assertEqual(btl._actinfo_from(v, lang, dbg), expected)
+        for v, lv, lang, dbg, expected in data:
+            with self.subTest(v=v, lv=lv, lang=lang, dbg=dbg, expected=expected):
+                self.assertEqual(btl._actinfo_from_in(v, lv, lang, dbg), expected)
 
     def test_acttypes_percents_from(self):
         def baselist(be=0, behav=0, deal=0, do=0, explain=0, feel=0, look=0, move=0,
@@ -97,7 +97,7 @@ class PrivateMethodsTest(unittest.TestCase):
 
         for v, lang, expected in data:
             with self.subTest(v=v, lang=lang, expected=expected):
-                self.assertEqual(btl._descs_count_from(v, lang), expected)
+                self.assertEqual(btl._descs_count_from_in(v, lang), expected)
 
     def test_descs_from(self):
         taro = self.taro
@@ -121,7 +121,7 @@ class PrivateMethodsTest(unittest.TestCase):
 
         for v, lang, dbg, expected in data:
             with self.subTest(v=v, lang=lang, dbg=dbg, expected=expected):
-                self.assertEqual(btl._descs_from(v, lang, dbg), expected)
+                self.assertEqual(btl._descs_from_in(v, lang, dbg), expected)
 
     def test_estimated_description_count_from(self):
         data = [

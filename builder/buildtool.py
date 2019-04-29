@@ -57,9 +57,8 @@ def build_to_story(story: list, lang: em.LangType) -> bool: # pragma: no cover
 
 # private methods
 def _actinfo_from_(val, lv: int, lang: em.LangType, is_debug: bool) -> list:
-    if isinstance(val, act.ActionGroup):
-        deeplv = 1 if val.group_type is em.GroupType.COMBI else 0
-        return _actinfo_from_in_group(val, lv + deeplv, lang, is_debug)
+    if isinstance(val, (act.ActionGroup, list, tuple)):
+        return _actinfo_from_in(val, lv, lang, is_debug)
     elif isinstance(val, act.TagAction):
         v = ps.actinfo_from_tag(val)
         return [v] if v else []
@@ -70,20 +69,16 @@ def _actinfo_from_(val, lv: int, lang: em.LangType, is_debug: bool) -> list:
         return []
 
 
-def _actinfo_from(story: list, lang: em.LangType, is_debug: bool) -> list:
+def _actinfo_from_in(vals: [act.ActionGroup, list, tuple],
+        lv: int, lang: em.LangType, is_debug: bool) -> list:
     tmp = []
-    for v in ast.is_list(story):
-        tmp.extend(_actinfo_from_(v, 0, lang, is_debug))
-    return tmp
-
-
-def _actinfo_from_in_group(group: act.ActionGroup, lv: int, lang: em.LangType,
-        is_debug: bool) -> list:
-    tmp = []
-    for a in ast.is_instance(group, act.ActionGroup).actions:
-        tmp.extend(_actinfo_from_(a, lv, lang, is_debug))
-    if group.group_type is em.GroupType.COMBI:
-        # TODO: action info combined mark
+    is_actgroup = isinstance(vals, act.ActionGroup)
+    is_combine = is_actgroup and vals.group_type is em.GroupType.COMBI
+    group = vals.actions if is_actgroup else vals
+    deeplv = lv + 1 if is_combine else lv
+    for a in group:
+        tmp.extend(_actinfo_from_(a, deeplv, lang, is_debug))
+    if is_combine:
         return [sutl.ul_tag_replaced(sutl.ul_tag_space_removed(tmp[0]))] + tmp[1:]
     else:
         return tmp
@@ -114,7 +109,7 @@ def _acttypes_percents_from(story: list) -> list:
 
 
 def _charcount_from(story: list, lang: em.LangType) -> list:
-    total = _descs_count_from(story, lang)
+    total = _descs_count_from_in(story, lang)
     estimated = _estimated_description_count_from(story, lang)
     return [
             "## Characters",
@@ -128,31 +123,21 @@ def _descs_combined_with_validated(val: list, lang: em.LangType) -> str:
 
 
 def _descs_count_from_(val, lang: em.LangType) -> int:
-    if isinstance(val, act.ActionGroup):
-        return _descs_count_from_in_group(val, lang)
+    if isinstance(val, (act.ActionGroup, list, tuple)):
+        return _descs_count_from_in(val, lang)
     elif isinstance(val, act.TagAction):
         return 0
     elif isinstance(val, act.Action):
         return len(sutl.str_space_chopped(
             ps.description_from_action(val, lang)))
-    elif isinstance(val, list) or isinstance(val, tuple):
-        return _descs_from(val, lang)
     else:
         return 0
 
 
-def _descs_count_from(story: list, lang: em.LangType) -> int:
-    tmp = 0
-    for v in ast.is_list(story):
-        tmp += _descs_count_from_(v, lang)
-    return tmp
-
-
-def _descs_count_from_in_group(group: act.ActionGroup, lang: em.LangType) -> int:
-    tmp = 0
-    for a in ast.is_instance(group, act.ActionGroup).actions:
-        tmp += _descs_count_from_(a, lang)
-    return tmp
+def _descs_count_from_in(vals: [act.ActionGroup, list, tuple],
+        lang: em.LangType) -> int:
+    group = vals.actions if isinstance(vals, act.ActionGroup) else vals
+    return sum([_descs_count_from_(v, lang) for v in group])
 
 
 def _descs_formatted_estar_style(output: list) -> list:
@@ -180,8 +165,8 @@ def _descs_formatted_smartphone_style(output: list) -> list:
 
 
 def _descs_from_(val, lang: em.LangType, is_debug: bool) -> list:
-    if isinstance(val, act.ActionGroup):
-        return _descs_from_in_group(val, lang, is_debug)
+    if isinstance(val, (act.ActionGroup, list, tuple)):
+        return _descs_from_in(val, lang, is_debug)
     elif isinstance(val, act.TagAction):
         v = ps.description_from_tag(val)
         return [v] if v else []
@@ -191,28 +176,19 @@ def _descs_from_(val, lang: em.LangType, is_debug: bool) -> list:
         v = sutl.str_replaced_tag(desc_conv(val),
                 val.subject.calling) if hasattr(val.subject, 'calling') else desc_conv(val)
         return [v] if v else []
-    elif isinstance(val, (list, tuple)):
-        return _descs_from(val, lang, is_debug)
     else:
         return []
 
 
-def _descs_from(story: list, lang: em.LangType, is_debug: bool) -> list:
+def _descs_from_in(vals: [act.ActionGroup, list, tuple],
+        lang: em.LangType, is_debug: bool) -> list:
+    group = vals.actions if isinstance(vals, act.ActionGroup) else vals
+    is_combine = isinstance(vals, act.ActionGroup) and vals.group_type is em.GroupType.COMBI
     tmp = []
-    for v in ast.is_list(story):
+    for v in group:
         tmp.extend(_descs_from_(v, lang, is_debug))
-    return [sutl.paragraph_head_inserted(v, lang) for v in tmp]
-
-
-def _descs_from_in_group(group: act.ActionGroup, lang: em.LangType,
-        is_debug: bool) -> list:
-    tmp = []
-    for a in ast.is_instance(group, act.ActionGroup).actions:
-        tmp.extend(_descs_from_(a, lang, is_debug))
-    if group.group_type is em.GroupType.COMBI:
-        return [_descs_combined_with_validated(tmp, lang)]
-    else:
-        return tmp
+    res = [_descs_combined_with_validated(tmp, lang)] if is_combine else tmp
+    return [sutl.paragraph_head_inserted(v, lang) for v in res]
 
 
 def _description_validated(target: str, lang: em.LangType) -> str:
@@ -290,7 +266,7 @@ def _output_story_as_actinfo(story: list, lang: em.LangType, filename: str, asfi
         * flags info
     '''
     # contents heads
-    actinfos = _actinfo_from(story, lang, is_debug)
+    actinfos = _actinfo_from_in(story, 0, lang, is_debug)
     tmp = actinfos + _flags_info_from(story)
     if asfile:
         return _output_to_file(tmp, filename, "_a", is_debug)
@@ -305,7 +281,7 @@ def _output_story_as_descriptions(story: list, lang: em.LangType, filename: str,
         * descriptions
     '''
     # contents heads
-    descriptions = _descs_from(story, lang, is_debug)
+    descriptions = _descs_from_in(story, lang, is_debug)
     desc_formatted = []
     if formattype in ('phone', 'smart', 'smartphone'):
         desc_formatted = _descs_formatted_smartphone_style(descriptions)

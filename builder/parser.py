@@ -58,7 +58,8 @@ def actobject_name_of(obj: bs.BaseSubject) -> str:
         return "X"
     elif isinstance(obj, bs.BaseSubject):
         return obj.name
-    return ""
+    else:
+        return ""
 
 
 def actobject_names_from(ac: act.Action) -> str:
@@ -211,52 +212,54 @@ def _desc_as_dialogue_from(dsc: act.ds.Desc, lang: em.LangType) -> str:
 
 
 def _story_filtered_by_pri_(val, pri_filter: int) -> list:
-    if isinstance(val, act.ActionGroup):
-        if val.priority >= pri_filter:
-            return _story_filtered_by_pri_in_group(val, pri_filter)
-        else:
-            return []
+    if isinstance(val, (act.ActionGroup, list, tuple)):
+        return _story_filtered_by_pri_in(val, pri_filter)
     elif isinstance(val, act.TagAction):
         return [val]
     elif isinstance(val, act.Action):
         return [val] if val.priority >= pri_filter else []
-    elif isinstance(val, list) or isinstance(val, tuple):
-        return story_filtered_by_priority(val, pri_filter)
     else:
         return []
 
 
-def _story_filtered_by_pri_in_group(group: act.ActionGroup, pri_filter: int) -> list:
+def _story_filtered_by_pri_in(vals: [act.ActionGroup, list, tuple],
+        pri_filter: int) -> list:
     tmp = []
-    for a in ast.is_instance(group, act.ActionGroup).actions:
+    is_actgroup = False
+    if isinstance(vals, act.ActionGroup):
+        is_actgroup = True
+        if vals.priority < pri_filter:
+            return tmp
+    group = vals.actions if is_actgroup else vals
+    for a in group:
         tmp.extend(_story_filtered_by_pri_(a, pri_filter))
-    return [group.inherited(*tmp)]
+    return [vals.inherited(*tmp)] if is_actgroup else tmp
 
 
 def _subjects_retrieved_from_(val, subcls: bs.BaseSubject) -> list:
-    if isinstance(val, act.ActionGroup):
-        return _subjects_retrieved_from_in_group(val, subcls)
+    if isinstance(val, (act.ActionGroup, list, tuple)):
+        return _subjects_retrieved_from_in(val, subcls)
     elif isinstance(val, act.TagAction):
         return []
     elif isinstance(val, act.Action):
         tmp = [val.subject] if isinstance(ast.is_instance(val, act.Action).subject, ast.is_subclass(subcls, bs.BaseSubject)) else []
         return tmp + [v for v in val.objects if isinstance(v, subcls)]
-    elif isinstance(val, list) or isinstance(val, tuple):
-        return subjects_retrieved_from(val, subcls)
     else:
         return []
 
 
-def _subjects_retrieved_from_in_group(group: act.ActionGroup, subcls: bs.BaseSubject) -> list:
+def _subjects_retrieved_from_in(vals: [act.ActionGroup, list, tuple],
+        subcls: bs.BaseSubject) -> list:
     tmp = []
-    for a in ast.is_instance(group, act.ActionGroup).actions:
+    group = vals.actions if isinstance(vals, act.ActionGroup) else vals
+    for a in group:
         tmp.extend(_subjects_retrieved_from_(a, subcls))
     return tmp
 
 
 def _titles_retrieved_from_(val) -> list:
-    if isinstance(val, act.ActionGroup):
-        return _titles_retrieved_from_in_group(val)
+    if isinstance(val, (act.ActionGroup, list, tuple)):
+        return _titles_retrieved_from_in(val)
     elif isinstance(val, act.TagAction):
         return [val] if val.tag in (em.TagType.HEAD1, em.TagType.HEAD2, em.TagType.HEAD3) else []
     elif isinstance(val, act.Action):
@@ -265,8 +268,10 @@ def _titles_retrieved_from_(val) -> list:
         return []
 
 
-def _titles_retrieved_from_in_group(group: act.ActionGroup) -> list:
+def _titles_retrieved_from_in(vals: [act.ActionGroup, list, tuple]) -> list:
     tmp = []
-    for a in ast.is_instance(group, act.ActionGroup).actions:
+    group = vals.actions if isinstance(vals, act.ActionGroup) else vals
+    for a in group:
         tmp.extend(_titles_retrieved_from_(a))
     return tmp
+
