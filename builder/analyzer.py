@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Utility for analyze.
 """
+from typing import Any
 from . import action as act
 from . import assertion as ast
 from . import basesubject as bs
@@ -50,9 +51,8 @@ def has_the_action_in(story: list, target: act.Action) -> bool:
     return _has_the_action_in(story, target)
 
 
-def has_the_keyword(story: list) -> bool:
-    # TODO: implement
-    return False
+def has_the_keyword(story: list, target: str, strict: bool=False) -> bool:
+    return _has_the_keyword_in(story, target, strict)
 
 
 def has_the_subject_in(story: list, target: bs.BaseSubject) -> bool:
@@ -156,6 +156,28 @@ def _count_subjects_in(vals: [act.ActionGroup, list, tuple],
     return sum([_count_subjects_(v, subcls) for v in group])
 
 
+def _exists_the_keyword_in_action(val: act.Action, target: str) -> bool:
+    if ast.is_str(target) in ast.is_instance(val, act.Action).subject.name:
+        return True
+    for o in val.objects:
+        if isinstance(o, inf.Info) and target in o.note:
+            return True
+        elif target in o.name:
+            return True
+    else:
+        return False
+
+
+def _exists_the_keyword_in_description(val: act.ds.Desc, target: str) -> bool:
+    if isinstance(val, act.ds.DescGroup):
+        # TODO: desc group implement
+        return False
+    elif isinstance(val, act.ds.Desc):
+        return len([v for v in val.data if target in v]) > 0
+    else:
+        return _exists_the_keyword_in_description(val.description, target)
+
+
 def _has_a_subject_(val, subcls: bs.BaseSubject) -> bool:
     if isinstance(val, (act.ActionGroup, list, tuple)):
         return _has_a_subject_in(val, subcls)
@@ -191,6 +213,26 @@ def _has_the_action_in(vals: [act.ActionGroup, list, tuple],
     return len([v for v in group if _has_the_action_(v, target)]) > 0
 
 
+def _has_the_keyword_(val: Any, target: str, strict: bool) -> bool:
+    if isinstance(val, (act.ActionGroup, list, tuple)):
+        return _has_the_keyword_in(val, target, strict)
+    elif isinstance(val, act.TagAction):
+        return False
+    elif isinstance(val, act.Action):
+        if strict:
+            return _is_the_keyword_in_action(val, target)
+        else:
+            return _exists_the_keyword_in_action(val, target)
+    else:
+        return False
+
+
+def _has_the_keyword_in(vals: [act.ActionGroup, list, tuple],
+        target: str, strict: bool) -> bool:
+    group = vals.actions if isinstance(vals, act.ActionGroup) else vals
+    return len([v for v in group if _has_the_keyword_(v, target, strict)]) > 0
+
+
 def _has_the_subject(val, target: bs.BaseSubject) -> bool:
     if isinstance(val, (act.ActionGroup, list, tuple)):
         return _has_the_subject_in(val, target)
@@ -207,4 +249,29 @@ def _has_the_subject_in(vals: [act.ActionGroup, list, tuple],
         target: bs.BaseSubject) -> bool:
     group = vals.actions if isinstance(vals, act.ActionGroup) else vals
     return len([v for v in group if _has_the_subject(v, target)]) > 0
+
+
+def _is_the_keyword_in_action(val: act.Action, target: str) -> bool:
+    if ast.is_str(target) == ast.is_instance(val, act.Action).subject.name:
+        return True
+    for o in val.objects:
+        if isinstance(o, inf.Info) and target == o.note:
+            return True
+        elif target == o.name:
+            return True
+    else:
+        return False
+
+
+def _is_the_keyword_in_description(val: [act.Action, act.ds.Desc],
+        target: str) -> bool:
+    if isinstance(val, act.ds.DescGroup):
+        # TODO: implement desc group
+        return False
+    elif isinstance(val, act.ds.Desc):
+        return len([v for v in val.data if ast.is_str(target) == v]) > 0
+    elif isinstance(val, act.Action):
+        return _is_the_keyword_in_description(val.description, target)
+    else:
+        return False
 

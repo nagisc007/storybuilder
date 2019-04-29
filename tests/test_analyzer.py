@@ -22,6 +22,7 @@ class PublicMethodsTest(unittest.TestCase):
 
     def setUp(self):
         self.taro = psn.Person("Taro", 17, "male", "student")
+        self.hanako = psn.Person("Hanako", 17, "female", "student")
         self.box = itm.Item("Box", "a box")
         self.stick = itm.Item("Stick", "a stick")
 
@@ -107,6 +108,24 @@ class PublicMethodsTest(unittest.TestCase):
         for v, target, expected in data:
             with self.subTest(v=v, target=target, expected=expected):
                 self.assertEqual(ayz.has_the_action_in(v, target), expected)
+
+    def test_has_the_keyword(self):
+        data = [
+                ((self.taro.be(),),
+                    "Taro", False, True),
+                ((self.taro.be(),),
+                    "Hanako", False, False),
+                ((self.taro.be(), self.hanako.be(),),
+                    "Ta", False, True),
+                ((self.taro.talk(self.hanako),),
+                    "Hanako", False, True),
+                ((self.hanako.ask(self.taro),),
+                    "Ta", True, False),
+                ]
+
+        for v, target, strict, expected in data:
+            with self.subTest(v=v, target=target, strict=strict, expected=expected):
+                self.assertEqual(ayz.has_the_keyword(v, target, strict), expected)
 
     def test_has_the_subject_in(self):
         data = [
