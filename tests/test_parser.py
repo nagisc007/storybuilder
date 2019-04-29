@@ -103,15 +103,31 @@ class PublicMethodsTest(unittest.TestCase):
     def test_story_filtered_by_priority(self):
         taro = self.taro.be()
         hanako = self.hanako.be()
+        group = act.ActionGroup(taro, hanako,
+                group_type=em.GroupType.SCENE)
         data = [
-                ((taro, hanako.omit(),),
+                ((self.taro.be(), self.hanako.be().omit(),),
                     5,
-                    (taro,)),
+                    (self.taro.be(),)),
+                ((self.taro.be(),
+                    act.ActionGroup(taro, hanako, group_type=em.GroupType.SCENE),),
+                    5,
+                    (self.taro.be(),
+                        act.ActionGroup(taro, hanako, group_type=em.GroupType.SCENE)),),
+                ((self.taro.be(),
+                    act.ActionGroup(taro, group_type=em.GroupType.SCENE).omit()),
+                    5,
+                    (self.taro.be(),)),
                 ]
 
         for v, pri, expected in data:
             with self.subTest(v=v, pri=pri, expected=expected):
-                self.assertEqual(ps.story_filtered_by_priority(v, pri), list(expected))
+                tmp = ps.story_filtered_by_priority(v, pri)
+                for res, exp in zip(tmp, expected):
+                    if hasattr(res, "subject"):
+                        self.assertEqual(res, exp)
+                    else:
+                        self.assertEqual(res.actions, exp.actions)
 
     def test_str_to_dict_by_splitter(self):
         data = [

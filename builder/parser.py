@@ -212,7 +212,10 @@ def _desc_as_dialogue_from(dsc: act.ds.Desc, lang: em.LangType) -> str:
 
 def _story_filtered_by_pri_(val, pri_filter: int) -> list:
     if isinstance(val, act.ActionGroup):
-        return _story_filtered_by_pri_in_group(val, pri_filter)
+        if val.priority >= pri_filter:
+            return _story_filtered_by_pri_in_group(val, pri_filter)
+        else:
+            return []
     elif isinstance(val, act.TagAction):
         return [val]
     elif isinstance(val, act.Action):

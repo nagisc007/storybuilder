@@ -52,8 +52,7 @@ class Action(ba.BaseAction):
     def omit(self):
         """Set minimum priority.
         """
-        self.priority = Action.PRIORITY_MIN
-        return self
+        return self.pri(Action.PRIORITY_MIN)
 
     def pri(self, pri):
         self.priority = ast.is_between(pri, Action.PRIORITY_MAX, Action.PRIORITY_MIN)
@@ -75,6 +74,7 @@ class ActionGroup(ba.BaseAction):
         actions (:tuple:obj:`Action`): actions.
         group_type (:enum:`GroupType`): a type of this group.
         lang (:enum:`LangType`): a language type.
+        priority (int): a group priority.
     """
     def __init__(self, *args: Action, group_type: em.GroupType, lang: em.LangType=em.LangType.JPN):
         """
@@ -87,11 +87,19 @@ class ActionGroup(ba.BaseAction):
         self.actions = args # TODO: check and build data
         self.group_type = ast.is_instance(group_type, em.GroupType)
         self.lang = ast.is_instance(lang, em.LangType)
+        self.priority = Action.PRIORITY_DEFAULT
 
     def inherited(self, *args):
         return ActionGroup(*args,
                 group_type=self.group_type,
                 lang=self.lang)
+
+    def omit(self):
+        return self.pri(Action.PRIORITY_MIN)
+
+    def pri(self, pri: int):
+        self.priority = ast.is_between(pri, Action.PRIORITY_MAX, Action.PRIORITY_MIN)
+        return self
 
 
 class TagAction(ba.BaseAction):
