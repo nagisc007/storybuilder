@@ -82,6 +82,29 @@ class PrivateMethodsTest(unittest.TestCase):
             with self.subTest(v=v, lang=lang, expected=expected):
                 self.assertEqual(btl._charcount_from(v, lang), expected)
 
+    def test_contents_title_from(self):
+        def h1of(t):
+            return act.TagAction(em.TagType.HEAD1, t)
+        def h2of(t):
+            return act.TagAction(em.TagType.HEAD2, t)
+        def h3of(t):
+            return act.TagAction(em.TagType.HEAD3, t)
+
+        data = [
+                ((h1of("test"),),
+                    ["1.test"]),
+                ((h1of("test"), h1of("apple")),
+                    ["1.test", "2.apple"]),
+                ((h1of("test"), h2of("apple"), h3of("orange")),
+                    ["1.test", "    1.apple", "        1.orange"]),
+                ((h1of("test"), h2of("apple"), h1of("orange")),
+                    ["1.test", "    1.apple", "2.orange"]),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(btl._contents_title_from(v), expected)
+
     def test_descs_count_from(self):
         taro = self.taro
         data = [

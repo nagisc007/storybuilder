@@ -118,6 +118,23 @@ def _charcount_from(story: list, lang: em.LangType) -> list:
             ]
 
 
+def _contents_title_from(story: list) -> list:
+    titles = ps.titles_retrieved_from(story)
+    tmp = []
+    nums = [0, 0, 0]
+    prevlv = 1
+    def getnum(curlv, prev):
+        if curlv > prev:
+            nums[curlv - 1] = 0
+        nums[curlv - 1] += 1
+        return nums[curlv - 1]
+
+    for t in titles:
+        lv = ps.title_level_of(t.tag)
+        tmp.append(f"{'    ' * (lv - 1)}{getnum(lv, prevlv)}.{t.info}")
+    return tmp
+
+
 def _descs_combined_with_validated(val: list, lang: em.LangType) -> str:
     return _description_validated("".join(val), lang)
 
@@ -223,6 +240,13 @@ def _flags_info_from(story: list):
     return ["## Flags"] + [ps.flag_linkinfo_of(v) for v in flags]
 
 
+def _maintitle_from(story: list) -> list:
+    titles = ps.titles_retrieved_from(story)
+    for t in titles:
+        if ps.title_level_of(t.tag) == 1:
+            return [f"{t.info}\n==="]
+
+
 def _options_parsed(): # pragma: no cover
     '''Get and setting a commandline option.
 
@@ -267,7 +291,9 @@ def _output_story_as_actinfo(story: list, lang: em.LangType, filename: str, asfi
     '''
     # contents heads
     actinfos = _actinfo_from_in(story, 0, lang, is_debug)
-    tmp = actinfos + _flags_info_from(story)
+    tmp = _maintitle_from(story) \
+            + actinfos \
+            + _flags_info_from(story)
     if asfile:
         return _output_to_file(tmp, filename, "_a", is_debug)
     else:
@@ -289,7 +315,9 @@ def _output_story_as_descriptions(story: list, lang: em.LangType, filename: str,
         desc_formatted = _descs_formatted_estar_style(descriptions)
     else:
         desc_formatted = descriptions
-    tmp = desc_formatted
+    tmp = _maintitle_from(story) \
+            + _contents_title_from(story) \
+            + desc_formatted
     if asfile:
         return _output_to_file(tmp, filename, "", is_debug)
     else:
@@ -305,7 +333,9 @@ def _output_story_as_info(story: list, lang: em.LangType, filename: str,
     '''
     # flags
     # 各種db
-    tmp = _charcount_from(story, lang) + _acttypes_percents_from(story)\
+    tmp = _maintitle_from(story) \
+            + _charcount_from(story, lang) \
+            + _acttypes_percents_from(story) \
             + _flags_info_from(story)
     if asfile:
         return _output_to_file(tmp, filename, "_i", is_debug)
