@@ -14,6 +14,12 @@ class Info(sb.Subject):
     def __init__(self, info: str):
         super().__init__(Info._NAME, info)
 
+    def deflag(self):
+        return Deflag(self.note)
+
+    def flag(self):
+        return Flag(self.note)
+
     def inherited(self, info: str=None):
         return Info(utl.val_ifNone_default(info, self.note))
 

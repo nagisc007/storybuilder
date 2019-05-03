@@ -28,6 +28,19 @@ class InfoTest(unittest.TestCase):
             self.assertEqual(tmp.name, exp_name)
             self.assertEqual(tmp.note, exp_note)
 
+    def test_convert_flag_deflag(self):
+        data = [
+                ("test", True, inf.Flag, "test"),
+                ("test", False, inf.Deflag, "test"),
+                ]
+
+        for v, isflg, exp_cls, expected in data:
+            with self.subTest(v=v, isflg=isflg, exp_cls=exp_cls, expected=expected):
+                tmp = inf.Info(v)
+                res = tmp.flag() if isflg else tmp.deflag()
+                self.assertIsInstance(res, exp_cls)
+                self.assertEqual(res.note, expected)
+
 
 class FlagTest(unittest.TestCase):
 
