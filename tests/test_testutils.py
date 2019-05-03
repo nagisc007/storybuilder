@@ -93,6 +93,25 @@ class PublicMethodsTest(unittest.TestCase):
             with self.subTest(v=v, expected=expected):
                 self.assertEqual(tutl.followed_all_flags(v), expected)
 
+    def test_followed_all_flags_with_error_info(self):
+        data = [
+                ((self.taro.be(inf.Flag("1")),),
+                    True, False),
+                ((self.taro.be(inf.Deflag("1")),),
+                    True, False),
+                ((self.taro.be(inf.Flag("1"), inf.Flag("2")),
+                    self.taro.be(inf.Deflag("1")),),
+                    True, False),
+                ]
+
+        for v, isfail, expected in data:
+            with self.subTest(v=v, isfail=isfail, expected=expected):
+                if isfail:
+                    with self.assertRaises(AssertionError):
+                        self.assertEqual(tutl.followed_all_flags_with_error_info(self, v), expected)
+                else:
+                    self.assertEqual(tutl.followed_all_flags_with_error_info(self, v), expected)
+
     def test_is_all_actions_in(self):
         data = [
                 ((self.taro.be(), self.hanako.be()),

@@ -94,6 +94,17 @@ def followed_all_flags(story: list) -> bool:
     return set([v.note for v in flags]) == set([v.note for v in deflags])
 
 
+def followed_all_flags_with_error_info(case: unittest.TestCase,
+        story: list) -> bool:
+    result = followed_all_flags(story)
+    if not result:
+        flags = set([v.note for v in ps.subjects_retrieved_from(story, inf.Flag)])
+        deflags = set([v.note for v in ps.subjects_retrieved_from(story, inf.Deflag)])
+        delta = (flags | deflags) - (flags & deflags)
+        case.fail(f"Missing flags: {delta}")
+    return result
+
+
 def has_the_keyword_in(story: list, target: str, strict: bool=False) -> bool:
     return ayz.has_the_keyword(story, target, strict)
 
