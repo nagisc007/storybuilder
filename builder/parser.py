@@ -199,7 +199,7 @@ def verb_from(ac: act.Action) -> str:
     return f"{auxverb}{ac.verb}"
 
 
-def word_dictionary_from(w: wd.World) -> dict:
+def word_dictionary_from(w: dict) -> dict:
     tmp = {}
     for k, v in ast.is_instance(w, wd.World).items():
         if k in ('stage', 'day', 'i'):
