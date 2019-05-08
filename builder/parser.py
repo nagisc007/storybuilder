@@ -8,6 +8,7 @@ from . import basesubject as bs
 from . import enums as em
 from . import info as inf
 from . import strutils as sutl
+from . import world as wd
 
 
 # public methods
@@ -196,6 +197,21 @@ def titles_retrieved_from(story: list) -> list:
 def verb_from(ac: act.Action) -> str:
     auxverb = "" if ast.is_instance(ac, act.Action).auxverb is em.AuxVerb.NONE else str(ac.auxverb) + "_"
     return f"{auxverb}{ac.verb}"
+
+
+def word_dictionary_from(w: wd.World) -> dict:
+    tmp = {}
+    for k, v in ast.is_instance(w, wd.World).items():
+        if k in ('stage', 'day', 'i'):
+            continue
+        if isinstance(v, bs.BaseSubject):
+            tmp[k] = v.name
+    for k, v in w.stage.items():
+        tmp['st_' + k] = v.name
+    # TODO: day is not converted currently. so need any idea
+    for k, v in w.i.items():
+        tmp['i_' + k] = v.note
+    return tmp
 
 
 # private methods

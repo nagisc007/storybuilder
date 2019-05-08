@@ -18,7 +18,7 @@ _BASEMENT = 10 # for estimated count
 
 
 # public methods
-def build_to_story(story: list, lang: em.LangType) -> bool: # pragma: no cover
+def build_to_story(story: list, lang: em.LangType, words: dict) -> bool: # pragma: no cover
     '''Build a story.
 
     Args:
@@ -41,7 +41,7 @@ def build_to_story(story: list, lang: em.LangType) -> bool: # pragma: no cover
             is_succeeded = False
 
     if options.description:
-        if not _output_story_as_descriptions(story_filtered, lang, filename, as_file, formattype,
+        if not _output_story_as_descriptions(story_filtered, lang, words, filename, as_file, formattype,
                 is_debug):
             is_succeeded = False
 
@@ -137,6 +137,10 @@ def _contents_title_from(story: list) -> list:
 
 def _descs_combined_with_validated(val: list, lang: em.LangType) -> str:
     return _description_validated("".join(val), lang)
+
+
+def _descs_converted_with_word_tags(vals: list, words: dict) -> list:
+    return [sutl.str_replaced_tag(v, words) for v in vals]
 
 
 def _descs_count_from_(val, lang: em.LangType) -> int:
@@ -311,14 +315,17 @@ def _output_story_as_actinfo(story: list, lang: em.LangType, filename: str, asfi
         return _output_to_console(tmp, is_debug)
 
 
-def _output_story_as_descriptions(story: list, lang: em.LangType, filename: str,
+def _output_story_as_descriptions(story: list, lang: em.LangType, words: dict,
+        filename: str,
         asfile: bool, formattype: str, is_debug: bool) -> bool: # pragma: no cover
     '''
     Descriptions:
         * descriptions
     '''
     # contents heads
-    descriptions = _descs_from_in(story, lang, is_debug)
+    descriptions = _descs_converted_with_word_tags(
+            _descs_from_in(story, lang, is_debug),
+            words)
     # check description
     if not _descs_validated_in(descriptions):
         return False

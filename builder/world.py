@@ -103,7 +103,8 @@ class World(SDict):
         return self._append_one(key, val, self.stage, stg.Stage)
 
     def build(self, story: list) -> bool:
-        return btool.build_to_story(story, self.lang)
+        from . import parser as ps
+        return btool.build_to_story(story, self.lang, ps.word_dictionary_from(self))
 
     def chaptertitle(self, title: str) -> act.TagAction:
         return self.tag.title(title, 2)

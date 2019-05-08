@@ -9,6 +9,7 @@ from builder import person as psn
 from builder import item as itm
 from builder import info as inf
 from builder import enums as em
+from builder import world as wd
 
 
 _FILENAME = "parser.py"
@@ -199,3 +200,33 @@ class PublicMethodsTest(unittest.TestCase):
         for v, expected in data:
             with self.subTest(v=v, expected=expected):
                 self.assertEqual(ps.verb_from(v), expected)
+
+    def test_word_dictionary_from(self):
+        data = [
+                ("item", ("test", "item1"),
+                    ("test", "item1")),
+                ("info", ("test", "info1"),
+                    ("i_test", "info1")),
+                ("stage", ("test", "stage1"),
+                    ("st_test", "stage1")),
+                ("person", ("test", "Taro", 17, "male", "student"),
+                    ("test", "Taro")),
+                ]
+        def creator(w: wd.World, cls, val):
+            if cls == 'item':
+                return w.append_item(val[0], val[1:])
+            elif cls == 'stage':
+                return w.append_stage(val[0], val[1:])
+            elif cls == 'person':
+                return w.append_person(val[0], val[1:])
+            else:
+                return w.append_info(val[0], val[1:])
+
+        for cls, v, expected in data:
+            with self.subTest(cls=cls, v=v, expected=expected):
+                tmp = wd.World("dict test")
+                creator(tmp, cls, v)
+                result = ps.word_dictionary_from(tmp)
+                self.assertIsInstance(result, dict)
+                self.assertEqual(result[expected[0]], expected[1])
+
