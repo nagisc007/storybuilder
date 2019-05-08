@@ -208,6 +208,17 @@ def _descs_from_in(vals: [act.ActionGroup, list, tuple],
     return [sutl.paragraph_head_inserted(v, lang) for v in res]
 
 
+def _descs_validated_in(vals: list) -> bool:
+    for v in vals:
+        if sutl.is_conversion_attempt(v):
+            try:
+                raise ValueError(f"Tags convertion error! {v}")
+            except ValueError as e:
+                print(e)
+            return False
+    return True
+
+
 def _description_validated(target: str, lang: em.LangType) -> str:
     return sutl.punctuation_duplicated_chopped(
             sutl.double_comma_chopped(
@@ -308,6 +319,10 @@ def _output_story_as_descriptions(story: list, lang: em.LangType, filename: str,
     '''
     # contents heads
     descriptions = _descs_from_in(story, lang, is_debug)
+    # check description
+    if not _descs_validated_in(descriptions):
+        return False
+
     desc_formatted = []
     if formattype in ('phone', 'smart', 'smartphone'):
         desc_formatted = _descs_formatted_smartphone_style(descriptions)

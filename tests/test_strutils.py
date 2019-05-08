@@ -134,6 +134,16 @@ class PublicMethodsTest(unittest.TestCase):
             with self.subTest(v=v, expected=expected):
                 self.assertEqual(utl.hr_tag_from(v), expected)
 
+    def test_is_conversion_attempt(self):
+        data = [
+                ("test", False),
+                ("$test", True),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                self.assertEqual(utl.is_conversion_attempt(v), expected)
+
     def test_link_tag_from(self):
         data = [
                 ("test", "apple", "[test](apple)"),

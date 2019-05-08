@@ -67,6 +67,10 @@ def hr_tag_from(num: int=9) -> str:
     return "--------" * ast.is_int(num)
 
 
+def is_conversion_attempt(target: str) -> bool:
+    return '$' in target
+
+
 def link_tag_from(target: str, link: str) -> str:
     return "[{}]({})".format(ast.is_str(target), ast.is_str(link))
 
