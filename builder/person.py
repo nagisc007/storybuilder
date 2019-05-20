@@ -6,6 +6,7 @@ from . import enums as em
 from . import subject as sb
 from . import parser as ps
 from . import utils as utl
+from . import strutils as sutl
 
 
 class Person(sb.Subject):
@@ -14,8 +15,10 @@ class Person(sb.Subject):
     Attributes:
         age (int): an age.
         calling (dict): a calling dictionary.
+        firstname (str): a first name.
+        lastname (str): a last name.
         job (str): a job.
-        name (str): a name.
+        name (str): a name (full name).
         note (str): a short description.
         sex (str): a sex.
     """
@@ -31,9 +34,13 @@ class Person(sb.Subject):
             calling ([dict, str]): a calling dictionary.
             note (str, optional): a short description.
         """
-        super().__init__(name, note)
+        _lastname, _firstname = sutl.name_divided_from(name)
+        _fullname = _lastname + _firstname if ',' in name else name
+        super().__init__(_fullname, note)
         self.age = ast.is_int(age)
         self.calling = ps.str_to_dict_by_splitter(calling, "me", Person.DEF_CALLING)
+        self.firstname = _firstname
+        self.lastname = _lastname
         self.job = ast.is_str(job)
         self.sex = ast.is_str(sex)
 

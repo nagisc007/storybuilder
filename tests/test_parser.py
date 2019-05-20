@@ -210,7 +210,11 @@ class PublicMethodsTest(unittest.TestCase):
                 ("stage", ("test", "stage1"),
                     ("st_test", "stage1")),
                 ("person", ("test", "Taro", 17, "male", "student"),
-                    ("test", "Taro")),
+                    ("n_test", "Taro")),
+                ("person", ("test2", "Tanaka,Taro", 17, "male", "student"),
+                    ("fn_test2", "Taro")),
+                ("person", ("test3", "Tanaka,Taro", 17, "male", "student"),
+                    ("ln_test3", "Tanaka")),
                 ]
         def creator(w: wd.World, cls, val):
             if cls == 'item':

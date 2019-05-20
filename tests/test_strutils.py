@@ -153,6 +153,16 @@ class PublicMethodsTest(unittest.TestCase):
             with self.subTest(v=v, link=link, expected=expected):
                 self.assertEqual(utl.link_tag_from(v, link), expected)
 
+    def test_name_divided_from(self):
+        data = [
+                ("testname", "testname", "testname"),
+                ("test,name", "test", "name"),
+                ]
+
+        for v, exp_last, exp_name in data:
+            with self.subTest(v=v, exp_last=exp_last, exp_name=exp_name):
+                self.assertEqual(utl.name_divided_from(v), (exp_last, exp_name))
+
     def test_paragraph_head_inserted(self):
         data = [
                 ("test", em.LangType.ENG, " test"),

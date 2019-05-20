@@ -23,15 +23,21 @@ class PersonTest(unittest.TestCase):
     def test_attributes(self):
         data = [
                 ("Taro", 17, "male", "student", "俺", "a man",
-                    "Taro", 17, "male", "student", {"me":"俺"}, "a man"),
+                    "Taro", "Taro", "Taro", 17, "male", "student", {"me":"俺"}, "a man"),
+                ("山田,太郎", 20, "male", "会社員", "me:私", "a human",
+                    "山田太郎", "山田", "太郎", 20, "male", "会社員", {"me":"私"}, "a human"),
                 ]
-        for name, age, sex, job, calling, note, exp_name, exp_age, exp_sex, exp_job, exp_calling, exp_note in data:
+        for name, age, sex, job, calling, note, exp_name, exp_lastname, exp_firstname, exp_age, exp_sex, exp_job, exp_calling, exp_note in data:
             with self.subTest(name=name, age=age, sex=sex, job=job, calling=calling, note=note,
-                    exp_name=exp_name, exp_age=exp_age, exp_sex=exp_sex, exp_job=exp_job,
+                    exp_name=exp_name, exp_lastname=exp_lastname,
+                    exp_firstname=exp_firstname,
+                    exp_age=exp_age, exp_sex=exp_sex, exp_job=exp_job,
                     exp_calling=exp_calling, exp_note=exp_note):
                 tmp = psn.Person(name, age, sex, job, calling, note)
                 self.assertIsInstance(tmp, psn.Person)
                 self.assertEqual(tmp.name, exp_name)
+                self.assertEqual(tmp.lastname, exp_lastname),
+                self.assertEqual(tmp.firstname, exp_firstname)
                 self.assertEqual(tmp.age, exp_age)
                 self.assertEqual(tmp.sex, exp_sex)
                 self.assertEqual(tmp.job, exp_job)

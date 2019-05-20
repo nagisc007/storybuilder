@@ -9,6 +9,7 @@ from . import enums as em
 from . import info as inf
 from . import strutils as sutl
 from . import world as wd
+from . import person as psn
 
 
 # public methods
@@ -204,7 +205,11 @@ def word_dictionary_from(w: dict) -> dict:
     for k, v in ast.is_instance(w, wd.World).items():
         if k in ('stage', 'day', 'i'):
             continue
-        if isinstance(v, bs.BaseSubject):
+        if isinstance(v, psn.Person):
+            tmp['n_' + k] = v.name
+            tmp['fn_' + k] = v.firstname
+            tmp['ln_' + k] = v.lastname
+        elif isinstance(v, bs.BaseSubject):
             tmp[k] = v.name
     for k, v in w.stage.items():
         tmp['st_' + k] = v.name

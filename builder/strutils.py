@@ -75,6 +75,14 @@ def link_tag_from(target: str, link: str) -> str:
     return "[{}]({})".format(ast.is_str(target), ast.is_str(link))
 
 
+def name_divided_from(target: str, splitter: str=','):
+    tmp = target
+    if splitter in target:
+        return tuple(tmp.split(splitter))
+    else:
+        return tmp, tmp
+
+
 def paragraph_head_inserted(target: str, lang: em.LangType) -> str:
     if lang is em.LangType.JPN:
         return target if re.match(r'\A[　#「\-\*]', target) else "　" + target
