@@ -48,6 +48,12 @@ def exists_keywords_by_data(case: unittest.TestCase,
         with case.subTest(story=story, keyword=keyword, strict=strict):
             case.assertTrue(has_the_keyword_in(story, keyword, strict))
 
+def exists_keywords_in_description_by_data(case: unittest.TestCase,
+        story: list, data: list): # pragma: no cover
+    for keyword in data:
+        with case.subTest(story=story, keyword=keyword):
+            case.assertTrue(has_the_keyword_in_description_in(story, keyword))
+
 
 def exists_looking_infos() -> bool:
     # TODO: implement
@@ -107,6 +113,10 @@ def followed_all_flags_with_error_info(case: unittest.TestCase,
 
 def has_the_keyword_in(story: list, target: str, strict: bool=False) -> bool:
     return ayz.has_the_keyword(story, target, strict)
+
+
+def has_the_keyword_in_description_in(story: list, target: str) -> bool:
+    return ayz.has_the_keyword_in_descriptions(story, target)
 
 
 def is_all_actions_in(story: list) -> bool:

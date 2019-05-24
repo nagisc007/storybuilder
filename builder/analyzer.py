@@ -55,6 +55,10 @@ def has_the_keyword(story: list, target: str, strict: bool=False) -> bool:
     return _has_the_keyword_in(story, target, strict)
 
 
+def has_the_keyword_in_descriptions(story: list, target: str) -> bool:
+    return _has_the_keyword_in_desc_in(story, target)
+
+
 def has_the_subject_in(story: list, target: bs.BaseSubject) -> bool:
     return _has_the_subject_in(story, target)
 
@@ -231,6 +235,23 @@ def _has_the_keyword_in(vals: [act.ActionGroup, list, tuple],
         target: str, strict: bool) -> bool:
     group = vals.actions if isinstance(vals, act.ActionGroup) else vals
     return len([v for v in group if _has_the_keyword_(v, target, strict)]) > 0
+
+
+def _has_the_keyword_in_desc_(val: Any, target: str) -> bool:
+    if isinstance(val, (act.ActionGroup, list, tuple)):
+        return _has_the_keyword_in_desc_in(val, target)
+    elif isinstance(val, act.TagAction):
+        return False
+    elif isinstance(val, act.Action):
+        return _exists_the_keyword_in_description(val, target)
+    else:
+        return False
+
+
+def _has_the_keyword_in_desc_in(vals: [act.ActionGroup, list, tuple],
+        target :str) -> bool:
+    group = vals.actions if isinstance(vals, act.ActionGroup) else vals
+    return len([v for v in group if _has_the_keyword_in_desc_(v, target)]) > 0
 
 
 def _has_the_subject(val, target: bs.BaseSubject) -> bool:

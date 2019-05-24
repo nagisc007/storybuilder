@@ -127,6 +127,20 @@ class PublicMethodsTest(unittest.TestCase):
             with self.subTest(v=v, target=target, strict=strict, expected=expected):
                 self.assertEqual(ayz.has_the_keyword(v, target, strict), expected)
 
+    def test_has_the_keyword_in_description(self):
+        data = [
+                ((self.taro.be().d("test"),),
+                    "test", True),
+                ((self.taro.be().d("apple"),),
+                    "test", False),
+                ((self.taro.be().d("testing"),),
+                    "test", True),
+                ]
+
+        for v, target, expected in data:
+            with self.subTest(v=v, target=target, expected=expected):
+                self.assertEqual(ayz.has_the_keyword_in_descriptions(v, target), expected)
+
     def test_has_the_subject_in(self):
         data = [
                 ((self.taro.be(),),
