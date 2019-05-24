@@ -176,6 +176,8 @@ def _exists_the_keyword_in_description(val: act.ds.Desc, target: str) -> bool:
     if isinstance(val, act.ds.DescGroup):
         # TODO: desc group implement
         return False
+    elif isinstance(val, act.ds.NoDesc):
+        return False
     elif isinstance(val, act.ds.Desc):
         return len([v for v in val.data if target in v]) > 0
     else:
