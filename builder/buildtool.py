@@ -260,6 +260,8 @@ def _maintitle_from(story: list) -> list:
     for t in titles:
         if ps.title_level_of(t.tag) == 1:
             return [f"{t.info}\n==="]
+    else:
+        return [""]
 
 
 def _options_parsed(): # pragma: no cover
