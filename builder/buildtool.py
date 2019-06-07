@@ -48,8 +48,7 @@ def build_to_story(story: list, lang: em.LangType, words: dict) -> bool: # pragm
     if options.info:
         if not _output_story_as_info(story_filtered, lang, filename, as_file, is_debug):
             is_succeeded = False
-
-    if not _output_baseinfo(story_filtered, lang, is_debug):
+    elif not _output_baseinfo(story_filtered, lang, is_debug):
         is_succeeded = False
 
     return is_succeeded
