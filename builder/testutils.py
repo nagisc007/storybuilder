@@ -111,6 +111,18 @@ def followed_all_flags_with_error_info(case: unittest.TestCase,
     return result
 
 
+def followed_motifs(case: unittest.TestCase, story: list, motifs: dict): # pragma: no cover
+    for k, v in motifs.items():
+        with case.subTest(k=k, v=v):
+            case.assertTrue(has_the_keyword_in_description_in(story, motifs[k]))
+
+
+def followed_themes(case: unittest.TestCase, story: list, themes: dict): # pragma: no cover
+    for k, v in themes.items():
+        with case.subTest(k=k, v=v):
+            case.assertTrue(has_the_keyword_in(story, themes[k]))
+
+
 def has_the_keyword_in(story: list, target: str, strict: bool=False) -> bool:
     return ayz.has_the_keyword(story, target, strict)
 
