@@ -266,7 +266,7 @@ def _manupaper_counts_from(story: list, lang: em.LangType,
 
 def _manupaper_rows_from_(val, lang: em.LangType, columns: int) -> int:
     if isinstance(val, (act.ActionGroup, list, tuple)):
-        return _manupaper_count_rows_in(val, lang, columns)
+        return _manupaper_rows_from_in(val, lang, columns)
     elif isinstance(val, act.TagAction):
         return 0
     elif isinstance(val, act.Action):
