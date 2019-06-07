@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- themes and motifs checking utility
+- manupapers count
+- keywords checking in descriptions
+- first and last name each persons (using as tag)
+### Fixed
+- duplicated output with info option
+- empty main title error
+- nodesc class checkout
 
 ## [0.2.0] - 2019-04-27
 ### Added
