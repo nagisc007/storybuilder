@@ -75,7 +75,8 @@ class PrivateMethodsTest(unittest.TestCase):
         data = [
                 ((self.taro.be().d("test"),),
                     em.LangType.ENG,
-                    ["## Characters", "- Total: 5", "- Estimated: 10"]),
+                    ["## Characters", "- Total: 5", "- Estimated: 10",
+                        "- Manupapers: 0.0125 (0.25/20 x 20)"]),
                 ]
 
         for v, lang, expected in data:

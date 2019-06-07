@@ -107,13 +107,16 @@ def _acttypes_percents_from(story: list) -> list:
             ]
 
 
-def _charcount_from(story: list, lang: em.LangType) -> list:
+def _charcount_from(story: list, lang: em.LangType,
+        rows: int=20, columns: int=20) -> list:
     total = _descs_count_from_in(story, lang)
     estimated = _estimated_description_count_from(story, lang)
+    manupp = _manupaper_counts_from(story, lang, rows, columns)
     return [
             "## Characters",
             f"- Total: {total}",
             f"- Estimated: {estimated}",
+            f"- Manupapers: {manupp}",
             ]
 
 
@@ -254,6 +257,30 @@ def _flags_info_from(story: list):
     return ["## Flags"] + [ps.flag_linkinfo_of(v) for v in flags]
 
 
+def _manupaper_counts_from(story: list, lang: em.LangType,
+        rows: int, columns: int) -> list:
+    _rows = _manupaper_rows_from_in(story, lang, columns)
+    _papers = _rows / rows
+    return f"{_papers} ({_rows}/{rows} x {columns})"
+
+
+def _manupaper_rows_from_(val, lang: em.LangType, columns: int) -> int:
+    if isinstance(val, (act.ActionGroup, list, tuple)):
+        return _manupaper_count_rows_in(val, lang, columns)
+    elif isinstance(val, act.TagAction):
+        return 0
+    elif isinstance(val, act.Action):
+        return _descs_count_from_(val, lang) / columns
+    else:
+        return 0
+
+
+def _manupaper_rows_from_in(vals: [act.ActionGroup, list, tuple],
+        lang: em.LangType, columns: int) -> int:
+    group = vals.actions if isinstance(vals, act.ActionGroup) else vals
+    return sum([_manupaper_rows_from_(v, lang, columns) for v in group])
+
+
 def _maintitle_from(story: list) -> list:
     titles = ps.titles_retrieved_from(story)
     for t in titles:
@@ -273,6 +300,7 @@ def _options_parsed(): # pragma: no cover
 
     parser.add_argument('-a', '--action', help="output as action data", action='store_true')
     parser.add_argument('-b', '--build', help="build and output as a file", action='store_true')
+    # TODO: character info
     parser.add_argument('-d', '--description', help="output as descriptions", action='store_true')
     parser.add_argument('-i', '--info', help="display with informations", action='store_true')
     parser.add_argument('-f', '--filename', help="advanced output file name", type=str)
