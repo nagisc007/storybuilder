@@ -261,7 +261,7 @@ def _manupaper_counts_from(story: list, lang: em.LangType,
         rows: int, columns: int) -> list:
     _rows = _manupaper_rows_from_in(story, lang, columns)
     _papers = _rows / rows
-    return f"{_papers} ({_rows}/{rows} x {columns})"
+    return f"{_papers:0.3f} ({_rows:0.2f}/{rows} x {columns})"
 
 
 def _manupaper_rows_from_(val, lang: em.LangType, columns: int) -> int:
