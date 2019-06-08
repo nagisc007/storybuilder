@@ -21,10 +21,20 @@ class Person(sb.Subject):
         name (str): a name (full name).
         note (str): a short description.
         sex (str): a sex.
+    Attributes(features):
+        body (str): a body info.
+        eyes (str): eyes info.
+        fashion (str): a fashion info.
+        hair (str): a hair info.
+        height (str): a height info.
+        ornament (str): a ornament info.
+        weight (str): a weight info.
     """
     DEF_CALLING = "私"
+    DEF_HAIR = "黒髪"
 
-    def __init__(self, name: str, age: int, sex: str, job: str, calling: [dict, str]=DEF_CALLING, note: str=""):
+    def __init__(self, name: str, age: int, sex: str, job: str, calling: [dict, str]=DEF_CALLING,
+            note: str="", features: [dict, str]=""):
         """
         Args:
             name (str): a person name
@@ -43,6 +53,7 @@ class Person(sb.Subject):
         self.lastname = _lastname
         self.job = ast.is_str(job)
         self.sex = ast.is_str(sex)
+        self._set_features(features)
 
     def ask(self, *args, verb: str="ask"):
         return self.talk(*args, verb=verb)
@@ -102,3 +113,16 @@ class Person(sb.Subject):
                 utl.val_ifNone_default(calling, self.calling),
                 utl.val_ifNone_default(note, self.note),
                 )
+    # private
+    def _set_features(self, features: [dict, str]):
+        tmp = ps.str_to_dict_by_splitter(features, "hair", Person.DEF_HAIR)
+        def creator(dct, key):
+            return dct[key] if key in dct else ""
+        self.body = creator(tmp, "body")
+        self.eyes = creator(tmp, "eyes")
+        self.fashion = creator(tmp, "fashion")
+        self.hair = creator(tmp, "hair")
+        self.height = creator(tmp, "height")
+        self.ornament = creator(tmp, "ornament")
+        self.weight = creator(tmp, "weight")
+
