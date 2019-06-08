@@ -24,6 +24,10 @@ class DescTest(unittest.TestCase):
                     ("test", "apple"), em.DescType.DESCRIPTION),
                 ("", em.DescType.DESCRIPTION,
                     (), em.DescType.DESCRIPTION),
+                (("test",), em.DescType.DIALOGUE,
+                    ("test",), em.DescType.DIALOGUE),
+                (("test",), em.DescType.PLAIN,
+                    ("test",), em.DescType.PLAIN),
                 ]
 
         for v, dtype, expected, exp_type in data:

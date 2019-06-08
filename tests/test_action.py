@@ -50,6 +50,27 @@ class ActionTest(unittest.TestCase):
                 self.assertIsInstance(tmp.desc(*v).description, act.ds.Desc)
                 self.assertEqual(tmp.description.data, expected)
 
+    def test_tell(self):
+        data = [
+                (("test",), ("test",)),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                tmp = act.Action(em.ActType.BE, self.taro, "be", em.AuxVerb.NONE, ())
+                self.assertIsInstance(tmp.tell(*v).description, act.ds.Desc)
+                self.assertEqual(tmp.description.data, expected)
+
+    def test_pre(self):
+        data = [
+                (("test",), ("test",)),
+                ]
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                tmp = act.Action(em.ActType.BE, self.taro, "be", em.AuxVerb.NONE, ())
+                self.assertIsInstance(tmp.pre(*v).description, act.ds.Desc)
+                self.assertEqual(tmp.description.data, expected)
+
 
 class ActionGroupTest(unittest.TestCase):
 

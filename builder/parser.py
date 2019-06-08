@@ -99,6 +99,8 @@ def description_from_action(ac: act.Action, lang: em.LangType) -> str:
         return _desc_as_description_from(ac.description, lang)
     elif ac.description.desc_type is em.DescType.DIALOGUE:
         return _desc_as_dialogue_from(ac.description, lang)
+    elif ac.description.desc_type is em.DescType.PLAIN:
+        return _desc_as_plain_from(ac.description, lang)
     else:
         # TODO: desc group implement
         return ""
@@ -230,6 +232,9 @@ def _desc_as_dialogue_from(dsc: act.ds.Desc, lang: em.LangType) -> str:
     return sutl.dialogue_from(
             sutl.comma_by(lang).join(dsc.data),
             lang)
+
+def _desc_as_plain_from(dsc: act.ds.Desc, lang: em.LangType) -> str:
+    return sutl.comma_by(lang).join(dsc.data)
 
 
 def _story_filtered_by_pri_(val, pri_filter: int) -> list:

@@ -80,6 +80,7 @@ class DescType(Enum):
     DESCRIPTION = auto()
     DIALOGUE = auto()
     NONE = auto()
+    PLAIN = auto()
     TAG = auto()
 
     def __str__(self) -> str:
@@ -87,6 +88,7 @@ class DescType(Enum):
                 self.DESCRIPTION.value: "DESCRIPTION",
                 self.DIALOGUE.value: "DIALOGUE",
                 self.NONE.value: "NONE",
+                self.PLAIN.value: "PLAIN",
                 self.TAG.value: "TAG",
                 }[self.value]
 

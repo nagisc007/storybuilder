@@ -54,6 +54,10 @@ class Action(ba.BaseAction):
         """
         return self.pri(Action.PRIORITY_MIN)
 
+    def pre(self, *args):
+        self.description = ds.Desc(*args, desc_type=em.DescType.PLAIN)
+        return self
+
     def pri(self, pri):
         self.priority = ast.is_between(pri, Action.PRIORITY_MAX, Action.PRIORITY_MIN)
         return self

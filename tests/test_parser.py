@@ -85,6 +85,14 @@ class PublicMethodsTest(unittest.TestCase):
                     "test."),
                 (self.taro.be().d("test"), em.LangType.JPN,
                     "test。"),
+                (self.taro.be().t("test"), em.LangType.ENG,
+                    '"test"'),
+                (self.taro.be().t("test"), em.LangType.JPN,
+                    "「test」"),
+                (self.taro.be().pre("test"), em.LangType.ENG,
+                    "test"),
+                (self.taro.be().pre("test"), em.LangType.JPN,
+                    "test"),
                 ]
 
         for v, lang, expected in data:
