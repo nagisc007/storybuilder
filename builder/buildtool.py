@@ -12,6 +12,7 @@ from . import enums as em
 from . import info as inf
 from . import parser as ps
 from . import strutils as sutl
+from . import utils as utl
 
 
 _BASEMENT = 10 # for estimated count
@@ -270,7 +271,7 @@ def _manupaper_rows_from_(val, lang: em.LangType, columns: int) -> int:
     elif isinstance(val, act.TagAction):
         return 0
     elif isinstance(val, act.Action):
-        return _descs_count_from_(val, lang) / columns
+        return utl.int_ceiled(_descs_count_from_(val, lang), columns)
     else:
         return 0
 
