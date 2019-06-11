@@ -79,6 +79,7 @@ class DescType(Enum):
     """
     DESCRIPTION = auto()
     DIALOGUE = auto()
+    EMPHASIS1 = auto()
     NONE = auto()
     PLAIN = auto()
     TAG = auto()
@@ -87,6 +88,7 @@ class DescType(Enum):
         return {
                 self.DESCRIPTION.value: "DESCRIPTION",
                 self.DIALOGUE.value: "DIALOGUE",
+                self.EMPHASIS1.value: "EMPHASIS1",
                 self.NONE.value: "NONE",
                 self.PLAIN.value: "PLAIN",
                 self.TAG.value: "TAG",

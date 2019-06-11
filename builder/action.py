@@ -49,6 +49,11 @@ class Action(ba.BaseAction):
         self.description = ds.Desc(*args)
         return self
 
+    def emphasis(self, *args):
+        # TODO: level setting
+        self.description = ds.Desc(*args, desc_type=em.DescType.EMPHASIS1)
+        return self
+
     def omit(self):
         """Set minimum priority.
         """

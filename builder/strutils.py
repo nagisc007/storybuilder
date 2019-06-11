@@ -36,6 +36,9 @@ def double_comma_chopped(target: str, lang: em.LangType=em.LangType.JPN) -> str:
                 re.sub(r'(,|\.)+', r'\1', ast.is_str(target)))
 
 
+def emphasis_from(target: str, lang: em.LangType) -> str:
+    return f'『{target}』' if lang is em.LangType.JPN else f"'{target}'"
+
 def em_tag_from(target: str, lv: int=1) -> str:
     tag = "***" if lv >= 3 else ("**" if lv == 2 else "_")
     return "{tag}{target}{tag}".format(tag=tag, target=ast.is_str(target))
@@ -85,9 +88,9 @@ def name_divided_from(target: str, splitter: str=','):
 
 def paragraph_head_inserted(target: str, lang: em.LangType) -> str:
     if lang is em.LangType.JPN:
-        return target if re.match(r'\A[　#「\-\*]', target) else "　" + target
+        return target if re.match(r'\A[　#「『\-\*]', target) else "　" + target
     else:
-        return target if re.match(r'\A[ #"\-\*]', target) else " " + target
+        return target if re.match(r'\A[ #"\'\-\*]', target) else " " + target
 
 
 def period_added_if_none(target: str, lang: em.LangType) -> str:
