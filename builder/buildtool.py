@@ -266,12 +266,14 @@ def _manupaper_counts_from(story: list, lang: em.LangType,
 
 
 def _manupaper_rows_from_(val, lang: em.LangType, columns: int) -> int:
-    if isinstance(val, (act.ActionGroup, list, tuple)):
+    if isinstance(val, act.ActionGroup) and val.group_type is em.GroupType.COMBI:
+        return utl.int_ceiled(_manupaper_rows_from_in(val, lang, columns), columns)
+    elif isinstance(val, (act.ActionGroup, list, tuple)):
         return _manupaper_rows_from_in(val, lang, columns)
     elif isinstance(val, act.TagAction):
         return 0
     elif isinstance(val, act.Action):
-        return _descs_count_from_(val, lang)
+        return utl.int_ceiled(_descs_count_from_(val, lang), columns)
     else:
         return 0
 
@@ -279,10 +281,7 @@ def _manupaper_rows_from_(val, lang: em.LangType, columns: int) -> int:
 def _manupaper_rows_from_in(vals: [act.ActionGroup, list, tuple],
         lang: em.LangType, columns: int) -> int:
     group = vals.actions if isinstance(vals, act.ActionGroup) else vals
-    if isinstance(vals, act.ActionGroup) and vals.group_type is em.GroupType.COMBI:
-        return utl.int_ceiled(sum(_manupaper_rows_from_(v, lang, columns) for v in group), columns)
-    else:
-        return sum(utl.int_ceiled(_manupaper_rows_from_(v, lang, columns), columns) for v in group)
+    return sum(_manupaper_rows_from_(v, lang, columns) for v in group)
 
 
 def _maintitle_from(story: list) -> list:
