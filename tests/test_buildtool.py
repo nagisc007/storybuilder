@@ -163,6 +163,10 @@ class PrivateMethodsTest(unittest.TestCase):
         data = [
                 ((self.taro.be().d("test"), self.taro.be().d("apple"),),
                     em.LangType.JPN, 20, 2),
+                ((w.scene("test",
+                    self.taro.be().d("test"), self.taro.be().d("apple"),
+                    self.taro.be().d("orange"),)),
+                    em.LangType.JPN, 20, 3),
                 ((w.combine(
                     self.taro.be().d("test"), self.taro.be().d("apple"),
                     ),),

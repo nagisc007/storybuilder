@@ -282,7 +282,7 @@ def _manupaper_rows_from_in(vals: [act.ActionGroup, list, tuple],
     if isinstance(vals, act.ActionGroup) and vals.group_type is em.GroupType.COMBI:
         return utl.int_ceiled(sum(_manupaper_rows_from_(v, lang, columns) for v in group), columns)
     else:
-        return sum([utl.int_ceiled(_manupaper_rows_from_(v, lang, columns), columns) for v in group])
+        return sum(utl.int_ceiled(_manupaper_rows_from_(v, lang, columns), columns) for v in group)
 
 
 def _maintitle_from(story: list) -> list:
