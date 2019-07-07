@@ -26,9 +26,9 @@ class Subject(bs.BaseSubject, metaclass=ABCMeta):
                 _actobjects_valid_converted(args))
         desc_args = _descriptions_from_args(args)
         if is_desc:
-            tmp.desc(desc_args)
+            tmp.desc(*desc_args)
         else:
-            tmp.tell(desc_args)
+            tmp.tell(*desc_args)
         return tmp
 
     def be(self, *args, verb: str="be", is_desc: bool=True):
