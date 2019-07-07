@@ -437,6 +437,6 @@ def _output_to_file(data: list, filename: str, suffix: str, is_debug: bool) -> b
 
 def _scene_title_of(val: act.ActionGroup) -> str:
     if isinstance(val, act.ActionGroup) and val.group_type is em.GroupType.SCENE:
-        return f'*{val.info}*'
+        return f'*{val.actions[0].info}*'
     else:
         return "*Scene*"
