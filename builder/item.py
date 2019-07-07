@@ -20,8 +20,8 @@ class Item(sb.Subject):
         """
         super().__init__(name, note)
 
-    def move(self, *args, verb: str="move"):
-        return self.act(*args, act_type=sb.em.ActType.MOVE, verb=verb)
+    def move(self, *args, verb: str="move", is_desc: bool=True):
+        return self.act(*args, act_type=sb.em.ActType.MOVE, verb=verb, is_desc=is_desc)
 
     def inherited(self, name: str=None, note: str=None):
         return Item(name if name else self.name, note if note else self.note)

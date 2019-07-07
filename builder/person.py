@@ -55,53 +55,53 @@ class Person(sb.Subject):
         self.sex = ast.is_str(sex)
         self._set_features(features)
 
-    def ask(self, *args, verb: str="ask"):
-        return self.talk(*args, verb=verb)
+    def ask(self, *args, verb: str="ask", is_desc: bool=False):
+        return self.talk(*args, verb=verb, is_desc=is_desc)
 
-    def behav(self, *args, verb: str="behav"):
-        return self.act(*args, act_type=em.ActType.BEHAV, verb=verb)
+    def behav(self, *args, verb: str="behav", is_desc: bool=True):
+        return self.act(*args, act_type=em.ActType.BEHAV, verb=verb, is_desc=is_desc)
 
-    def come(self, *args, verb: str="come"):
-        return self.move(*args, verb=verb)
+    def come(self, *args, verb: str="come", is_desc: bool=True):
+        return self.move(*args, verb=verb, is_desc=is_desc)
 
-    def deal(self, *args, verb: str="deal"):
-        return self.act(*args, act_type=em.ActType.DEAL, verb=verb)
+    def deal(self, *args, verb: str="deal", is_desc: bool=True):
+        return self.act(*args, act_type=em.ActType.DEAL, verb=verb, is_desc=is_desc)
 
-    def feel(self, *args, verb: str="feel"):
-        return self.act(*args, act_type=em.ActType.FEEL, verb=verb)
+    def feel(self, *args, verb: str="feel", is_desc: bool=True):
+        return self.act(*args, act_type=em.ActType.FEEL, verb=verb, is_desc=is_desc)
 
-    def go(self, *args, verb: str="go"):
-        return self.move(*args, verb=verb)
+    def go(self, *args, verb: str="go", is_desc: bool=True):
+        return self.move(*args, verb=verb, is_desc=is_desc)
 
-    def have(self, *args, verb: str="have"):
-        return self.deal(*args, verb=verb)
+    def have(self, *args, verb: str="have", is_desc: bool=True):
+        return self.deal(*args, verb=verb, is_desc=is_desc)
 
-    def hear(self, *args, verb: str="hear"):
-        return self.talk(*args, verb=verb)
+    def hear(self, *args, verb: str="hear", is_desc: bool=True):
+        return self.talk(*args, verb=verb, is_desc=is_desc)
 
-    def know(self, *args, verb: str="know"):
-        return self.think(*args, verb=verb)
+    def know(self, *args, verb: str="know", is_desc: bool=True):
+        return self.think(*args, verb=verb, is_desc=is_desc)
 
-    def look(self, *args, verb: str="look"):
-        return self.act(*args, act_type=em.ActType.LOOK, verb=verb)
+    def look(self, *args, verb: str="look", is_desc: bool=True):
+        return self.act(*args, act_type=em.ActType.LOOK, verb=verb, is_desc=is_desc)
 
-    def meet(self, *args, verb: str="meet"):
-        return self.look(*args, verb=verb)
+    def meet(self, *args, verb: str="meet", is_desc: bool=True):
+        return self.look(*args, verb=verb, is_desc=is_desc)
 
-    def move(self, *args, verb: str="move"):
-        return self.act(*args, act_type=em.ActType.MOVE, verb=verb)
+    def move(self, *args, verb: str="move", is_desc: bool=True):
+        return self.act(*args, act_type=em.ActType.MOVE, verb=verb, is_desc=is_desc)
 
-    def remember(self, *args, verb: str="remember"):
-        return self.think(*args, verb=verb)
+    def remember(self, *args, verb: str="remember", is_desc: bool=True):
+        return self.think(*args, verb=verb, is_desc=is_desc)
 
-    def reply(self, *args, verb: str="reply"):
-        return self.talk(*args, verb=verb)
+    def reply(self, *args, verb: str="reply", is_desc: bool=False):
+        return self.talk(*args, verb=verb, is_desc=is_desc)
 
-    def talk(self, *args, verb: str="talk"):
-        return self.act(*args, act_type=em.ActType.TALK, verb=verb)
+    def talk(self, *args, verb: str="talk", is_desc: bool=False):
+        return self.act(*args, act_type=em.ActType.TALK, verb=verb, is_desc=is_desc)
 
-    def think(self, *args, verb: str="think"):
-        return self.act(*args, act_type=em.ActType.THINK, verb=verb)
+    def think(self, *args, verb: str="think", is_desc: bool=True):
+        return self.act(*args, act_type=em.ActType.THINK, verb=verb, is_desc=is_desc)
 
     def inherited(self, name: str=None, age: int=None, sex: str=None, job: str=None,
             calling: str=None, note: str=None):
