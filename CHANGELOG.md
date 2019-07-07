@@ -6,10 +6,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+
+## [0.2.1] - 2019-07-07
+### Added
 - themes and motifs checking utility
 - manupapers count
 - keywords checking in descriptions
 - first and last name each persons (using as tag)
+- person's new attributes
+- emphasis description
+- directly writing a description to an action
+- output each scene information
 ### Fixed
 - duplicated output with info option
 - empty main title error
@@ -153,7 +160,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Example story as usage.
 - Output story as markdown.
 
-[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/nagisc007/storybuilder/releases/v0.2.1
 [0.2.0]: https://github.com/nagisc007/storybuilder/releases/v0.2.0
 [0.1.0]: https://github.com/nagisc007/storybuilder/releases/v0.1.0
 [0.0.9]: https://github.com/nagisc007/storybuilder/releases/v0.0.9
