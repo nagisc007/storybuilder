@@ -259,7 +259,7 @@ def _flags_info_from(story: list):
     return ["## Flags"] + [ps.flag_linkinfo_of(v) for v in flags]
 
 
-def _info_data_from(title: str, story: list) -> list:
+def _info_data_from(title: str, story: list, lang: em.LangType) -> list:
     return ["### Information ###",
             title] \
             + _charcount_from(story, lang) \
@@ -396,12 +396,12 @@ def _output_story_as_info(story: list, lang: em.LangType, filename: str,
         * act type percents
     '''
     tmp = []
-    tmp = _info_data_from(_maintitle_from(story), story)
+    tmp = _info_data_from(_maintitle_from(story), story, lang)
     if is_eachscenes:
         scenes = ps.scenes_gathered_from(story)
         for v in scenes:
-            tmp.extend(_info_data_from(v))
-
+            tmp.extend(_scene_title_of(v),
+                    _info_data_from(v), lang)
     if asfile:
         return _output_to_file(tmp, filename, "_i", is_debug)
     else:
@@ -435,3 +435,8 @@ def _output_to_file(data: list, filename: str, suffix: str, is_debug: bool) -> b
 
     return is_succeeded
 
+def _scene_title_of(val: act.ActionGroup) -> str:
+    if isinstance(val, act.ActionGroup) and val.group_type is em.GroupType.SCENE:
+        return f'*{val.info}*'
+    else:
+        return "*Scene*"
