@@ -400,8 +400,7 @@ def _output_story_as_info(story: list, lang: em.LangType, filename: str,
     if is_eachscenes:
         scenes = ps.scenes_gathered_from(story)
         for v in scenes:
-            tmp.extend(_scene_title_of(v),
-                    _info_data_from(v), lang)
+            tmp.extend(_info_data_from(_scene_title_of(v), v, lang))
     if asfile:
         return _output_to_file(tmp, filename, "_i", is_debug)
     else:
