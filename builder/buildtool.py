@@ -35,6 +35,7 @@ def build_to_story(story: list, lang: em.LangType, words: dict) -> bool: # pragm
     pri_filter = options.priority
     formattype = options.format
     is_debug = options.debug
+    is_eachscenes = options.scene
     story_filtered = ps.story_filtered_by_priority(story, pri_filter)
 
     if options.action:
@@ -47,7 +48,7 @@ def build_to_story(story: list, lang: em.LangType, words: dict) -> bool: # pragm
             is_succeeded = False
 
     if options.info:
-        if not _output_story_as_info(story_filtered, lang, filename, as_file, is_debug):
+        if not _output_story_as_info(story_filtered, lang, filename, as_file, is_eachscenes, is_debug):
             is_succeeded = False
     elif not _output_baseinfo(story_filtered, lang, is_debug):
         is_succeeded = False
@@ -258,6 +259,14 @@ def _flags_info_from(story: list):
     return ["## Flags"] + [ps.flag_linkinfo_of(v) for v in flags]
 
 
+def _info_data_from(title: str, story: list) -> list:
+    return ["### Information ###",
+            title] \
+            + _charcount_from(story, lang) \
+            + _acttypes_percents_from(story) \
+            + _flags_info_from(story)
+
+
 def _manupaper_counts_from(story: list, lang: em.LangType,
         rows: int, columns: int) -> list:
     _rows = _manupaper_rows_from_in(story, lang, columns)
@@ -308,6 +317,7 @@ def _options_parsed(): # pragma: no cover
     parser.add_argument('-i', '--info', help="display with informations", action='store_true')
     parser.add_argument('-f', '--filename', help="advanced output file name", type=str)
     parser.add_argument('-p', '--priority', help="output an action filtered priorities", type=int, default=act.Action.PRIORITY_DEFAULT)
+    parser.add_argument('-s', '--scene', help="each scene info", action='store_true')
     parser.add_argument('--debug', help="with a debug mode", action='store_true')
     parser.add_argument('--format', help='format style', type=str)
 
@@ -379,18 +389,19 @@ def _output_story_as_descriptions(story: list, lang: em.LangType, words: dict,
 
 
 def _output_story_as_info(story: list, lang: em.LangType, filename: str,
-        asfile: bool, is_debug: bool) -> bool: # pragma: no cover
+        asfile: bool, is_eachscenes: bool, is_debug: bool) -> bool: # pragma: no cover
     '''
     Story info:
         * total description characters
         * act type percents
     '''
-    # flags
-    # 各種db
-    tmp = _maintitle_from(story) \
-            + _charcount_from(story, lang) \
-            + _acttypes_percents_from(story) \
-            + _flags_info_from(story)
+    tmp = []
+    tmp = _info_data_from(_maintitle_from(story), story)
+    if is_eachscenes:
+        scenes = ps.scenes_gathered_from(story)
+        for v in scenes:
+            tmp.extend(_info_data_from(v))
+
     if asfile:
         return _output_to_file(tmp, filename, "_i", is_debug)
     else:

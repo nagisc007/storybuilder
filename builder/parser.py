@@ -139,6 +139,10 @@ def flag_linkinfo_of(val: [inf.Flag, inf.Deflag]) -> str:
         return ""
 
 
+def scenes_gathered_from(story: list) -> list:
+    return [v for v in ast.is_list(story) if isinstance(v, act.ActionGroup) and v.group_type is em.GroupType.SCENE]
+
+
 def story_filtered_by_priority(story: list, pri_filter: int) -> list:
     tmp = []
     for v in ast.is_list(story):

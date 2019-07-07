@@ -109,6 +109,22 @@ class PublicMethodsTest(unittest.TestCase):
             with self.subTest(v=v, expected=expected):
                 self.assertEqual(ps.description_from_tag(v), expected)
 
+    def test_scene_gathered_from(self):
+        w = wd.World("test")
+        data = [
+                ((w.scene("test"),),
+                    1),
+                ((w.scene("test"), w.scene("apple")),
+                    2),
+                ((w.chaptertitle("test"), self.taro.be()),
+                    0),
+                ]
+
+        for v, expected in data:
+            with self.subTest(v=v, expected=expected):
+                tmp = ps.scenes_gathered_from(v)
+                self.assertEqual(len(tmp), expected)
+
     def test_story_filtered_by_priority(self):
         taro = self.taro.be()
         hanako = self.hanako.be()
