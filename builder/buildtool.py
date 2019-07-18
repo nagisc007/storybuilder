@@ -165,7 +165,7 @@ def _descs_count_from_in(vals: [act.ActionGroup, list, tuple],
     return sum([_descs_count_from_(v, lang) for v in group])
 
 
-def _descs_formatted_estar_style(output: list) -> list:
+def _descs_formatted_estar_style(output: list) -> list: # pragma: no cover
     '''Estar style format
 
     NOTE:
@@ -182,12 +182,28 @@ def _descs_formatted_estar_style(output: list) -> list:
     return tmp
 
 
-def _descs_formatted_smartphone_style(output: list) -> list:
+def _descs_formatted_smartphone_style(output: list) -> list: # pragma: no cover
     tmp = []
     for v in ast.is_list(output):
         tmp.append(v + "\n")
     return tmp
 
+
+def _descs_formatted_webnovel_style(output: list) -> list: # pragma: no cover
+    '''Web novel style format
+
+    NOTE:
+        * 通常の文章は行を開けない
+        * 地の文から台詞に切り替わる、逆、は１行空行
+    '''
+    tmp = []
+    is_dialogue = False
+    for v in ast.is_list(output):
+        current_is_dialogue = v.startswith('「')
+        pre = "" if is_dialogue == current_is_dialogue else "\n"
+        tmp.append(pre + v)
+        is_dialogue = current_is_dialogue
+    return tmp
 
 def _descs_from_(val, lang: em.LangType, is_debug: bool) -> list:
     if isinstance(val, (act.ActionGroup, list, tuple)):
@@ -377,6 +393,8 @@ def _output_story_as_descriptions(story: list, lang: em.LangType, words: dict,
         desc_formatted = _descs_formatted_smartphone_style(descriptions)
     elif formattype in ('estar',):
         desc_formatted = _descs_formatted_estar_style(descriptions)
+    elif formattype in ('web', 'webnovel'):
+        desc_formatted = _descs_formatted_webnovel_style(descriptions)
     else:
         desc_formatted = descriptions
     tmp = _maintitle_from(story) \
