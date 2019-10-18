@@ -6,8 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+
+## [0.2.9] - 2019-10-18
+### TODO
+- each unit tests
 ### Changed
 - Refining total sources
+### Removed
+- Old builder
 
 ## [0.2.1] - 2019-07-07
 ### Added
@@ -162,7 +168,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Example story as usage.
 - Output story as markdown.
 
-[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/nagisc007/storybuilder/compare/v0.2.9...HEAD
+[0.2.9]: https://github.com/nagisc007/storybuilder/releases/v0.2.9
 [0.2.1]: https://github.com/nagisc007/storybuilder/releases/v0.2.1
 [0.2.0]: https://github.com/nagisc007/storybuilder/releases/v0.2.0
 [0.1.0]: https://github.com/nagisc007/storybuilder/releases/v0.1.0
