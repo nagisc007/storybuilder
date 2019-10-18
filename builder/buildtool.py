@@ -1,323 +1,228 @@
 # -*- coding: utf-8 -*-
-"""Building story.
+"""The build tool.
 """
 from __future__ import print_function
 import os
 import argparse
 import re
-from . import assertion as ast
-from . import action as act
-from . import analyzer as ayz
-from . import enums as em
-from . import info as inf
-from . import parser as ps
-from . import strutils as sutl
-from . import utils as utl
+from . import assertion
+from . import world as wd
+from .parser import outlines_from, scenarios_from, descriptions_from, story_filtered_by_priority, story_pronoun_replaced, description_connected, story_tag_replaced
+from .strutils import dict_sorted
+from .analyzer import Analyzer
 
 
-_BASEMENT = 10 # for estimated count
+class Build(object):
+    """The story build tools.
+    """
+    DEF_FILENAME = "story"
+    DEF_EXTENSION = "md" # NOTE: currently markdown only
+    DEF_BUILD_DIR = "build"
 
+    def __init__(self, story: wd.Story, world: wd.World):
+        self._story = Build._validatedStory(story)
+        self._words = Build._wordsFrom(world)
+        self._filename = Build.DEF_FILENAME
+        self._options = _options_parsed()
+        self._extension = Build.DEF_EXTENSION
+        self._builddir = Build.DEF_BUILD_DIR
+        # TODO: build dir を指定（変更）できるように
 
-# public methods
-def build_to_story(story: list, lang: em.LangType, words: dict) -> bool: # pragma: no cover
-    '''Build a story.
+    # methods
+    def output_story(self):
+        is_succeeded = True
+        options = self._options
+        filename = self._filename # TODO: ファイル名指定できるようにする
+        pri_filter = options.priority # TODO: priority指定できるようにする
+        formattype = options.format
+        is_debug = options.debug # NOTE: 現在デバッグモードはコンソール出力のみ
 
-    Args:
-        story (:list:obj:`BaseAction`): a story objects.
-    Returns:
-        True if complete to success, otherwise False.
-    '''
-    FILENAME = "story"
-    options = _options_parsed()
-    filename = options.filename if options.filename else FILENAME
-    is_succeeded = True
-    as_file = options.build
-    pri_filter = options.priority
-    formattype = options.format
-    is_debug = options.debug
-    is_eachscenes = options.scene
-    story_filtered = ps.story_filtered_by_priority(story, pri_filter)
+        ''' NOTE: converted story content
+                1) prioriy filter
+                2) pronoun replaced
+                3) description connected
+                4) tag replaced
+        '''
+        story_converted = story_tag_replaced(
+                    description_connected(
+                    story_pronoun_replaced(
+                    story_filtered_by_priority(self._story, pri_filter)
+                )), self._words)
 
-    if options.action:
-        if not _output_story_as_actinfo(story_filtered, lang, filename, as_file, is_debug):
-            is_succeeded = False
+        analyzer = Analyzer()
 
-    if options.description:
-        if not _output_story_as_descriptions(story_filtered, lang, words, filename, as_file, formattype,
-                is_debug):
-            is_succeeded = False
+        if options.outline:
+            is_succeeded = self.to_outline(story_converted, filename, is_debug)
+            if not is_succeeded:
+                print("ERROR: output a outline failed!!")
+                return is_succeeded
 
-    if options.info:
-        if not _output_story_as_info(story_filtered, lang, filename, as_file, is_eachscenes, is_debug):
-            is_succeeded = False
-    elif not _output_baseinfo(story_filtered, lang, is_debug):
-        is_succeeded = False
+        if options.scenario:
+            is_succeeded = self.to_scenario(story_converted, filename, is_debug)
+            if not is_succeeded:
+                print("ERROR: output a scenario failed!!")
+                return is_succeeded
 
-    return is_succeeded
+        if options.description:
+            is_succeeded = self.to_description(story_converted, filename, formattype,
+                    is_debug)
+            if not is_succeeded:
+                print("ERROR: output a description failed!!")
+                return is_succeeded
 
+        if options.action:
+            # TODO: action view output
+            pass
 
-# private methods
-def _actinfo_from_(val, lv: int, lang: em.LangType, is_debug: bool) -> list:
-    if isinstance(val, (act.ActionGroup, list, tuple)):
-        return _actinfo_from_in(val, lv, lang, is_debug)
-    elif isinstance(val, act.TagAction):
-        v = ps.actinfo_from_tag(val)
-        return [v] if v else []
-    elif isinstance(val, act.Action):
-        v = ps.actinfo_from_action(val, lv, lang, is_debug)
-        return [v] if v else []
-    else:
-        return []
+        if options.info:
+            # TODO: detail info output
+            is_succeeded = self.to_detail_info(story_converted, analyzer, filename,
+                    is_debug)
+            if not is_succeeded:
+                print("ERROR: output a detail info failed!!")
+                return is_succeeded
 
+        if options.chara:
+            # TODO: show character infos
+            pass
 
-def _actinfo_from_in(vals: [act.ActionGroup, list, tuple],
-        lv: int, lang: em.LangType, is_debug: bool) -> list:
-    tmp = []
-    is_actgroup = isinstance(vals, act.ActionGroup)
-    is_combine = is_actgroup and vals.group_type is em.GroupType.COMBI
-    group = vals.actions if is_actgroup else vals
-    deeplv = lv + 1 if is_combine else lv
-    for a in group:
-        tmp.extend(_actinfo_from_(a, deeplv, lang, is_debug))
-    if is_combine:
-        return [sutl.ul_tag_replaced(sutl.ul_tag_space_removed(tmp[0]))] + tmp[1:]
-    else:
+        if options.version:
+            # TODO: show version
+            pass
+
+        # total info (always display)
+        is_succeeded = self.to_total_info(story_converted, analyzer)
+
+        return is_succeeded
+
+    def to_outline(self, story: wd.Story, filename: str, is_debug: bool):
+        is_succeeded = True
+        res = Build._outline_formatted(outlines_from(story))
+        if is_debug:
+            # out to console
+            for v in res:
+                print(v)
+        else:
+            is_succeeded = Build._out_to_file(res, filename, "_out", self._extension,
+                    self._builddir)
+        return is_succeeded
+
+    def to_scenario(self, story: wd.Story, filename: str, is_debug: bool):
+        is_succeeded = True
+        res = Build._scenario_formatted(scenarios_from(story))
+        if is_debug:
+            # out to console
+            for v in res:
+                print(v)
+        else:
+            is_succeeded = Build._out_to_file(res, filename, "_sc", self._extension,
+                    self._builddir)
+        return is_succeeded
+
+    def to_description(self, story: wd.Story, filename: str, formattype: str,
+            is_debug: bool):
+        is_succeeded = True
+        res = Build._description_formatted(descriptions_from(story), formattype)
+        if is_debug:
+            # out to console
+            for v in res:
+                print(v)
+        else:
+            is_succeeded = Build._out_to_file(res, filename, "", self._extension,
+                    self._builddir)
+        return is_succeeded
+
+    def to_total_info(self, story: wd.Story, analyzer: Analyzer):
+        is_succeeded = True
+        charcounts = analyzer.characters_count(story)
+        for v in charcounts:
+            print(v)
+        return is_succeeded
+
+    def to_detail_info(self, story: wd.Story, analyzer: Analyzer, filename: str,
+            is_debug: bool):
+        is_succeeded = True
+        # TODO: 最初にタイトルから章やシーンリスト
+        # TODO: 文字数に続いて各シーンの簡易情報
+        # TODO: 各分析情報
+        scenes_characters = analyzer.characters_count_each_scenes(story)
+        act_percents = analyzer.action_percent(story)
+        res = scenes_characters + ["\n---- Actions ----\n"] + act_percents
+        if is_debug: # out to console
+            for v in res:
+                print(v)
+        else:
+            is_succeeded = Build._out_to_file(res, filename, "_info", self._extension,
+                    self._builddir)
+        return is_succeeded
+
+    # private
+    def _validatedStory(story: wd.Story):
+        if isinstance(story, wd.Story):
+            return story
+        else:
+            raise AssertionError("Must be data type of 'Story'!")
+        return False
+
+    def _wordsFrom(world: wd.Word):
+        '''To create the world dictionary.
+        '''
+        tmp = {}
+        # persons and charas
+        for k, v in assertion.is_instance(world, wd.World).items():
+            if k in ('stage', 'day', 'time', 'item', 'word'):
+                continue
+            if isinstance(v, wd.Chara):
+                tmp[k] = v.name
+            elif isinstance(v, wd.Person):
+                tmp['n_' + k] = v.name
+                tmp['fn_' + k] = v.firstname
+                tmp['ln_' + k] = v.lastname
+        for k, v in world.stage.items():
+            tmp['st_' + k] = v.name
+        for k, v in world.item.items():
+            tmp['t_' + k] = v.name
+        for k, v in world.word.items():
+            tmp['w_' + k] = v.name
+        return dict_sorted(tmp)
+
+    def _outline_formatted(outlines: list):
+        tmp = []
+        for v in outlines:
+            tmp.append(v[0] + ": " + v[1])
         return tmp
 
+    def _scenario_formatted(scenarios: list):
+        from .scene import ScenarioType
+        tmp = []
+        for v in scenarios:
+            if v[0] is ScenarioType.DIRECTION:
+                tmp.append("　　" + v[1])
+            else:
+                tmp.append(v[1])
+        return tmp
 
-def _acttypes_percents_from(story: list) -> list:
-    acttypes = ayz.count_acttypes(story)
-    total = ayz.count_acts(story)
-    def act_percent(char, atype):
-        return "- {}: {:.2f}%".format(
-                char,
-                acttypes[atype] / total * 100 if total else 0
-                )
-    return [
-            "## Actions",
-            f"- Total: {total}",
-            act_percent("be", em.ActType.BE),
-            act_percent("behav", em.ActType.BEHAV),
-            act_percent("deal", em.ActType.DEAL),
-            act_percent("do", em.ActType.DO),
-            act_percent("explain", em.ActType.EXPLAIN),
-            act_percent("feel", em.ActType.FEEL),
-            act_percent("look", em.ActType.LOOK),
-            act_percent("move", em.ActType.MOVE),
-            act_percent("talk", em.ActType.TALK),
-            act_percent("think", em.ActType.THINK),
-            ]
+    def _description_formatted(descs: list, formattype: str):
+        tmp = descs
+        # TODO: format を選んで変更
+        return tmp
 
-
-def _charcount_from(story: list, lang: em.LangType,
-        rows: int=20, columns: int=20) -> list:
-    total = _descs_count_from_in(story, lang)
-    estimated = _estimated_description_count_from(story, lang)
-    manupp = _manupaper_counts_from(story, lang, rows, columns)
-    return [
-            "## Characters",
-            f"- Total: {total}",
-            f"- Estimated: {estimated}",
-            f"- Manupapers: {manupp}",
-            ]
+    def _out_to_file(data: list, filename: str, suffix: str, extention: str,
+            builddir: str):
+        is_succeeded = True
+        if not os.path.isdir(builddir):
+            os.makedirs(builddir)
+        fullpath = os.path.join(builddir, "{}{}.{}".format(
+            assertion.is_str(filename), assertion.is_str(suffix),
+            assertion.is_str(extention)
+            ))
+        with open(fullpath, 'w') as f:
+            for v in data:
+                f.write(f"{v}\n")
+        return is_succeeded
 
 
-def _contents_title_from(story: list) -> list:
-    titles = ps.titles_retrieved_from(story)
-    tmp = []
-    nums = [0, 0, 0]
-    prevlv = 1
-    def getnum(curlv, prev):
-        if curlv > prev:
-            nums[curlv - 1] = 0
-        nums[curlv - 1] += 1
-        return nums[curlv - 1]
-
-    for t in titles:
-        lv = ps.title_level_of(t.tag)
-        tmp.append(f"{'    ' * (lv - 1)}{getnum(lv, prevlv)}.{t.info}")
-    return tmp
-
-
-def _descs_combined_with_validated(val: list, lang: em.LangType) -> str:
-    return _description_validated("".join(val), lang)
-
-
-def _descs_converted_with_word_tags(vals: list, words: dict) -> list:
-    return [sutl.str_replaced_tag(v, words) for v in vals]
-
-
-def _descs_count_from_(val, lang: em.LangType) -> int:
-    if isinstance(val, (act.ActionGroup, list, tuple)):
-        return _descs_count_from_in(val, lang)
-    elif isinstance(val, act.TagAction):
-        return 0
-    elif isinstance(val, act.Action):
-        return len(sutl.str_space_chopped(
-            ps.description_from_action(val, lang)))
-    else:
-        return 0
-
-
-def _descs_count_from_in(vals: [act.ActionGroup, list, tuple],
-        lang: em.LangType) -> int:
-    group = vals.actions if isinstance(vals, act.ActionGroup) else vals
-    return sum([_descs_count_from_(v, lang) for v in group])
-
-
-def _descs_formatted_estar_style(output: list) -> list: # pragma: no cover
-    '''Estar style format
-
-    NOTE:
-        * 通常の文章なら次に１行空行
-        * 地の文から台詞に切り替わる、逆、は２行空行
-    '''
-    tmp = []
-    is_dialogue = False
-    for v in ast.is_list(output):
-        current_is_dialogue = v.startswith('「')
-        pre = "" if is_dialogue == current_is_dialogue else "\n"
-        tmp.append(pre + v + "\n")
-        is_dialogue = current_is_dialogue
-    return tmp
-
-
-def _descs_formatted_smartphone_style(output: list) -> list: # pragma: no cover
-    tmp = []
-    for v in ast.is_list(output):
-        tmp.append(v + "\n")
-    return tmp
-
-
-def _descs_formatted_webnovel_style(output: list) -> list: # pragma: no cover
-    '''Web novel style format
-
-    NOTE:
-        * 通常の文章は行を開けない
-        * 地の文から台詞に切り替わる、逆、は１行空行
-    '''
-    tmp = []
-    is_dialogue = False
-    for v in ast.is_list(output):
-        current_is_dialogue = v.startswith('「')
-        pre = "" if is_dialogue == current_is_dialogue else "\n"
-        tmp.append(pre + v)
-        is_dialogue = current_is_dialogue
-    return tmp
-
-def _descs_from_(val, lang: em.LangType, is_debug: bool) -> list:
-    if isinstance(val, (act.ActionGroup, list, tuple)):
-        return _descs_from_in(val, lang, is_debug)
-    elif isinstance(val, act.TagAction):
-        v = ps.description_from_tag(val)
-        return [v] if v else []
-    elif isinstance(val, act.Action):
-        desc_conv = lambda x: _description_validated(
-                ps.description_from_action(x, lang), lang)
-        v = sutl.str_replaced_tag(desc_conv(val),
-                val.subject.calling) if hasattr(val.subject, 'calling') else desc_conv(val)
-        return [v] if v else []
-    else:
-        return []
-
-
-def _descs_from_in(vals: [act.ActionGroup, list, tuple],
-        lang: em.LangType, is_debug: bool) -> list:
-    group = vals.actions if isinstance(vals, act.ActionGroup) else vals
-    is_combine = isinstance(vals, act.ActionGroup) and vals.group_type is em.GroupType.COMBI
-    tmp = []
-    for v in group:
-        tmp.extend(_descs_from_(v, lang, is_debug))
-    res = [_descs_combined_with_validated(tmp, lang)] if is_combine else tmp
-    return [sutl.paragraph_head_inserted(v, lang) for v in res]
-
-
-def _descs_validated_in(vals: list) -> bool:
-    for v in vals:
-        if sutl.is_conversion_attempt(v):
-            try:
-                raise ValueError(f"Tags convertion error! {v}")
-            except ValueError as e:
-                print(e)
-            return False
-    return True
-
-
-def _description_validated(target: str, lang: em.LangType) -> str:
-    return sutl.punctuation_duplicated_chopped(
-            sutl.double_comma_chopped(
-                sutl.extraend_chopped(
-                    sutl.extraspace_chopped(
-            target,
-            lang), lang), lang), lang)
-
-
-def _estimated_description_count_from(story: list, lang: em.LangType) -> int:
-    acttypes = ayz.count_acttypes(story)
-    return sum([
-        acttypes[em.ActType.BE] * 1,
-        acttypes[em.ActType.BEHAV] * 1,
-        acttypes[em.ActType.DEAL] * 2,
-        acttypes[em.ActType.DO] * 2,
-        acttypes[em.ActType.EXPLAIN] * 4,
-        acttypes[em.ActType.FEEL] * 2,
-        acttypes[em.ActType.LOOK] * 4,
-        acttypes[em.ActType.MOVE] * 2,
-        acttypes[em.ActType.TALK] * 4,
-        acttypes[em.ActType.THINK] * 4,
-            ]) * _BASEMENT
-
-
-def _flags_info_from(story: list):
-    flags = ps.subjects_retrieved_from(story, inf.Flag)
-    # TODO: check flag and deflag, so display relations
-    #deflags = ps.subjects_retrieved_from(story, inf.Deflag)
-    return ["## Flags"] + [ps.flag_linkinfo_of(v) for v in flags]
-
-
-def _info_data_from(title: str, story: list, lang: em.LangType) -> list:
-    return ["### Information ###",
-            title] \
-            + _charcount_from(story, lang) \
-            + _acttypes_percents_from(story) \
-            + _flags_info_from(story)
-
-
-def _manupaper_counts_from(story: list, lang: em.LangType,
-        rows: int, columns: int) -> list:
-    _rows = _manupaper_rows_from_in(story, lang, columns)
-    _papers = _rows / rows
-    return f"{_papers:0.3f} ({_rows:0.2f}/{rows} x {columns})"
-
-
-def _manupaper_rows_from_(val, lang: em.LangType, columns: int) -> int:
-    if isinstance(val, act.ActionGroup) and val.group_type is em.GroupType.COMBI:
-        return utl.int_ceiled(_manupaper_rows_from_in(val, lang, columns), columns)
-    elif isinstance(val, (act.ActionGroup, list, tuple)):
-        return _manupaper_rows_from_in(val, lang, columns)
-    elif isinstance(val, act.TagAction):
-        return 0
-    elif isinstance(val, act.Action):
-        return utl.int_ceiled(_descs_count_from_(val, lang), columns)
-    else:
-        return 0
-
-
-def _manupaper_rows_from_in(vals: [act.ActionGroup, list, tuple],
-        lang: em.LangType, columns: int) -> int:
-    group = vals.actions if isinstance(vals, act.ActionGroup) else vals
-    return sum(_manupaper_rows_from_(v, lang, columns) for v in group)
-
-
-def _maintitle_from(story: list) -> list:
-    titles = ps.titles_retrieved_from(story)
-    for t in titles:
-        if ps.title_level_of(t.tag) == 1:
-            return [f"{t.info}\n==="]
-    else:
-        return [""]
-
-
+# privates
 def _options_parsed(): # pragma: no cover
     '''Get and setting a commandline option.
 
@@ -326,16 +231,25 @@ def _options_parsed(): # pragma: no cover
     '''
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-a', '--action', help="output as action data", action='store_true')
-    parser.add_argument('-b', '--build', help="build and output as a file", action='store_true')
+    parser.add_argument('-o', '--outline', help="output the outline", action='store_true')
+    parser.add_argument('-s', '--scenario', help="output the scenario", action='store_true')
+    parser.add_argument('-d', '--description', help="output the novel", action='store_true')
+    # TODO: action view
+    parser.add_argument('-a', '--action', help="output the monitoring action", action='store_true')
+    # TODO: detail info
+    parser.add_argument('-i', '--info', help="output adding the detail info", action='store_true')
     # TODO: character info
-    parser.add_argument('-d', '--description', help="output as descriptions", action='store_true')
-    parser.add_argument('-i', '--info', help="display with informations", action='store_true')
-    parser.add_argument('-f', '--filename', help="advanced output file name", type=str)
-    parser.add_argument('-p', '--priority', help="output an action filtered priorities", type=int, default=act.Action.PRIORITY_DEFAULT)
-    parser.add_argument('-s', '--scene', help="each scene info", action='store_true')
+    parser.add_argument('-c', '--chara', help="output characters info", action='store_true')
+    # TODO: help
+    # TODO: version info
+    parser.add_argument('-v', '--version', help="display this version", action='store_true')
+    # TODO: advanced file name
+    parser.add_argument('-f', '--file', help="advanced output the file name", type=str)
+    # TODO: priority setting
+    parser.add_argument('-p', '--priority', help="output filtered by the priority", type=int, default=wd.World.DEF_PRIORITY)
     parser.add_argument('--debug', help="with a debug mode", action='store_true')
-    parser.add_argument('--format', help='format style', type=str)
+    # TODO: output format
+    parser.add_argument('--format', help='output the format style', type=str)
 
     # get result
     args = parser.parse_args()
@@ -343,117 +257,3 @@ def _options_parsed(): # pragma: no cover
     return (args)
 
 
-def _output_baseinfo(story: list, lang: em.LangType,
-        is_debug: bool) -> bool: # pragma: no cover
-    '''Output a basic information.
-
-    Output infos:
-        * total description characters
-        * act type percent
-    '''
-    tmp = _charcount_from(story, lang) + _acttypes_percents_from(story)
-    return _output_to_console(tmp, is_debug)
-
-
-def _output_story_as_actinfo(story: list, lang: em.LangType, filename: str, asfile: bool,
-        is_debug: bool) -> bool: # pragma: no cover
-    '''
-    Action infos:
-        * action infos
-        * flags info
-    '''
-    # contents heads
-    actinfos = _actinfo_from_in(story, 0, lang, is_debug)
-    tmp = _maintitle_from(story) \
-            + actinfos \
-            + _flags_info_from(story)
-    if asfile:
-        return _output_to_file(tmp, filename, "_a", is_debug)
-    else:
-        return _output_to_console(tmp, is_debug)
-
-
-def _output_story_as_descriptions(story: list, lang: em.LangType, words: dict,
-        filename: str,
-        asfile: bool, formattype: str, is_debug: bool) -> bool: # pragma: no cover
-    '''
-    Descriptions:
-        * descriptions
-    '''
-    # contents heads
-    descriptions = _descs_converted_with_word_tags(
-            _descs_from_in(story, lang, is_debug),
-            words)
-    # check description
-    if not _descs_validated_in(descriptions):
-        return False
-
-    desc_formatted = []
-    if formattype in ('phone', 'smart', 'smartphone'):
-        desc_formatted = _descs_formatted_smartphone_style(descriptions)
-    elif formattype in ('estar',):
-        desc_formatted = _descs_formatted_estar_style(descriptions)
-    elif formattype in ('web', 'webnovel'):
-        desc_formatted = _descs_formatted_webnovel_style(descriptions)
-    else:
-        desc_formatted = descriptions
-    tmp = _maintitle_from(story) \
-            + _contents_title_from(story) \
-            + desc_formatted
-    if asfile:
-        return _output_to_file(tmp, filename, "", is_debug)
-    else:
-        return _output_to_console(tmp, is_debug)
-
-
-def _output_story_as_info(story: list, lang: em.LangType, filename: str,
-        asfile: bool, is_eachscenes: bool, is_debug: bool) -> bool: # pragma: no cover
-    '''
-    Story info:
-        * total description characters
-        * act type percents
-    '''
-    tmp = []
-    tmp = _info_data_from(_maintitle_from(story), story, lang)
-    if is_eachscenes:
-        scenes = ps.scenes_gathered_from(story)
-        for v in scenes:
-            tmp.extend(_info_data_from(_scene_title_of(v), [v], lang))
-    if asfile:
-        return _output_to_file(tmp, filename, "_i", is_debug)
-    else:
-        return _output_to_console(tmp, is_debug)
-
-
-def _output_to_console(data: list, is_debug: bool) -> bool:
-    is_succeeded = True
-    idx = 0
-    for d in data:
-        tmp = "{idx}: {d}" if is_debug else d
-        print(f"{tmp}")
-        idx += 1
-    return is_succeeded
-
-
-def _output_to_file(data: list, filename: str, suffix: str, is_debug: bool) -> bool:
-    EXT_MARKDOWN = 'md' # TODO: select file type
-    BUILD_DIR = 'build' # TODO: select build dir
-    if not os.path.isdir(BUILD_DIR):
-        os.makedirs(BUILD_DIR)
-    fullpath = os.path.join(BUILD_DIR, "{}{}.{}".format(
-        ast.is_str(filename), ast.is_str(suffix), EXT_MARKDOWN))
-    is_succeeded = True
-    with open(fullpath, 'w') as f:
-        idx = 0
-        for d in data:
-            tmp = "{idx}: {d}" if is_debug else d
-            f.write(f"{tmp}\n")
-            idx += 1
-
-    return is_succeeded
-
-def _scene_title_of(val: act.ActionGroup) -> str:
-    if isinstance(val, act.ActionGroup) and val.group_type is em.GroupType.SCENE:
-        return f'*{val.actions[0].info}*'
-    else:
-        return "*Scene*"

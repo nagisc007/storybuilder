@@ -1,126 +1,133 @@
 # -*- coding: utf-8 -*-
-"""Define an action class.
+"""Define action class.
 """
-from . import assertion as ast
-from . import description as ds
-from . import enums as em
-from . import baseaction as ba
-from . import basesubject as bs
+from enum import Enum
+from . import assertion
+from .basedata import BaseData
+from .description import Description, NoDesc, DescType
+from .flag import Flag, NoFlag, NoDeflag
+from .basesubject import NoSubject
+from .person import Person
+from .chara import Chara
+from .who import Who
 
 
-class Action(ba.BaseAction):
-    """A general action class.
-
-    Attributes:
-        act_type (:enum:`ActType`): an action category type.
-        auxverb (:enum:`AuxVerb`): an auxiliary verb.
-        description (:obj:`BaseDesc`): an associated description.
-        objects (:tuple:obj:`BaseSubject`): an action objects.
-        priority (int): an action priotiry.
-        subject (:obj:`BaseSubject`): an action subject.
-        verb (str): an action verb.
+class ActType(Enum):
+    """Action type.
     """
-    PRIORITY_DEFAULT = 5
-    PRIORITY_MAX = 10
-    PRIORITY_MIN = 0
+    ACT = "act" # 全般
+    MOVE = "move" # 動かす
+    COME = "come" # 出現
+    GO = "go" # 消去
+    LOOK = "look" # 描画
+    BE = "be" # 外部状態
+    THINK = "think" # 内部状態
+    HAVE = "have" # 所有変更
+    TALK = "talk" # 音声
 
-    def __init__(self, act_type: em.ActType, subject: bs.BaseSubject, verb: str, auxverb: em.AuxVerb,
-            objects: tuple):
-        """
-        Args:
-            act_type (:enum:`ActType`): an action type.
-            subject (:obj:`BaseSubject`): a subject.
-            verb (str): an action verbs.
-            auxverb (:enum:`AuxVerb`): an auxiliary verb.
-            objects (:tuple:obj:`_BaseSubject`): objects.
-        """
-        super().__init__(act_type)
-        self.auxverb = ast.is_instance(auxverb, em.AuxVerb)
-        self.priority = Action.PRIORITY_DEFAULT
-        self.description = ds.NoDesc()
-        self.objects = objects # check and build data
-        self.subject = ast.is_instance(subject, bs.BaseSubject)
-        self.verb = ast.is_str(verb)
 
-    def d(self, *args):
-        return self.desc(*args)
+class Action(BaseData):
+    """Data type of an action.
+    """
+    DEF_PRIORITY = 5
+    MAX_PRIORITY = 10
+    MIN_PRIORITY = 0
 
-    def desc(self, *args):
-        self.description = ds.Desc(*args)
+    def __init__(self, subject: [Person, Chara, None],
+            outline: str="", act_type: ActType=ActType.ACT):
+        super().__init__("__action__")
+        _subject_is_str = isinstance(subject, str)
+        # TODO: subjectが文字列だったらsubjectにはWhoを入れてそのままoutlineにスライドさせる
+        self._subject = Who() if _subject_is_str else Action._validatedSubject(subject)
+        self._outline = assertion.is_str(subject if _subject_is_str else outline)
+        self._act_type = assertion.is_instance(act_type, ActType)
+        self._description = NoDesc()
+        self._flag = NoFlag()
+        self._deflag = NoDeflag()
+        self._priority = Action.DEF_PRIORITY
+
+    def inherited(self, subject=None, outline=None, desc=None):
+        return Action(subject if subject else self.subject,
+                outline if outline else self.outline,
+                self.act_type) \
+                    .flag(self.getFlag()).deflag(self.getDeflag()) \
+                    ._setDescription(desc if desc else self.description) \
+                    .setPriority(self.priority)
+
+    @property
+    def act_type(self): return self._act_type
+
+    @property
+    def subject(self): return self._subject
+
+    @property
+    def outline(self): return self._outline
+
+    @property
+    def description(self): return self._description
+
+    @property
+    def priority(self): return self._priority
+
+    def setPriority(self, pri: int):
+        self._priority = pri
         return self
 
-    def emphasis(self, *args):
-        # TODO: level setting
-        self.description = ds.Desc(*args, desc_type=em.DescType.EMPHASIS1)
+    def flag(self, val: [str, NoFlag]):
+        self._flag = NoFlag() if isinstance(val, NoFlag) else assertion.is_str(val)
         return self
+
+    def deflag(self, val: [str, NoDeflag]):
+        self._deflag = NoDeflag() if isinstance(val, NoDeflag) else assertion.is_str(val)
+        return self
+
+    def getFlag(self): return self._flag
+
+    def getDeflag(self): return self._deflag
 
     def omit(self):
-        """Set minimum priority.
-        """
-        return self.pri(Action.PRIORITY_MIN)
-
-    def pre(self, *args):
-        self.description = ds.Desc(*args, desc_type=em.DescType.PLAIN)
+        self._priority = Action.MIN_PRIORITY
         return self
 
-    def pri(self, pri):
-        self.priority = ast.is_between(pri, Action.PRIORITY_MAX, Action.PRIORITY_MIN)
+    # methods
+    def desc(self, *args):
+        self._description = Description(*args, desc_type=DescType.DESC)
         return self
 
-    def t(self, *args):
-        return self.tell(*args)
+    def d(self, *args): return self.desc(*args)
 
     def tell(self, *args):
-        self.description = ds.Desc(*args, desc_type=em.DescType.DIALOGUE)
+        self._description = Description(*args, desc_type=DescType.DIALOGUE)
         return self
 
+    def t(self, *args): return self.tell(*args)
 
-class ActionGroup(ba.BaseAction):
-    """Action grouping class.
-
-    Attributes:
-        act_type (:enum:`ActType`): a type of this group.
-        actions (:tuple:obj:`Action`): actions.
-        group_type (:enum:`GroupType`): a type of this group.
-        lang (:enum:`LangType`): a language type.
-        priority (int): a group priority.
-    """
-    def __init__(self, *args: Action, group_type: em.GroupType, lang: em.LangType=em.LangType.JPN):
-        """
-        Args:
-            *args (:tuple:obj:`Action`): actions
-            group_type (:enum:`GroupType`): a group type.
-            lang (:enum:`LangType`, optional): a language type.
-        """
-        super().__init__(em.ActType.GROUP)
-        self.actions = args # TODO: check and build data
-        self.group_type = ast.is_instance(group_type, em.GroupType)
-        self.lang = ast.is_instance(lang, em.LangType)
-        self.priority = Action.PRIORITY_DEFAULT
-
-    def inherited(self, *args):
-        return ActionGroup(*args,
-                group_type=self.group_type,
-                lang=self.lang)
-
-    def omit(self):
-        return self.pri(Action.PRIORITY_MIN)
-
-    def pri(self, pri: int):
-        self.priority = ast.is_between(pri, Action.PRIORITY_MAX, Action.PRIORITY_MIN)
+    def comp(self, *args):
+        self._description = Description(*args, desc_type=DescType.COMPLEX)
         return self
 
+    def same(self, desc_type: str='d'):
+        if desc_type in ('t', 'tell'):
+            self.tell(self.outline)
+        elif desc_type in ('c', 'comp'):
+            self.comp(self.outline)
+        else:
+            self.desc(self.outline)
+        return self
 
-class TagAction(ba.BaseAction):
-    """Action class for tag specialized.
+    # private
+    def _validatedSubject(sub: [str, Person, Chara, None]):
+        if isinstance(sub, str):
+            return Who()
+        elif isinstance(sub, (Person, Chara)):
+            return sub
+        else:
+            return NoSubject()
 
-    Attributes:
-        act_type (:enum:`ActType`): a type of this tag.
-        tag (:enum:`TagType`): a tag type.
-        info (str): a tag information.
-    """
-    def __init__(self, tag: em.TagType, info: str=""):
-        super().__init__(em.ActType.TAG)
-        self.tag = ast.is_instance(tag, em.TagType)
-        self.info = ast.is_str(info)
+    def _setDescription(self, descs):
+        if isinstance(descs, Description):
+            self._description = descs
+        else:
+            self._description = Description(*descs)
+        return self
 

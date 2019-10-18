@@ -1,48 +1,46 @@
 # -*- coding: utf-8 -*-
-"""Define descriptions.
+"""Define description class.
 """
-from . import assertion as ast
-from . import basedescription as bd
-from . import enums as em
+from enum import Enum
+from . import assertion
+from .basedata import BaseData
 
 
-class Desc(bd.BaseDesc):
-    """Description class.
-
-    Attributes:
-        desc_type (:enum:`DescType`): a description type.
-        data (:tuple:str): description data.
+class DescType(Enum):
+    """Description type.
     """
-    def __init__(self, *args, desc_type: em.DescType=em.DescType.DESCRIPTION):
-        """
-        Args:
-            *args ([str, tuple]): description strings.
-            desc_type (:enum:`DescType`, optional): a description type.
-        """
-        from . import parser
-        super().__init__(desc_type)
-        self.data = parser.str_to_tuple_from_args(args)
+    DESC = "description"
+    DIALOGUE = "dialogue"
+    COMPLEX = "complex"
 
 
-class DescGroup(bd.BaseDesc):
-    """Description group class.
-
-    Attributes:
-        desc_type (:enum:`DescType`): a group type.
-        descriptions (:tuple:`Desc`): descriptions.
+class Description(BaseData):
+    """Data type of a description.
     """
-    def __init__(self, *args: bd.BaseDesc, base_type: em.DescType=em.DescType.DESCRIPTION):
-        """
-        Args:
-            *args (:obj:`BaseDesc`): descriptions in this container.
-            base_type (:enum:`DescType`): a basic type for this container.
-        """
-        super().__init__(base_type)
-        self.descriptions = args # TODO: check and build data
+    def __init__(self, *args, desc_type: DescType=DescType.DESC):
+        super().__init__("__desc__")
+        self._descs = Description._validatedStrings(args)
+        self._desc_type = assertion.is_instance(desc_type, DescType)
+
+    @property
+    def descs(self): return self._descs
+
+    @property
+    def desc_type(self): return self._desc_type
+
+    # privates
+    def _validatedStrings(args):
+        if args:
+            if isinstance(args, str):
+                return (args,)
+            else:
+                return tuple(assertion.is_list(args))
+        else:
+            return ()
 
 
-class NoDesc(bd.BaseDesc):
-    """Specific description that have nothing.
+class NoDesc(Description):
+    """Nothing data.
     """
     def __init__(self):
-        super().__init__(em.DescType.NONE)
+        super().__init__()

@@ -1,32 +1,37 @@
 # -*- coding: utf-8 -*-
-"""Define stage subject.
+"""Define stage class.
 """
-from . import assertion as ast
-from . import subject as sb
+from . import assertion
+from .basedata import BaseData
+from .item import Item
 
 
-class Stage(sb.Subject):
-    """Stage class.
-
-    Attributes:
-        name (str): a stage name.
-        note (str): a short description.
+class Stage(BaseData):
+    """Data type of a stage.
     """
-    def __init__(self, name: str, note: str=""):
+    def __init__(self, name: str, note: str="nothing"):
+        super().__init__(name)
+        self._note = assertion.is_str(note)
+        self._items = ()
+
+    @property
+    def items(self): return self._items
+
+    @property
+    def note(self): return self._note
+
+    def add(self, *args):
         """
         Args:
-            name (str): a stage name.
-            note (str, optional): a short description.
+            args (:obj:`Item`): a item object.
         """
-        super().__init__(name, note)
+        self._items = self._items + Stage._validatedItems(*args)
+        return self
 
-    def move(self, *args, verb: str="move", is_desc: bool=True):
-        return self.act(*args, act_type=sb.em.ActType.MOVE, verb=verb, is_desc=is_desc)
-
-    def inherited(self, name: str=None, note: str=None):
-        return Stage(name if name else self.name, note if note else self.note)
-
-    def insided(self, name: str=None, note: str=None):
-        return self.inherited(name, note)
-
+    # privates
+    def _validatedItems(*args):
+        for a in args:
+            if not isinstance(a, Item):
+                raise AssertionError("Must be data type 'Item'!")
+        return args
 

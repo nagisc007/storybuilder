@@ -1,23 +1,19 @@
 # -*- coding: utf-8 -*-
-"""Define a base subject class.
+"""Define base subject class.
 """
-from . import assertion as ast
-from . import sobject as so
+from . import assertion
+from .basedata import BaseData
 
 
-class BaseSubject(so.SObject):
-    """Base subject class.
-
-    Attributes:
-        name (str): a name of this subject.
-        note (str): a short description.
+class BaseSubject(BaseData):
+    """Data type of a subject.
     """
-    def __init__(self, name: str, note: str):
-        """
-        Args:
-            name (str): the name or title.
-            note (str): a short description.
-        """
-        self.name = ast.is_str(name)
-        self.note = ast.is_str(note)
+    def __init__(self, name: str):
+        super().__init__(name)
 
+
+class NoSubject(BaseSubject):
+    """Nothing data.
+    """
+    def __init__(self):
+        super().__init__("__noone__")

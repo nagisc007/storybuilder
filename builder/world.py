@@ -1,204 +1,225 @@
 # -*- coding: utf-8 -*-
-"""Define story manager class.
+"""Define class that world management.
 """
 from typing import Any
-from . import action as act
-from . import assertion as ast
-from . import basesubject as bs
-from . import day as dy
-from . import enums as em
-from . import info as inf
-from . import item as itm
-from . import person as psn
-from . import stage as stg
-from . import buildtool as btool
+from . import assertion
+from .basedata import BaseData
+from .chapter import Chapter
+from .episode import Episode
+from .story import Story
+from .scene import Scene
+from .person import Person
+from .chara import Chara
+from .stage import Stage
+from .item import Item
+from .day import Day
+from .time import Time
+from .item import Item
+from .word import Word
+from . import action as ac
+from .flag import Flag
+from .combaction import CombAction
 
 
-# classes
-class AuxverbDict(object):
-    """Utility dictionary for auxiliary verbs.
-    """
-    def __init__(self):
-        self.can = em.AuxVerb.CAN
-        self.may = em.AuxVerb.MAY
-        self.must = em.AuxVerb.MUST
-        self.none = em.AuxVerb.NONE
-        self.should = em.AuxVerb.SHOULD
-        self.want = em.AuxVerb.WANT
-        self.will = em.AuxVerb.WILL
-
-
-class SDict(dict):
+class UtilityDict(dict):
     """Useful dictionary class.
     """
     __getattr__ = dict.__getitem__
     __setattr__ = dict.__setitem__
 
 
-class TagManager(object):
-    """Utility class for tag management.
+class World(UtilityDict):
+    """World class.
     """
-    def br(self) -> act.TagAction:
-        return act.TagAction(em.TagType.BR)
+    DEF_PRIORITY = ac.Action.DEF_PRIORITY
+    MAX_PRIORITY = ac.Action.MAX_PRIORITY
+    MIN_PRIORITY = ac.Action.MIN_PRIORITY
 
-    def comment(self, note: str) -> act.TagAction:
-        return act.TagAction(em.TagType.COMMENT, note)
-
-    def hr(self) -> act.TagAction:
-        return act.TagAction(em.TagType.HR)
-
-    def symbol(self, info: str) -> act.TagAction:
-        return act.TagAction(em.TagType.SYMBOL, info)
-
-    def title(self, title: str, lv: int=1) -> act.TagAction:
-        tag = em.TagType.HEAD1 if lv <= 1 else (em.TagType.HEAD2 if lv == 2 else em.TagType.HEAD3)
-        return act.TagAction(tag, title)
-
-
-class World(SDict):
-    """Story management class.
-
-    Attributes:
-        aux (:obj:`AuxverbDict`): auxiliary dictionary.
-        day (:obj:`SDict`): day objects dictionary.
-        deflag (:obj:`SDict`): deflag objects dictionary.
-        flag (:obj:`SDict`): flag objects dictionary.
-        i (:obj:`SDict`): info objects dictionary.
-        lang (:enum:`LangType`): a language type.
-        name (str): a name.
-        note (str): a short description.
-        stage (:obj:`SDict`): stage object dictionary.
-        tag (:obj:`TagManager`): tag management.
-    """
-    def __init__(self, name: str, note: str="", lang: em.LangType=em.LangType.JPN):
+    def __init__(self):
         super().__init__()
-        self.aux = AuxverbDict()
-        self.day = SDict()
-        self.deflag = SDict()
-        self.flag = SDict()
-        self.i = SDict()
-        self.lang = ast.is_instance(lang, em.LangType)
-        self.name = ast.is_str(name)
-        self.note = ast.is_str(note)
-        self.stage = SDict()
-        self.tag = TagManager()
+        self.day = UtilityDict()
+        self.item = UtilityDict()
+        self.stage = UtilityDict()
+        self.time = UtilityDict()
+        self.word = UtilityDict()
+        # TODO: priorityを先か後で調整できるようにする
+        self._priority = World.DEF_PRIORITY
+
+    # tag
+    def br(self):
+        return self
+
+    def comment(self):
+        return self
+
+    def hr(self):
+        return self
+
+    # creations
+    def chapter(self, *args, **kwargs):
+        '''To create a chapter.
+        '''
+        return Chapter(*args, **kwargs)
+
+    def episode(self, *args, **kwargs):
+        '''To create a episode.
+        '''
+        return Episode(*args, **kwargs)
+
+    def scene(self, *args, **kwargs):
+        '''To create a scene.
+        '''
+        return Scene(*args, **kwargs)
+
+    def story(self, *args, **kwargs):
+        '''To create a story.
+        '''
+        return Story(*args, **kwargs)
+
+    # db management
+    def append_chara(self, key: str, val: Any):
+        return self._appendOne(key, val, self, Chara)
 
     def append_day(self, key: str, val: Any):
-        return self._append_one(key, val, self.day, dy.Day)
-
-    def append_flag(self, key: str, val: Any):
-        self._append_one(key, val, self.flag, inf.Flag)
-        return self._append_one(key, val, self.deflag, inf.Deflag)
-
-    def append_info(self, key: str, val: Any):
-        return self._append_one(key, val, self.i, inf.Info)
+        return self._appendOne(key, val, self.day, Day)
 
     def append_item(self, key: str, val: Any):
-        return self._append_one(key, val, self, itm.Item)
+        return self._appendOne(key, val, self.item, Item)
 
     def append_person(self, key: str, val: Any):
-        return self._append_one(key, val, self, psn.Person)
+        return self._appendOne(key, val, self, Person)
 
     def append_stage(self, key: str, val: Any):
-        return self._append_one(key, val, self.stage, stg.Stage)
+        return self._appendOne(key, val, self.stage, Stage)
 
-    def build(self, story: list) -> bool:
-        from . import parser as ps
-        return btool.build_to_story(story, self.lang, ps.word_dictionary_from(self))
+    def append_time(self, key: str, val: Any):
+        return self._appendOne(key, val, self.time, Time)
 
-    def chaptertitle(self, title: str) -> act.TagAction:
-        return self.tag.title(title, 2)
+    def append_word(self, key: str, val: Any):
+        return self._appendOne(key, val, self.word, Word)
 
-    def combine(self, *args, lang: em.LangType=em.LangType.NONE) -> act.ActionGroup:
-        return act.ActionGroup(*args,
-                group_type=em.GroupType.COMBI,
-                lang=lang if not lang is em.LangType.NONE else self.lang)
-
-    def info(self, info: str) -> inf.Info:
-        return inf.Info(info)
-
-    def maintitle(self, title: str) -> act.TagAction:
-        return self.tag.title(title, 1)
-
-    def nothing(self) -> inf.Nothing:
-        return inf.Nothing()
-
-    def scene(self, title: str, *args,
-            lang: em.LangType=em.LangType.NONE) -> act.ActionGroup:
-        # TODO: stage and day setting
-        tmp = ()
-        if title:
-            tmp = (self.tag.title(title, 3),) + args
-        else:
-            tmp = args
-        return act.ActionGroup(*tmp,
-                group_type=em.GroupType.SCENE,
-                lang=lang if not lang is em.LangType.NONE else self.lang)
+    def set_charas(self, charas: list):
+        for v in assertion.is_list(charas):
+            self.append_chara(v[0], v[1:])
+        return self
 
     def set_days(self, days: list):
-        for v in ast.is_list(days):
+        for v in assertion.is_list(days):
             self.append_day(v[0], v[1:])
         return self
 
-    def set_db(self, persons: list=None, stages: list=None, days: list=None,
-            items: list=None, infos: list=None, flags: list=None):
-        if persons:
-            self.set_persons(persons)
-        if stages:
-            self.set_stages(stages)
-        if days:
-            self.set_days(days)
-        if items:
-            self.set_items(items)
-        if infos:
-            self.set_infos(infos)
-        if flags:
-            self.set_flags(flags)
-        return self
-
-    def set_flags(self, flags: list):
-        for v in ast.is_list(flags):
-            self.append_flag(v[0], v[1:])
-        return self
-
-    def set_infos(self, infos: list):
-        for v in ast.is_list(infos):
-            self.append_info(v[0], v[1:])
-        return self
-
     def set_items(self, items: list):
-        for v in ast.is_list(items):
+        for v in assertion.is_list(items):
             self.append_item(v[0], v[1:])
         return self
 
     def set_persons(self, persons: list):
-        for v in ast.is_list(persons):
+        for v in assertion.is_list(persons):
             self.append_person(v[0], v[1:])
         return self
 
     def set_stages(self, stages: list):
-        for v in ast.is_list(stages):
+        for v in assertion.is_list(stages):
             self.append_stage(v[0], v[1:])
         return self
 
-    def something(self) -> inf.Something:
-        return inf.Something()
-
-    def X(self) -> inf.Something:
-        return self.something()
-
-    # privates
-    def _append_one(self, key: str, val: Any, body: [SDict, dict], subcls: bs.BaseSubject):
-        # TODO: duplicated name
-        if body is self:
-            self.__setitem__(ast.is_str(key), self._data_from(val, subcls))
-        else:
-            ast.is_instance(body, SDict).__setitem__(
-                    ast.is_str(key), self._data_from(val, subcls))
+    def set_times(self, times: list):
+        for v in assertion.is_list(times):
+            self.append_time(v[0], v[1:])
         return self
 
-    def _data_from(self, val: Any, subcls: bs.BaseSubject):
-        return val if isinstance(val, subcls) else subcls(*val)
+    def set_words(self, words: list):
+        for v in assertion.is_list(words):
+            self.append_word(v[0], v[1:])
+        return self
 
-    def _lang_if(self, lang: em.LangType) -> em.LangType:
-        return lang if not lang is em.LangType.NONE else self.lang
+    def set_db(self, persons: list, charas: list,
+            stages: list, days: list, times: list,
+            items: list, words: list):
+        if persons:
+            self.set_persons(persons)
+        if charas:
+            self.set_charas(charas)
+        if items:
+            self.set_items(items)
+        if stages:
+            self.set_stages(stages)
+        if days:
+            self.set_days(days)
+        if times:
+            self.set_times(times)
+        if words:
+            self.set_words(words)
+        return self
+
+    # controls
+    def elapsed(self, time: Time, hour: int=0, min: int=0):
+        '''To elapse a time.
+        '''
+        return Time(hour=hour + time.hour, min=min + time.min)
+
+    def passed(self, base: Day, mon: int=0, day: int=0, year: int=0):
+        '''To pass a day.
+        '''
+        return Day(mon=mon + base.mon, day=day + base.day, year=year + base.year)
+
+    # actions
+    def combine(self, *args):
+        return CombAction(*args)
+
+    def act(self, subject: [str, Person, Chara, None],
+            outline: str=""):
+        return ac.Action(subject, outline, act_type=ac.ActType.ACT)
+
+    def be(self, subject: [Person, Chara, None],
+            outline: str=""):
+        return ac.Action(subject, outline, act_type=ac.ActType.BE)
+
+    def come(self, subject: [Person, Chara, None],
+            outline: str=""):
+        return ac.Action(subject, outline, act_type=ac.ActType.COME)
+
+    def go(self, subject: [Person, Chara, None],
+            outline: str=""):
+        return ac.Action(subject, outline, act_type=ac.ActType.GO)
+
+    def have(self, subject: [Person, Chara, None],
+            outline: str=""):
+        return ac.Action(subject, outline, act_type=ac.ActType.HAVE)
+
+    def look(self, subject: [Person, Chara, None],
+            outline: str=""):
+        return ac.Action(subject, outline, act_type=ac.ActType.LOOK)
+
+    def move(self, subject: [Person, Chara, None],
+            outline: str=""):
+        return ac.Action(subject, outline, act_type=ac.ActType.MOVE)
+
+    def talk(self, subject: [Person, Chara, None],
+            outline: str=""):
+        return ac.Action(subject, outline, act_type=ac.ActType.TALK)
+
+    def think(self, subject: [Person, Chara, None],
+            outline: str=""):
+        return ac.Action(subject, outline, act_type=ac.ActType.THINK)
+
+    # build
+    def build(self, val: Story):
+        '''To build this story world.
+        '''
+        from .buildtool import Build
+        bd = Build(val, self)
+        return bd.output_story()
+
+    # private
+    def _appendOne(self, key: str, val: Any, body: [UtilityDict, dict],
+            datatype: BaseData):
+        if body is self:
+            self.__setitem__(assertion.is_str(key), self._dataFrom(val, datatype))
+        else:
+            assertion.is_instance(body, UtilityDict).__setitem__(
+                    assertion.is_str(key), self._dataFrom(val, datatype))
+        return self
+
+    def _dataFrom(self, val: Any, datatype: BaseData):
+        return val if isinstance(val, datatype) else datatype(*val)

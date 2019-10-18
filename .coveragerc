@@ -3,6 +3,7 @@
 source = builder
 omit =
     # projects
+    old_*
     # markdown
     *.md
 

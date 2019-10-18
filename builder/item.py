@@ -1,29 +1,23 @@
 # -*- coding: utf-8 -*-
-"""Define item subject.
+"""Define an item class.
 """
-from . import assertion as ast
-from . import subject as sb
+from . import assertion
+from .basedata import BaseData
 
 
-class Item(sb.Subject):
-    """Item class.
-
-    Attributes.
-        name (str): a item name.
-        note (str, optional): a short description.
+class Item(BaseData):
+    """Data type of an item.
     """
-    def __init__(self, name: str, note: str=""):
+    DEF_NOTE = "なし"
+
+    def __init__(self, name: str, note: str=DEF_NOTE):
         """
         Args:
-            name (str): a item name.
-            note (str, optional): a short description.
+            name (str): an item name.
+            note (str): a note.
         """
-        super().__init__(name, note)
+        super().__init__(name)
+        self._note = assertion.is_str(note)
 
-    def move(self, *args, verb: str="move", is_desc: bool=True):
-        return self.act(*args, act_type=sb.em.ActType.MOVE, verb=verb, is_desc=is_desc)
-
-    def inherited(self, name: str=None, note: str=None):
-        return Item(name if name else self.name, note if note else self.note)
-
-
+    @property
+    def note(self): return self._note

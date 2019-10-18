@@ -1,314 +1,328 @@
 # -*- coding: utf-8 -*-
-"""Utility for parsing, converting and more.
+"""The parser.
 """
-from typing import Any
-from . import assertion as ast
-from . import action as act
-from . import basesubject as bs
-from . import enums as em
-from . import info as inf
-from . import strutils as sutl
-from . import world as wd
-from . import person as psn
+from . import assertion
+from .action import Action, ActType
+from .story import Story
+from .chapter import Chapter
+from .episode import Episode
+from .scene import Scene, ScenarioType
+from .action import Action, ActType
+from .who import Who
+from .description import Description, DescType, NoDesc
+from .basesubject import NoSubject
+from .strutils import str_replaced_tag_by_dictionary, str_duplicated_chopped, extraspace_chopped
+from .combaction import CombAction
 
 
-# public methods
-def actinfo_from_action(ac: act.Action, lv: int, lang: em.LangType, is_debug: bool) -> str:
-    space = "\u3000" if lang is em.LangType.JPN else " "
-    return "{test}{lihead}{subject:{space}<8s}:{verb: <12s}/{obj}".format(
-            test="> " if is_debug else "",
-            lihead=sutl.ul_tag_from("", lv),
-            subject=ac.subject.name,
-            space=space,
-            verb=verb_from(ac),
-            obj=actobject_names_from(ac),
-            )
-
-
-def actinfo_from_tag(ac: act.TagAction) -> str:
-    if ast.is_instance(ac, act.TagAction).tag is em.TagType.BR:
-        return "\n"
-    elif ac.tag is em.TagType.COMMENT:
-        return sutl.comment_tag_from(ac.info)
-    elif ac.tag in (em.TagType.HEAD1, em.TagType.HEAD2, em.TagType.HEAD3):
-        return sutl.head_tag_from(ac.info, title_level_of(ac.tag))
-    elif ac.tag is em.TagType.HR:
-        return sutl.hr_tag_from()
-    elif ac.tag is em.TagType.SYMBOL:
-        return f"\n{ac.info}\n"
-    else:
-        return ""
-
-
-def actobject_from(val) -> bs.BaseSubject:
-    if isinstance(val, bs.BaseSubject):
-        return val
-    elif isinstance(val, str):
-        return inf.Info(val)
-    else:
-        return inf.Nothing()
-
-
-def actobject_name_of(obj: bs.BaseSubject) -> str:
-    if isinstance(obj, inf.Flag) or isinstance(obj, inf.Deflag):
-        return flag_info_of(obj)
-    if isinstance(obj, inf.Info):
-        return obj.note
-    elif isinstance(obj, inf.Nothing):
-        return ""
-    elif isinstance(obj, inf.Something):
-        return "X"
-    elif isinstance(obj, bs.BaseSubject):
-        return obj.name
-    else:
-        return ""
-
-
-def actobject_names_from(ac: act.Action) -> str:
-    return "/".join([actobject_name_of(v) for v in ast.is_instance(ac, act.Action).objects])
-
-
-def auxverb_from(val) -> em.AuxVerb:
-    if isinstance(val, em.AuxVerb):
-        return val
-    elif isinstance(val, str):
-        return auxverb_type_from_tag(val)
-    else:
-        return em.AuxVerb.NONE
-
-
-def auxverb_type_from_tag(val: str) -> em.AuxVerb:
-    if val == "$can":
-        return em.AuxVerb.CAN
-    elif val == "$may":
-        return em.AuxVerb.MAY
-    elif val == "$must":
-        return em.AuxVerb.MUST
-    elif val == "$should":
-        return em.AuxVerb.SHOULD
-    elif val == "$want":
-        return em.AuxVerb.WANT
-    elif val == "$will":
-        return em.AuxVerb.WILL
-    else:
-        return em.AuxVerb.NONE
-
-
-def description_from_action(ac: act.Action, lang: em.LangType) -> str:
-    if ac.description.desc_type is em.DescType.DESCRIPTION:
-        return _desc_as_description_from(ac.description, lang)
-    elif ac.description.desc_type is em.DescType.DIALOGUE:
-        return _desc_as_dialogue_from(ac.description, lang)
-    elif ac.description.desc_type is em.DescType.EMPHASIS1:
-        return _desc_as_emphasis_from(ac.description, lang)
-    elif ac.description.desc_type is em.DescType.PLAIN:
-        return _desc_as_plain_from(ac.description, lang)
-    else:
-        # TODO: desc group implement
-        return ""
-
-
-def description_from_tag(ac: act.TagAction) -> str:
-    if ast.is_instance(ac, act.TagAction).tag is em.TagType.BR:
-        return "\n"
-    elif ac.tag is em.TagType.COMMENT:
-        return ""
-    elif ac.tag in (em.TagType.HEAD1, em.TagType.HEAD2, em.TagType.HEAD3):
-        return sutl.head_tag_from(ac.info, title_level_of(ac.tag))
-    elif ac.tag is em.TagType.HR:
-        return sutl.hr_tag_from()
-    elif ac.tag is em.TagType.SYMBOL:
-        return f"\n{ac.info}\n"
-    else:
-        return ""
-
-
-def flag_info_of(val: [inf.Flag, inf.Deflag]) -> str:
-    if isinstance(val, inf.Deflag):
-        return f"[D:{val.note}]({val.note})"
-    elif isinstance(val, inf.Flag):
-        return f"[{val.note}]({val.note})"
-    else:
-        return ""
-
-
-def flag_linkinfo_of(val: [inf.Flag, inf.Deflag]) -> str:
-    if isinstance(val, inf.Flag) or isinstance(val, inf.Deflag):
-        return f"[{val.note}]:{val.note}"
-    else:
-        return ""
-
-
-def scenes_gathered_from(story: list) -> list:
-    return [v for v in ast.is_list(story) if isinstance(v, act.ActionGroup) and v.group_type is em.GroupType.SCENE]
-
-
-def story_filtered_by_priority(story: list, pri_filter: int) -> list:
-    tmp = []
-    for v in ast.is_list(story):
-        tmp.extend(_story_filtered_by_pri_(v, pri_filter))
+# publics
+def outlines_from(story: Story):
+    tmp = [("# " + story.title, "\n")]
+    for a in story.chapters:
+        res = _outlines_in_chapter(a)
+        if res:
+            tmp.extend(res)
     return tmp
 
+def scenarios_from(story: Story):
+    tmp = [("# " + story.title, "\n")]
+    for a in story.chapters:
+        res = _scenario_in_chapter(a)
+        if res:
+            tmp.extend(res)
+    return tmp
 
-def str_to_dict_by_splitter(target: [str, dict], defkey: str, defval: str) -> dict:
-    if isinstance(target, dict):
-        return target
-    elif isinstance(target, str):
-        if ":" in target:
-            tmp = target.split(":")
-            ret = {}
-            for k, v in zip(tmp[0::2], tmp[1::2]):
-                ret[k] = v
-            if not ast.is_str(defkey) in ret.keys():
-                ret.update({defkey: ast.is_str(defval)})
-            return ret
+def descriptions_from(story: Story):
+    tmp = ["# " + story.title + "\n"]
+    for a in story.chapters:
+        res = _desc_in_chapter(a)
+        if res:
+            tmp.extend(res)
+    return tmp
+
+def description_connected(story: Story):
+    tmp = []
+    for v in story.chapters:
+        tmp.append(_desc_connected_in_chapter(v))
+    return story.inherited(*tmp)
+
+def story_filtered_by_priority(story: Story, pri_filter: int):
+    tmp = []
+    for v in story.chapters:
+        tmp.append(_story_chapter_filtered(v, pri_filter))
+    return story.inherited(*tmp)
+
+def story_pronoun_replaced(story: Story):
+    tmp = []
+    for v in story.chapters:
+        tmp.append(_story_pronoun_replaced_in_chapter(v))
+    return story.inherited(*tmp)
+
+def story_tag_replaced(story: Story, words: dict):
+    tmp = []
+    for v in story.chapters:
+        tmp.append(_story_tag_replaced_in_chapter(v, words))
+    return story.inherited(*tmp)
+
+
+# privates
+def _outlines_in_chapter(chapter: Chapter):
+    tmp = [("## " + chapter.title, "\n")]
+    for a in chapter.episodes:
+        res = _outlines_in_episode(a)
+        if res:
+            tmp.extend(res)
+    return tmp
+
+def _outlines_in_episode(episode: Episode):
+    tmp = []
+    if episode.outline:
+        tmp.append(("\n### " + episode.title, episode.outline + "\n"))
+    else:
+        tmp.append(("\n### " + episode.title, "\n"))
+    for a in episode.scenes:
+        if a.outline:
+            tmp.append(("- " + a.title, a.outline))
+    return tmp
+
+def _scenario_in_chapter(chapter: Chapter):
+    tmp = [(ScenarioType.TITLE, "## " + chapter.title + "\n")]
+    for a in chapter.episodes:
+        res =_scenario_in_episode(a)
+        if res:
+            tmp.extend(res)
+    return tmp
+
+def _scenario_in_episode(episode: Episode):
+    tmp = [(ScenarioType.TITLE, "\n### " + episode.title + "\n")]
+    for a in episode.scenes:
+        res = _scenario_in_scene(a)
+        if res:
+            tmp.extend(res)
+    return tmp
+
+def _scenario_in_scene(scene: Scene):
+    tmp = [(ScenarioType.TITLE, "\n**" + scene.title + "**\n")]
+    tmp.append((ScenarioType.PILLAR, "◯{}".format(scene.stage.name)))
+    for a in scene.actions:
+        if isinstance(a, CombAction):
+            res = _scenario_in_scene_comaction(a)
+            if res:
+                tmp.extend(res)
+        elif a.act_type is ActType.TALK:
+            tmp.append((ScenarioType.DIALOGUE,
+                "{}「{}」".format(a.subject.name,
+                    str_duplicated_chopped(a.outline))))
         else:
-            return {defkey: target}
-    else:
-        return {ast.is_str(defkey): ast.is_str(defval)}
+            tmp.append((ScenarioType.DIRECTION,
+                str_duplicated_chopped(a.outline + "。")))
+    return tmp
 
-
-def str_to_tuple_from_args(args) -> tuple:
-    if args:
-        if isinstance(args, str):
-            return (args,)
+def _scenario_in_scene_comaction(act: CombAction):
+    tmp = []
+    for v in act.actions:
+        if v.act_type is ActType.TALK:
+            tmp.append((ScenarioType.DIALOGUE,
+                "{}「{}」".format(v.subject.name,
+                    str_duplicated_chopped(v.outline))))
         else:
-            return tuple(ast.is_list(args))
-    else:
-        return ()
-
-
-def subjects_retrieved_from(story: list, subcls: bs.BaseSubject) -> list:
-    tmp = []
-    for v in ast.is_list(story):
-        tmp.extend(_subjects_retrieved_from_(v, subcls))
+            tmp.append((ScenarioType.DIRECTION,
+                str_duplicated_chopped(v.outline + "。")))
     return tmp
 
-
-def title_level_of(tag: em.TagType) -> int:
-    if ast.is_instance(tag, em.TagType) is em.TagType.HEAD1:
-        return 1
-    elif tag is em.TagType.HEAD2:
-        return 2
-    elif tag is em.TagType.HEAD3:
-        return 3
-    else:
-        return 0
-
-
-def titles_retrieved_from(story: list) -> list:
-    tmp = []
-    for v in ast.is_list(story):
-        tmp.extend(_titles_retrieved_from_(v))
+def _desc_in_chapter(chapter: Chapter):
+    tmp = ["## " + chapter.title + "\n"]
+    for a in chapter.episodes:
+        res = _desc_in_episode(a)
+        if res:
+            tmp.extend(res)
     return tmp
 
+def _desc_in_episode(episode: Episode):
+    tmp = ["\n### " + episode.title + "\n"]
+    for a in episode.scenes:
+        res = _desc_in_scene(a)
+        if res:
+            tmp.extend(res)
+    return tmp
 
-def verb_from(ac: act.Action) -> str:
-    auxverb = "" if ast.is_instance(ac, act.Action).auxverb is em.AuxVerb.NONE else str(ac.auxverb) + "_"
-    return f"{auxverb}{ac.verb}"
-
-
-def word_dictionary_from(w: dict) -> dict:
-    tmp = {}
-    for k, v in ast.is_instance(w, wd.World).items():
-        if k in ('stage', 'day', 'i'):
+def _desc_in_scene(scene: Scene):
+    tmp = ["\n**" + scene.title + "**\n"]
+    # TODO: 時間帯の表示
+    for a in scene.actions:
+        if isinstance(a, CombAction):
+            res = _desc_in_scene_combaction(a)
+            if res:
+                tmp.append(res)
+        elif isinstance(a.description, NoDesc):
             continue
-        if isinstance(v, psn.Person):
-            tmp['n_' + k] = v.name
-            tmp['fn_' + k] = v.firstname
-            tmp['ln_' + k] = v.lastname
-        elif isinstance(v, bs.BaseSubject):
-            tmp[k] = v.name
-    for k, v in w.stage.items():
-        tmp['st_' + k] = v.name
-    # TODO: day is not converted currently. so need any idea
-    for k, v in w.i.items():
-        tmp['i_' + k] = v.note
+        elif isinstance(a.description, Description):
+            if a.description.desc_type is DescType.DIALOGUE:
+                tmp.append(str_duplicated_chopped(
+                    "「" + "".join(v for v in a.description.descs) + "」"))
+            elif a.description.desc_type is DescType.COMPLEX:
+                tmp.append("".join(v for v in a.description.descs))
+            else:
+                tmp.append(str_duplicated_chopped(
+                    "　" + "".join(v for v in a.description.descs) + "。"))
     return tmp
 
-
-# private methods
-def _desc_as_description_from(dsc: act.ds.Desc, lang: em.LangType) -> str:
-    return sutl.description_from(
-            sutl.comma_by(lang).join(dsc.data),
-            lang)
-
-
-def _desc_as_dialogue_from(dsc: act.ds.Desc, lang: em.LangType) -> str:
-    return sutl.dialogue_from(
-            sutl.comma_by(lang).join(dsc.data),
-            lang)
-
-def _desc_as_emphasis_from(dsc: act.ds.Desc, lang: em.LangType) -> str:
-    return sutl.emphasis_from(
-            sutl.comma_by(lang).join(dsc.data),
-            lang)
-
-def _desc_as_plain_from(dsc: act.ds.Desc, lang: em.LangType) -> str:
-    return sutl.comma_by(lang).join(dsc.data)
-
-
-def _story_filtered_by_pri_(val, pri_filter: int) -> list:
-    if isinstance(val, (act.ActionGroup, list, tuple)):
-        return _story_filtered_by_pri_in(val, pri_filter)
-    elif isinstance(val, act.TagAction):
-        return [val]
-    elif isinstance(val, act.Action):
-        return [val] if val.priority >= pri_filter else []
-    else:
-        return []
-
-
-def _story_filtered_by_pri_in(vals: [act.ActionGroup, list, tuple],
-        pri_filter: int) -> list:
+def _desc_in_scene_combaction(act: CombAction):
     tmp = []
-    is_actgroup = False
-    if isinstance(vals, act.ActionGroup):
-        is_actgroup = True
-        if vals.priority < pri_filter:
-            return tmp
-    group = vals.actions if is_actgroup else vals
-    for a in group:
-        tmp.extend(_story_filtered_by_pri_(a, pri_filter))
-    return [vals.inherited(*tmp)] if is_actgroup else tmp
+    for v in act.actions:
+        if isinstance(v.description, NoDesc):
+            continue
+        if isinstance(v.description, Description):
+            if v.description.desc_type is DescType.DIALOGUE:
+                tmp.append(str_duplicated_chopped(
+                    "「" + "".join(x for x in v.description.descs) + "」"))
+            elif v.description.desc_type is DescType.COMPLEX:
+                tmp.append("".join(x for x in v.description.descs))
+            else:
+                tmp.append(str_duplicated_chopped(
+                    "　" + "".join(x for x in v.description.descs) + "。"))
+    return extraspace_chopped("".join(tmp))
 
-
-def _subjects_retrieved_from_(val, subcls: bs.BaseSubject) -> list:
-    if isinstance(val, (act.ActionGroup, list, tuple)):
-        return _subjects_retrieved_from_in(val, subcls)
-    elif isinstance(val, act.TagAction):
-        return []
-    elif isinstance(val, act.Action):
-        tmp = [val.subject] if isinstance(ast.is_instance(val, act.Action).subject, ast.is_subclass(subcls, bs.BaseSubject)) else []
-        return tmp + [v for v in val.objects if isinstance(v, subcls)]
-    else:
-        return []
-
-
-def _subjects_retrieved_from_in(vals: [act.ActionGroup, list, tuple],
-        subcls: bs.BaseSubject) -> list:
+def _desc_connected_in_chapter(chapter: Chapter):
     tmp = []
-    group = vals.actions if isinstance(vals, act.ActionGroup) else vals
-    for a in group:
-        tmp.extend(_subjects_retrieved_from_(a, subcls))
-    return tmp
+    for v in chapter.episodes:
+        tmp.append(_desc_connected_in_episode(v))
+    return chapter.inherited(*tmp)
 
-
-def _titles_retrieved_from_(val) -> list:
-    if isinstance(val, (act.ActionGroup, list, tuple)):
-        return _titles_retrieved_from_in(val)
-    elif isinstance(val, act.TagAction):
-        return [val] if val.tag in (em.TagType.HEAD1, em.TagType.HEAD2, em.TagType.HEAD3) else []
-    elif isinstance(val, act.Action):
-        return []
-    else:
-        return []
-
-
-def _titles_retrieved_from_in(vals: [act.ActionGroup, list, tuple]) -> list:
+def _desc_connected_in_episode(episode: Episode):
     tmp = []
-    group = vals.actions if isinstance(vals, act.ActionGroup) else vals
-    for a in group:
-        tmp.extend(_titles_retrieved_from_(a))
-    return tmp
+    for v in episode.scenes:
+        tmp.append(_desc_connected_in_scene(v))
+    return episode.inherited(*tmp)
+
+def _desc_connected_in_scene(scene: Scene):
+    tmp = []
+    for a in scene.actions:
+        if isinstance(a, CombAction):
+            tmp.append(_desc_connected_in_scene_combaction(a))
+        elif isinstance(a.description, NoDesc):
+            tmp.append(a)
+        else:
+            tmp.append(a.inherited(desc=str_duplicated_chopped(
+                "。".join(a.description.descs))))
+    return scene.inherited(*tmp)
+
+def _desc_connected_in_scene_combaction(act: CombAction):
+    tmp = []
+    for v in act.actions:
+        if isinstance(v.description, NoDesc):
+            tmp.append(v)
+        else:
+            tmp.append(v.inherited(desc=str_duplicated_chopped(
+                "。".join(v.description.descs))))
+    return CombAction(*tmp)
+
+def _story_chapter_filtered(chapter: Chapter, pri_filter: int):
+    tmp = []
+    for v in chapter.episodes:
+        if v.priority >= pri_filter:
+            tmp.append(_story_episode_filtered(v, pri_filter))
+    return chapter.inherited(*tmp)
+
+def _story_episode_filtered(episode: Episode, pri_filter: int):
+    tmp = []
+    for v in episode.scenes:
+        if v.priority >= pri_filter:
+            tmp.append(_story_scene_filtered(v, pri_filter))
+    return episode.inherited(*tmp)
+
+def _story_scene_filtered(scene: Scene, pri_filter: int):
+    tmp = []
+    for a in scene.actions:
+        if isinstance(a, CombAction):
+            tmp.append(_story_scene_filtered_combaction(a, pri_filter))
+        elif a.priority >= pri_filter:
+            tmp.append(a)
+    return scene.inherited(*tmp)
+
+def _story_scene_filtered_combaction(act: CombAction, pri_filter: int):
+    tmp = []
+    for a in act.actions:
+        if a.priority >= pri_filter:
+            tmp.append(a)
+    return CombAction(*tmp)
+
+def _story_pronoun_replaced_in_chapter(chapter: Chapter):
+    tmp = []
+    for v in chapter.episodes:
+        tmp.append(_story_pronoun_replaced_in_episode(v))
+    return chapter.inherited(*tmp)
+
+def _story_pronoun_replaced_in_episode(episode: Episode):
+    tmp = []
+    for v in episode.scenes:
+        tmp.append(_story_pronoun_replaced_in_scene(v))
+    return episode.inherited(*tmp)
+
+def _story_pronoun_replaced_in_scene(scene: Scene):
+    tmp = []
+    cur_sub = NoSubject()
+    for a in scene.actions:
+        if isinstance(a, CombAction):
+            tmp_c = []
+            for v in a.actions:
+                if isinstance(v.subject, Who):
+                    tmp_c.append(v.inherited(subject=cur_sub))
+                else:
+                    cur_sub = v.subject
+                    tmp_c.append(v)
+            tmp.append(CombAction(*tmp_c))
+        elif isinstance(a.subject, Who):
+            tmp.append(a.inherited(subject=cur_sub))
+        else:
+            cur_sub = a.subject
+            tmp.append(a)
+    return scene.inherited(*tmp)
+
+def _story_tag_replaced_in_chapter(chapter: Chapter, words: dict):
+    tmp = []
+    for v in chapter.episodes:
+        tmp.append(_story_tag_replaced_in_episode(v, words))
+    return chapter.inherited(*tmp)
+
+def _story_tag_replaced_in_episode(episode: Episode, words: dict):
+    tmp = []
+    for v in episode.scenes:
+        tmp.append(_story_tag_replaced_in_scene(v, words))
+    return episode.inherited(*tmp)
+
+def _story_tag_replaced_in_scene(scene: Scene, words: dict):
+    tmp = []
+    for a in scene.actions:
+        if isinstance(a, CombAction):
+            tmp.append(_story_tag_replaced_in_scene_combaction(a, words))
+        else:
+            is_nodesc = isinstance(a.description, NoDesc)
+            outline = a.outline
+            desc = NoDesc() if is_nodesc else "".join(a.description.descs)
+            if hasattr(a.subject, "calling"):
+                outline = str_replaced_tag_by_dictionary(a.outline, a.subject.calling)
+                if not is_nodesc:
+                    desc = str_replaced_tag_by_dictionary(desc, a.subject.calling)
+            outline = str_replaced_tag_by_dictionary(outline, words)
+            if not is_nodesc:
+                desc = str_replaced_tag_by_dictionary(desc, words)
+            tmp.append(a.inherited(outline=outline, desc=desc))
+    return scene.inherited(*tmp)
+
+def _story_tag_replaced_in_scene_combaction(act: CombAction, words: dict):
+    tmp = []
+    for v in act.actions:
+        is_nodesc = isinstance(v.description, NoDesc)
+        outline = v.outline
+        desc = NoDesc() if is_nodesc else "".join(v.description.descs)
+        if hasattr(v.subject, "calling"):
+            outline = str_replaced_tag_by_dictionary(v.outline, v.subject.calling)
+            if not is_nodesc:
+                desc = str_replaced_tag_by_dictionary(desc, v.subject.calling)
+        outline = str_replaced_tag_by_dictionary(outline, words)
+        if not is_nodesc:
+            desc = str_replaced_tag_by_dictionary(desc, words)
+        tmp.append(v.inherited(outline=outline, desc=desc))
+    return CombAction(*tmp)
 
