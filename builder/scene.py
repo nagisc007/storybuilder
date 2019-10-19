@@ -75,36 +75,36 @@ class Scene(BaseContainer):
         self._priority = Action.MIN_PRIORITY
         return self
 
-    def setCamera(self, camera: Person):
+    def setCamera(self, camera: [Person, NoData]):
         """
         Args:
             XXX (:obj:`Chara`): a stage camera.
         """
-        self._camera = assertion.is_instance(camera, Person)
+        self._camera = camera if isinstance(camera, NoData) else assertion.is_instance(camera, Person)
         return self
 
-    def setStage(self, stage: Stage):
+    def setStage(self, stage: [Stage, NoData]):
         """
         Args:
             XXX (:obj:`Stage`): a stage of this scene.
         """
-        self._stage = assertion.is_instance(stage, Stage)
+        self._stage = stage if isinstance(stage, NoData) else assertion.is_instance(stage, Stage)
         return self
 
-    def setDay(self, day: Day):
+    def setDay(self, day: [Day, NoData]):
         """
         Args:
             XXX (:obj:`Day`): a base day of this scene.
         """
-        self._day = assertion.is_instance(day, Day)
+        self._day = day if isinstance(day, NoData) else assertion.is_instance(day, Day)
         return self
 
-    def setTime(self, time: Time):
+    def setTime(self, time: [Time, NoData]):
         """
         Args:
             XXX (:obj:`Time`): a base time of this scene.
         """
-        self._time = assertion.is_instance(time, Time)
+        self._time = time if isinstance(time, NoData) else assertion.is_instance(time, Time)
         return self
 
     def add(self, *args):

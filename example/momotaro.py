@@ -97,6 +97,10 @@ def sc_talk_buster(w: wd.World):
         )
     return s
 
+def sc_dummyscene(w: wd.World):
+    s = w.scene("ダミーシーン", "テスト用です")
+    return s
+
 def sc_depature(w: wd.World):
     s = w.scene("旅立ち", "鬼退治の旅に出る")
     s.setCamera(w.taro)
@@ -192,6 +196,7 @@ def ep_intro(w: wd.World):
 def ep_depature(w: wd.World):
     return w.episode("鬼退治に出発",
             "桃太郎は鬼が悪さをしていると知り、鬼退治に出向く",
+            sc_dummyscene(w),
             sc_know_deamon(w),
             sc_talk_buster(w),
             sc_depature(w),
