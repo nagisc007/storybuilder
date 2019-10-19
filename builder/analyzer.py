@@ -43,13 +43,15 @@ class Analyzer(object):
     def characters_count(self, story: wd.Story):
         # TODO: outline文字数／シナリオ用
         total = self._descs_count(story) # NOTE: 総文字数
+        outline = self._outline_count(story) # NOTE: outline文字数
         estimated = self._descs_estimated_count(story) # NOTE: 予想文字数
         manupp = self._descs_manupaper_counts(story, Analyzer.DEF_BASEROWS, Analyzer.DEF_BASECOLUMNS) # NOTE: 原稿用紙換算枚数
+        outlinemanupp = self._outline_manupaper_count(story, Analyzer.DEF_BASEROWS, Analyzer.DEF_BASECOLUMNS) # NOTE: outline原稿用紙換算枚数
         return [
                 "## Characters",
-                f"- Total: {total}",
+                f"- Total: {total} / Outline: {outline}",
                 f"- Estimated: {estimated}",
-                f"- Manupapers: {manupp}",
+                f"- Manupapers: {manupp}i / Outline {outlinemanupp}",
                 ]
 
     def characters_count_each_scenes(self, story: wd.Story):
@@ -102,6 +104,12 @@ class Analyzer(object):
     def _descs_manupaper_counts(self, story: wd.Story, rows: int, columns: int):
         return _manupapers_count(story, rows, columns)
 
+    def _outline_count(self, story: wd.Story):
+        return sum(_outline_count_in_chapter(x) for x in story.chapters)
+
+    def _outline_manupaper_count(self, story: wd.Story, rows: int, columns: int):
+        return _outline_manupapers_count(story, rows, columns)
+
 # privates (detail)
 def _descs_count_in_chapter(chapter: Chapter):
     tmp = []
@@ -128,6 +136,44 @@ def _descs_count_in_scene(scene: Scene):
             tmp.append(0)
         else:
             tmp.append(len("".join(v.description.descs)))
+    return sum(tmp)
+
+def _outline_count_in_chapter(chapter: Chapter):
+    return sum(_outline_count_in_episode(x) for x in chapter.episodes)
+
+def _outline_count_in_episode(episode: Episode):
+    return sum(_outline_count_in_scene(x) for x in episode.scenes)
+
+def _outline_count_in_scene(scene: Scene):
+    tmp = []
+    for v in scene.actions:
+        if isinstance(v, CombAction):
+            for c in v.actions:
+                tmp.append(len(c.outline))
+        else:
+            tmp.append(len(v.outline))
+    return sum(tmp)
+
+def _outline_manupapers_count(story: wd.Story, rows: int, columns: int):
+    _rows = sum(_outline_manupaper_count_in_chapter(x, columns) for x in story.chapters)
+    _papers = _rows / rows
+    return f"{_papers:0.3f} ({_rows:0.2f}/{rows} x {columns})"
+
+def _outline_manupaper_count_in_chapter(chapter: Chapter, columns: int):
+    return sum(_outline_manupaper_count_in_episode(x, columns) for x in chapter.episodes)
+
+def _outline_manupaper_count_in_episode(episode: Episode, columns: int):
+    return sum(_outline_manupaper_count_in_scene(x, columns) for x in episode.scenes)
+
+def _outline_manupaper_count_in_scene(scene: Scene, columns: int):
+    tmp = []
+    for v in scene.actions:
+        tmp.append(2) # NOTE: title pillar
+        if isinstance(v, CombAction):
+            for c in v.actions:
+                tmp.append(int_ceiled(len(c.outline), columns))
+        else:
+            tmp.append(int_ceiled(len(v.outline), columns))
     return sum(tmp)
 
 def _acttype_counts_in_story(story: wd.Story, act_type: ActType):
