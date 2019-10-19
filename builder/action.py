@@ -51,7 +51,8 @@ class Action(BaseData):
                 outline if outline else self.outline,
                 self.act_type) \
                     .flag(self.getFlag()).deflag(self.getDeflag()) \
-                    ._setDescription(desc if desc else self.description) \
+                    ._setDescription(desc if desc else self.description,
+                            self.description.desc_type) \
                     .setPriority(self.priority)
 
     @property
@@ -124,10 +125,11 @@ class Action(BaseData):
         else:
             return NoSubject()
 
-    def _setDescription(self, descs):
+    def _setDescription(self, descs, desc_type: DescType):
         if isinstance(descs, Description):
             self._description = descs
         else:
-            self._description = Description(*descs)
+            self._description = Description(*descs,
+                    desc_type=desc_type)
         return self
 

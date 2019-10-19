@@ -203,9 +203,13 @@ class Build(object):
         return tmp
 
     def _description_formatted(descs: list, formattype: str):
-        tmp = descs
         # TODO: format を選んで変更
-        return tmp
+        if formattype in ("estar",):
+            return Build._descs_formatted_estar_style(descs)
+        elif formattype in ("smartphone", "web", "phone", "smart"):
+            return Build._descs_formatted_smartphone_style(descs)
+        else:
+            return descs
 
     def _out_to_file(data: list, filename: str, suffix: str, extention: str,
             builddir: str):
@@ -221,6 +225,21 @@ class Build(object):
                 f.write(f"{v}\n")
         return is_succeeded
 
+    def _descs_formatted_estar_style(data: list):
+        tmp = []
+        inDialogue = False
+        for v in assertion.is_list(data):
+            current = v.startswith(('「', '『'))
+            pre = "" if inDialogue == current else "\n"
+            tmp.append(pre + v + "\n")
+            inDialogue = current
+        return tmp
+
+    def _descs_formatted_smartphone_style(data: list):
+        tmp = []
+        for v in assertion.is_list(data):
+            tmp.append(v + "\n")
+        return tmp
 
 # privates
 def _options_parsed(): # pragma: no cover
