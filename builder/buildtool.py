@@ -181,6 +181,8 @@ class Build(object):
                 tmp['n_' + k] = v.name
                 tmp['fn_' + k] = v.firstname
                 tmp['ln_' + k] = v.lastname
+                tmp['full_' + k] = v.fullname
+                tmp['efull_' + k] = v.exfullname
         for k, v in world.stage.items():
             tmp['st_' + k] = v.name
         for k, v in world.item.items():
