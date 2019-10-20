@@ -211,8 +211,10 @@ class Build(object):
         # TODO: format を選んで変更
         if formattype in ("estar",):
             return Build._descs_formatted_estar_style(descs)
-        elif formattype in ("smartphone", "web", "phone", "smart"):
+        elif formattype in ("smartphone", "phone", "smart"):
             return Build._descs_formatted_smartphone_style(descs)
+        elif formattype in ("web",):
+            return Build._descs_formatted_webnovel_style(descs)
         else:
             return descs
 
@@ -245,6 +247,17 @@ class Build(object):
         for v in assertion.is_list(data):
             tmp.append(v + "\n")
         return tmp
+
+    def _descs_formatted_webnovel_style(data: list) -> list:
+        tmp = []
+        inDialogue = False
+        for v in assertion.is_list(data):
+            current = v.startswith(('「', '『'))
+            pre = "" if inDialogue == current else "\n"
+            tmp.append(pre + v)
+            inDialogue = current
+        return tmp
+
 
 # privates
 def _options_parsed(): # pragma: no cover
