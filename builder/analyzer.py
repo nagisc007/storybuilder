@@ -51,7 +51,7 @@ class Analyzer(object):
                 "## Characters",
                 f"- Total: {total} / Outline: {outline}",
                 f"- Estimated: {estimated}",
-                f"- Manupapers: {manupp}i / Outline {outlinemanupp}",
+                f"- Manupapers: {manupp} / Outline {outlinemanupp}",
                 ]
 
     def characters_count_each_scenes(self, story: wd.Story):
