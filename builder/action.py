@@ -23,7 +23,8 @@ class ActType(Enum):
     BE = "be" # 外部状態
     THINK = "think" # 内部状態
     HAVE = "have" # 所有変更
-    TALK = "talk" # 音声
+    HEAR = "hear" # 効果音などの音声
+    TALK = "talk" # 台詞
 
 
 class Action(BaseData):

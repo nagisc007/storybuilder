@@ -187,6 +187,10 @@ class World(UtilityDict):
             outline: str=""):
         return ac.Action(subject, outline, act_type=ac.ActType.HAVE)
 
+    def hear(self, subject: [Person, Chara, None],
+            outline: str=""):
+        return ac.Action(subject, outline, act_type=ac.ActType.HEAR)
+
     def look(self, subject: [Person, Chara, None],
             outline: str=""):
         return ac.Action(subject, outline, act_type=ac.ActType.LOOK)
