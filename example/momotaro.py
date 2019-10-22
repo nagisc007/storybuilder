@@ -166,7 +166,7 @@ def sc_gotoisland(w: wd.World):
     s.setCamera(w.taro)
     s.setStage(w.stage.island).setDay(w.day.arrived).setTime(w.time.morning)
     s.add(
-        w.move(w.taro, "鬼ヶ島にやってくる"),
+        w.move(w.taro, "$w_islandにやってくる"),
         w.act("鬼を退治する"),
         w.have("鬼の宝物を手に入れる"),
         w.move("帰る"),

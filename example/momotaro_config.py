@@ -73,5 +73,6 @@ ITEMS = (
 
 WORDS = (
         # Tag / 名前 / 紹介
+        ("island", "鬼ヶ島"),
         )
 
