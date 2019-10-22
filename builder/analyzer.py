@@ -64,7 +64,10 @@ class Analyzer(object):
                     total = _descs_count_in_scene(s)
                     _rows = _manupaper_count_rows_in_scene(s, columns)
                     _papers = _rows / rows
-                    tmp.append(f"**{s.title}**\n+ {total} [{_papers:0.3f}({_rows:0.2f}/{rows} x {columns})]")
+                    outline = _outline_count_in_scene(s)
+                    _outrows = _outline_manupaper_count_in_scene(s, columns)
+                    _outpapers = _outrows / rows
+                    tmp.append(f"**{s.title}**\n+ {total} [{_papers:0.3f}({_rows:0.2f}/{rows} x {columns})] / Outline {outline} [{_outpapers:0.3f}({_outrows:0.2f})]")
         return tmp
 
     def acttype_counts(self, story: wd.Story):
