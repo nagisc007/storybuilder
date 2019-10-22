@@ -170,8 +170,8 @@ def _outline_manupaper_count_in_episode(episode: Episode, columns: int):
 
 def _outline_manupaper_count_in_scene(scene: Scene, columns: int):
     tmp = []
+    tmp.append(2) # NOTE: title pillar
     for v in scene.actions:
-        tmp.append(2) # NOTE: title pillar
         if isinstance(v, CombAction):
             for c in v.actions:
                 tmp.append(int_ceiled(len(c.outline), columns))
