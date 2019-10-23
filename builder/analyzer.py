@@ -59,6 +59,7 @@ class Analyzer(object):
         tmp = []
         rows = Analyzer.DEF_BASEROWS
         columns = Analyzer.DEF_BASECOLUMNS
+        scene_num = 0
         for c in story.chapters:
             for e in c.episodes:
                 for s in e.scenes:
@@ -68,7 +69,8 @@ class Analyzer(object):
                     outline = _outline_count_in_scene(s)
                     _outrows = _outline_manupaper_count_in_scene(s, columns)
                     _outpapers = _outrows / rows
-                    tmp.append(f"**{s.title}**\n+ {total} [{_papers:0.3f}({_rows:0.2f}/{rows} x {columns})] / Outline {outline} [{_outpapers:0.3f}({_outrows:0.2f})]")
+                    tmp.append(f"**{scene_num}. {s.title}**\n+ {total} [{_papers:0.3f}({_rows:0.2f}/{rows} x {columns})] / Outline {outline} [{_outpapers:0.3f}({_outrows:0.2f})]")
+                    scene_num += 1
         return tmp
 
     def acttype_counts(self, story: wd.Story):
