@@ -297,32 +297,31 @@ def _story_tag_replaced_in_scene(scene: Scene, words: dict):
         if isinstance(a, CombAction):
             tmp.append(_story_tag_replaced_in_scene_combaction(a, words))
         else:
-            is_nodesc = isinstance(a.description, NoDesc)
-            outline = a.outline
-            desc = NoDesc() if is_nodesc else "".join(a.description.descs)
-            if hasattr(a.subject, "calling"):
-                outline = str_replaced_tag_by_dictionary(a.outline, a.subject.calling)
-                if not is_nodesc:
-                    desc = str_replaced_tag_by_dictionary(desc, a.subject.calling)
-            outline = str_replaced_tag_by_dictionary(outline, words)
-            if not is_nodesc:
-                desc = str_replaced_tag_by_dictionary(desc, words)
-            tmp.append(a.inherited(outline=outline, desc=desc))
+            tmp.append(_story_tag_replaced_in_action(a, words))
     return scene.inherited(*tmp)
 
 def _story_tag_replaced_in_scene_combaction(act: CombAction, words: dict):
     tmp = []
     for v in act.actions:
-        is_nodesc = isinstance(v.description, NoDesc)
-        outline = v.outline
-        desc = NoDesc() if is_nodesc else "".join(v.description.descs)
-        if hasattr(v.subject, "calling"):
-            outline = str_replaced_tag_by_dictionary(v.outline, v.subject.calling)
-            if not is_nodesc:
-                desc = str_replaced_tag_by_dictionary(desc, v.subject.calling)
-        outline = str_replaced_tag_by_dictionary(outline, words)
-        if not is_nodesc:
-            desc = str_replaced_tag_by_dictionary(desc, words)
-        tmp.append(v.inherited(outline=outline, desc=desc))
+        tmp.append(_story_tag_replaced_in_action(v, words))
     return CombAction(*tmp)
+
+def _story_tag_replaced_in_action(act: Action, words: dict):
+    is_nodesc = isinstance(act.description, NoDesc)
+    outline = act.outline
+    desc = NoDesc() if is_nodesc else "".join(act.description.descs)
+    if hasattr(act.subject, "calling"):
+        outline = str_replaced_tag_by_dictionary(act.outline, act.subject.calling)
+        if not is_nodesc:
+            desc = str_replaced_tag_by_dictionary(desc, act.subject.calling)
+    outline = str_replaced_tag_by_dictionary(outline, words)
+    if not is_nodesc:
+        desc = str_replaced_tag_by_dictionary(desc, words)
+    if _isInvalidatedTagReplaced(outline): raise AssertionError("Cannot convert tags in:", outline)
+    if not is_nodesc and _isInvalidatedTagReplaced(desc): raise AssertionError("Cannot convert tags in:", desc)
+    return act.inherited(outline=outline, desc=desc)
+
+## checker
+def _isInvalidatedTagReplaced(target: str, prefix: str='$'):
+    return prefix in target
 
