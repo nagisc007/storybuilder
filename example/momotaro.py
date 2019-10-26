@@ -107,8 +107,8 @@ def sc_depature(w: wd.World):
     s.setStage(w.stage.home).setDay(w.day.voyage).setTime(w.time.morning)
     s.add(
         w.look(w.taro, "準備を終えて家の前にいる"),
-        w.talk(w.granma, "これを"),
-        w.have(w.taro, "$t_dangoを貰う"),
+        w.talk(w.granma, "これを").same(),
+        w.have(w.taro, "$t_dangoを貰う").same(),
         w.move("出発する"),
         )
     return s

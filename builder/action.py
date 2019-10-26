@@ -108,7 +108,9 @@ class Action(BaseData):
         self._description = Description(*args, desc_type=DescType.COMPLEX)
         return self
 
-    def same(self, desc_type: str='d'):
+    def same(self, desc_type: str=None):
+        if not desc_type:
+            desc_type = 't' if self.act_type is ActType.TALK else 'd'
         if desc_type in ('t', 'tell'):
             self.tell(self.outline)
         elif desc_type in ('c', 'comp'):
