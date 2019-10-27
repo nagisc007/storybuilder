@@ -23,7 +23,7 @@ class PersonTest(unittest.TestCase):
         self.assertEqual(p.age, 17)
         self.assertEqual(p.sex, "male")
         self.assertEqual(p.job, "student")
-        self.assertEqual(p.calling, {"me": "俺"})
+        self.assertEqual(p.calling, {"me": "俺", "S":"Taro", "M":"俺"})
         self.assertEqual(p.note, "a man")
         self.assertEqual(p.features, {"hair": "黒"})
 

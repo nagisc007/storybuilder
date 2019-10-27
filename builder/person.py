@@ -26,7 +26,7 @@ class Person(BaseSubject):
         self._sex = assertion.is_str(sex)
         self._job = assertion.is_str(job)
         self._note = assertion.is_str(note)
-        self._calling = str_to_dict_by_splitter(calling)
+        self._calling = Person._appendedBaseCalling(str_to_dict_by_splitter(calling), name)
         self._features = str_to_dict_by_splitter(features)
 
     @property
@@ -58,4 +58,9 @@ class Person(BaseSubject):
 
     @property
     def features(self): return self._features
+
+    # privets
+    def _appendedBaseCalling(origin: dict, name: str):
+        me = origin['me'] if 'me' in origin else '私'
+        return dict(origin, **{'S':name, 'M':me})
 
