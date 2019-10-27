@@ -145,12 +145,15 @@ class Build(object):
         # TODO: 最初にタイトルから章やシーンリスト
         # TODO: 文字数に続いて各シーンの簡易情報
         # TODO: 各分析情報
+        # TODO: flag情報
         charcounts = analyzer.characters_count(story)
         scenes_characters = analyzer.characters_count_each_scenes(story)
         act_percents = analyzer.action_percent(story)
+        flaginfo = analyzer.flag_infos(story)
         scene_num = ["## Scene info",
                 "- scenes: {}\n".format(len(scenes_characters))]
-        res = charcounts + [""] + scene_num + scenes_characters + ["\n---- Actions ----\n"] + act_percents
+        res = charcounts + [""] + scene_num + scenes_characters + act_percents \
+                + flaginfo
         if is_debug: # out to console
             for v in res:
                 print(v)

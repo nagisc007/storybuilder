@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """The analyze tool.
 """
+from itertools import chain
 from . import assertion
 from . import world as wd
 from .scene import Scene
@@ -9,6 +10,7 @@ from .chapter import Chapter
 from .combaction import CombAction
 from .action import Action, ActType
 from .description import Description, DescType, NoDesc
+from .flag import Flag, NoFlag, NoDeflag
 
 
 class Analyzer(object):
@@ -86,6 +88,17 @@ class Analyzer(object):
                 ActType.TALK: _acttype_counts_in_story(story, ActType.TALK),
                 ActType.THINK: _acttype_counts_in_story(story, ActType.THINK),
                 }
+    def flag_infos(self, story: wd.Story):
+        allflags = list(chain.from_iterable(_flags_in_chapter(v) for v in story.chapters))
+        flags = list(v for v in allflags if not v.isDeflag)
+        deflags = list(v for v in allflags if v.isDeflag)
+        return ["## Flag info",
+                "- flags: {}".format(len(flags)),
+                "- deflags: {}".format(len(deflags))] \
+                + ["### Flag detail"] \
+                + list("+ " + v.info for v in flags) \
+                + ["### Deflag detail"] \
+                + list("- " + v.info for v in deflags)
 
     # privates (hook)
     def _descs_count(self, story: wd.Story):
@@ -145,6 +158,33 @@ def _descs_count_in_scene(scene: Scene):
         else:
             tmp.append(len("".join(v.description.descs)))
     return sum(tmp)
+
+def _flags_in_chapter(chapter: Chapter):
+    return chain.from_iterable(_flags_in_episode(v) for v in chapter.episodes)
+
+def _flags_in_episode(episode: Episode):
+    return chain.from_iterable(_flags_in_scene(v) for v in episode.scenes)
+
+def _flags_in_scene(scene: Scene):
+    return chain.from_iterable(_flags_in_action(v) for v in scene.actions)
+
+def _flags_in_action(action: [Action, CombAction]):
+    if isinstance(action, Action):
+        tmp = []
+        if not isinstance(action.getFlag(), (NoFlag, NoDeflag)):
+            tmp.append(action.getFlag())
+        if not isinstance(action.getDeflag(), (NoFlag, NoDeflag)):
+            tmp.append(action.getDeflag())
+        return tmp
+    elif isinstance(action, CombAction):
+        tmp = []
+        for v in action.actions:
+            res = _flags_in_action(v)
+            if res:
+                tmp.append(res[0])
+        return tmp
+    else:
+        return []
 
 def _outline_count_in_chapter(chapter: Chapter):
     return sum(_outline_count_in_episode(x) for x in chapter.episodes)

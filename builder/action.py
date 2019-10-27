@@ -76,11 +76,21 @@ class Action(BaseData):
         return self
 
     def flag(self, val: [str, NoFlag]):
-        self._flag = NoFlag() if isinstance(val, NoFlag) else assertion.is_str(val)
+        if isinstance(val, Flag):
+            self._flag = val
+        elif isinstance(val, str):
+            self._flag = Flag(val)
+        else:
+            self._flag = NoFlag()
         return self
 
     def deflag(self, val: [str, NoDeflag]):
-        self._deflag = NoDeflag() if isinstance(val, NoDeflag) else assertion.is_str(val)
+        if isinstance(val, Flag):
+            self._deflag = val
+        elif isinstance(val, str):
+            self._deflag = Flag(val, True)
+        else:
+            self._deflag = NoDeflag()
         return self
 
     def getFlag(self): return self._flag

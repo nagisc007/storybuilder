@@ -10,7 +10,7 @@ class Flag(BaseData):
     """
     def __init__(self, info: str, isDeflag: bool=False):
         super().__init__("__flag__")
-        self._info = info
+        self._info = assertion.is_str(info)
         self._isDeflag = isDeflag
 
     @property
