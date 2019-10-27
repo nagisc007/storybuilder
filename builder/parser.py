@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """The parser.
 """
+from itertools import chain
 from . import assertion
 from .action import Action, ActType
 from .story import Story
@@ -11,7 +12,7 @@ from .action import Action, ActType
 from .who import Who
 from .description import Description, DescType, NoDesc
 from .basesubject import NoSubject
-from .strutils import str_replaced_tag_by_dictionary, str_duplicated_chopped, extraspace_chopped
+from .strutils import str_replaced_tag_by_dictionary, str_duplicated_chopped, extraspace_chopped, duplicate_bracket_chop_and_replaceed
 from .combaction import CombAction
 
 
@@ -104,6 +105,7 @@ def _scenario_in_episode(episode: Episode):
 def _scenario_in_scene(scene: Scene):
     tmp = [(ScenarioType.TITLE, "\n**" + scene.title + "**\n")]
     tmp.append((ScenarioType.PILLAR, "◯{}".format(scene.stage.name)))
+    # TODO: 時間帯の表示
     for a in scene.actions:
         if isinstance(a, CombAction):
             res = _scenario_in_scene_comaction(a)
@@ -131,57 +133,33 @@ def _scenario_in_scene_comaction(act: CombAction):
     return tmp
 
 def _desc_in_chapter(chapter: Chapter):
-    tmp = ["## " + chapter.title + "\n"]
-    for a in chapter.episodes:
-        res = _desc_in_episode(a)
-        if res:
-            tmp.extend(res)
-    return tmp
+    return ["##" + chapter.title + "\n"] \
+            + list(chain.from_iterable(_desc_in_episode(v) for v in chapter.episodes))
 
 def _desc_in_episode(episode: Episode):
-    tmp = ["\n### " + episode.title + "\n"]
-    for a in episode.scenes:
-        res = _desc_in_scene(a)
-        if res:
-            tmp.extend(res)
-    return tmp
+    return ["\n### " + episode.title + "\n"] \
+            + list(chain.from_iterable(_desc_in_scene(v) for v in episode.scenes))
 
 def _desc_in_scene(scene: Scene):
-    tmp = ["\n**" + scene.title + "**\n"]
-    # TODO: 時間帯の表示
-    for a in scene.actions:
-        if isinstance(a, CombAction):
-            res = _desc_in_scene_combaction(a)
-            if res:
-                tmp.append(res)
-        elif isinstance(a.description, NoDesc):
-            continue
-        elif isinstance(a.description, Description):
-            if a.description.desc_type is DescType.DIALOGUE:
-                tmp.append(str_duplicated_chopped(
-                    "「" + "".join(v for v in a.description.descs) + "」"))
-            elif a.description.desc_type is DescType.COMPLEX:
-                tmp.append("".join(v for v in a.description.descs))
-            else:
-                tmp.append(str_duplicated_chopped(
-                    "　" + "".join(v for v in a.description.descs) + "。"))
-    return tmp
+    return ["\n**" + scene.title + "**\n"] \
+            + list(chain.from_iterable(_desc_in_action(v) for v in scene.actions))
 
-def _desc_in_scene_combaction(act: CombAction):
-    tmp = []
-    for v in act.actions:
-        if isinstance(v.description, NoDesc):
-            continue
-        if isinstance(v.description, Description):
-            if v.description.desc_type is DescType.DIALOGUE:
-                tmp.append(str_duplicated_chopped(
-                    "「" + "".join(x for x in v.description.descs) + "」"))
-            elif v.description.desc_type is DescType.COMPLEX:
-                tmp.append("".join(x for x in v.description.descs))
+def _desc_in_action(action: [Action, CombAction]):
+    if isinstance(action, Action):
+        if isinstance(action.description, NoDesc):
+            return []
+        else:
+            if action.description.desc_type is DescType.DIALOGUE:
+                return [str_duplicated_chopped("「" + "".join(x for x in action.description.descs) + "」")]
+            elif action.description.desc_type is DescType.COMPLEX:
+                return ["".join(x for x in action.description.descs)]
             else:
-                tmp.append(str_duplicated_chopped(
-                    "　" + "".join(x for x in v.description.descs) + "。"))
-    return extraspace_chopped("".join(tmp))
+                return [str_duplicated_chopped("　" + "".join(x for x in action.description.descs) + "。")]
+        return []
+    elif isinstance(action, CombAction):
+        return [duplicate_bracket_chop_and_replaceed(extraspace_chopped("".join(chain.from_iterable(_desc_in_action(x) for x in action.actions))))]
+    else:
+        return []
 
 def _desc_connected_in_chapter(chapter: Chapter):
     tmp = []

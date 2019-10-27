@@ -48,4 +48,6 @@ def str_duplicated_chopped(target: str):
 def extraspace_chopped(target: str) -> str:
     return re.sub(r'([、。」])[　](.)', r'\1\2', assertion.is_str(target))
 
+def duplicate_bracket_chop_and_replaceed(target: str) -> str:
+    return re.sub(r'」「', r'。', assertion.is_str(target))
 
