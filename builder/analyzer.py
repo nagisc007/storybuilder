@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 """The analyze tool.
 """
+import re
+from collections import Counter
 from itertools import chain
+import MeCab
 from . import assertion
 from . import world as wd
 from .scene import Scene
@@ -19,6 +22,9 @@ class Analyzer(object):
     DEF_BASEMENT = 10
     DEF_BASEROWS = 20
     DEF_BASECOLUMNS = 20
+
+    def __init__(self):
+        self.tokenizer = MeCab.Tagger()
 
     # main analyzing methods
     def action_percent(self, story):
@@ -88,6 +94,7 @@ class Analyzer(object):
                 ActType.TALK: _acttype_counts_in_story(story, ActType.TALK),
                 ActType.THINK: _acttype_counts_in_story(story, ActType.THINK),
                 }
+
     def flag_infos(self, story: wd.Story):
         allflags = list(chain.from_iterable(_flags_in_chapter(v) for v in story.chapters))
         flags = list(v for v in allflags if not v.isDeflag)
@@ -99,6 +106,16 @@ class Analyzer(object):
                 + list("+ " + v.info for v in flags) \
                 + ["### Deflag detail"] \
                 + list("- " + v.info for v in deflags)
+
+    def frequency_words(self, story: wd.Story):
+        from .parser import descriptions_from
+        descs = descriptions_from(story)
+        parsed = self.tokenizer.parse("\n".join(descs)).split("\n")
+        tokens = (re.split('[\t,]', v) for v in parsed)
+        words = [v[0] for v in tokens if (v[0] not in ('EOS', '', 't', 'ー') and v[1] == '名詞')]
+        counter = Counter(words)
+        return ["## Frequency words"] \
+                + [f"{word}: {count}" for word, count in counter.most_common() if not "#" in word and not "*" in word]
 
     # privates (hook)
     def _descs_count(self, story: wd.Story):

@@ -82,6 +82,14 @@ class Build(object):
                 print("ERROR: output a detail info failed!!")
                 return is_succeeded
 
+        if options.analyze:
+            # TODO: analyze documents
+            is_succeeded = self.to_analyzed_info(story_converted, analyzer, filename,
+                    is_debug)
+            if not is_succeeded:
+                print("ERROR: output an analyzed info failed!!")
+                return is_succeeded
+
         if options.chara:
             # TODO: show character infos
             pass
@@ -159,6 +167,21 @@ class Build(object):
                 print(v)
         else:
             is_succeeded = Build._out_to_file(res, filename, "_info", self._extension,
+                    self._builddir)
+        return is_succeeded
+
+    def to_analyzed_info(self, story: wd.Story, analyzer: Analyzer, filename: str,
+            is_debug: bool):
+        is_succeeded = True
+        # NOTE: 解析結果
+        freq = analyzer.frequency_words(story)
+        res = freq
+        if is_debug:
+            # out to console
+            for v in res:
+                print(v)
+        else:
+            is_succeeded = Build._out_to_file(res, filename, "_anal", self._extension,
                     self._builddir)
         return is_succeeded
 
@@ -276,8 +299,8 @@ def _options_parsed(): # pragma: no cover
     parser.add_argument('-d', '--description', help="output the novel", action='store_true')
     # TODO: action view
     parser.add_argument('-a', '--action', help="output the monitoring action", action='store_true')
-    # TODO: detail info
     parser.add_argument('-i', '--info', help="output adding the detail info", action='store_true')
+    parser.add_argument('-z', '--analyze', help="output the analyzed info", action='store_true')
     # TODO: character info
     parser.add_argument('-c', '--chara', help="output characters info", action='store_true')
     # TODO: help
