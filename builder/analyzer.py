@@ -112,10 +112,39 @@ class Analyzer(object):
         descs = descriptions_from(story)
         parsed = self.tokenizer.parse("\n".join(descs)).split("\n")
         tokens = (re.split('[\t,]', v) for v in parsed)
-        words = [v[0] for v in tokens if (v[0] not in ('EOS', '', 't', 'ー') and v[1] == '名詞')]
-        counter = Counter(words)
+        def base_excepted(target: str):
+            return target in ('EOS', '', 't', 'ー')
+        verbs = []
+        nouns = []
+        adjectives = []
+        adverbs = []
+        conjuctions = []
+        for v in tokens:
+            if base_excepted(v[0]):
+                continue
+            elif len(v) == 1:
+                continue
+            elif v[1] == '名詞':
+                nouns.append(v[0])
+            elif v[1] == '動詞':
+                verbs.append(v[0])
+            elif v[1] == '形容詞':
+                adjectives.append(v[0])
+            elif v[1] == '副詞':
+                adverbs.append(v[0])
+            elif v[1] == '接続詞':
+                conjuctions.append(v[0])
+        noun_counter = Counter(nouns)
+        verb_counter = Counter(verbs)
+        adject_counter = Counter(adjectives)
+        adverb_counter = Counter(adverbs)
+        conjuct_counter = Counter(conjuctions)
         return ["## Frequency words"] \
-                + [f"{word}: {count}" for word, count in counter.most_common() if not "#" in word and not "*" in word]
+                + ["\n### 名詞\n"] + [f"{word}: {count}" for word, count in noun_counter.most_common() if not "#" in word and not "*" in word] \
+                + ["\n### 動詞\n"] + [f"{word}: {count}" for word, count in verb_counter.most_common()] \
+                + ["\n### 形容詞\n"] + [f"{word}: {count}" for word, count in adject_counter.most_common()] \
+                + ["\n### 副詞\n"] + [f"{word}: {count}" for word, count in adverb_counter.most_common()] \
+                + ["\n### 接続詞\n"] + [f"{word}: {count}" for word, count in conjuct_counter.most_common()] \
 
     # privates (hook)
     def _descs_count(self, story: wd.Story):
