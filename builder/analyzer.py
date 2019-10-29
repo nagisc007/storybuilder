@@ -109,7 +109,8 @@ class Analyzer(object):
 
     def frequency_words(self, story: wd.Story):
         from .parser import descriptions_from
-        descs = descriptions_from(story)
+        is_comment = False
+        descs = descriptions_from(story, is_comment)
         parsed = self.tokenizer.parse("\n".join(descs)).split("\n")
         tokens = (re.split('[\t,]', v) for v in parsed)
         def base_excepted(target: str):
