@@ -8,7 +8,7 @@ from .story import Story
 from .chapter import Chapter
 from .episode import Episode
 from .scene import Scene, ScenarioType
-from .action import Action, ActType
+from .action import Action, ActType, TagAction, TagType
 from .who import Who
 from .description import Description, DescType, NoDesc
 from .basesubject import NoSubject
@@ -33,13 +33,9 @@ def scenarios_from(story: Story):
             tmp.extend(res)
     return tmp
 
-def descriptions_from(story: Story):
-    tmp = ["# " + story.title + "\n"]
-    for a in story.chapters:
-        res = _desc_in_chapter(a)
-        if res:
-            tmp.extend(res)
-    return tmp
+def descriptions_from(story: Story, is_comment: bool):
+    return ["# " + story.title + "\n"] \
+            + list(chain.from_iterable(_desc_in_chapter(v, is_comment) for v in story.chapters))
 
 def description_connected(story: Story):
     tmp = []
@@ -132,20 +128,35 @@ def _scenario_in_scene_comaction(act: CombAction):
                 str_duplicated_chopped(v.outline + "。")))
     return tmp
 
-def _desc_in_chapter(chapter: Chapter):
+def _desc_in_chapter(chapter: Chapter, is_comment: bool):
     return ["##" + chapter.title + "\n"] \
-            + list(chain.from_iterable(_desc_in_episode(v) for v in chapter.episodes))
+            + list(chain.from_iterable(_desc_in_episode(v, is_comment) for v in chapter.episodes))
 
-def _desc_in_episode(episode: Episode):
+def _desc_in_episode(episode: Episode, is_comment: bool):
     return ["\n### " + episode.title + "\n"] \
-            + list(chain.from_iterable(_desc_in_scene(v) for v in episode.scenes))
+            + list(chain.from_iterable(_desc_in_scene(v, is_comment) for v in episode.scenes))
 
-def _desc_in_scene(scene: Scene):
+def _desc_in_scene(scene: Scene, is_comment: bool):
     return ["\n**" + scene.title + "**\n"] \
-            + list(chain.from_iterable(_desc_in_action(v) for v in scene.actions))
+            + list(chain.from_iterable(_desc_in_action(v, is_comment) for v in scene.actions))
 
-def _desc_in_action(action: [Action, CombAction]):
-    if isinstance(action, Action):
+def _desc_in_action(action: [Action, CombAction], is_comment: bool):
+    if isinstance(action, TagAction):
+        # TODO: 処理を切り離す
+        if action.tag_type is TagType.COMMENT and is_comment:
+            return [f"<!--{action.info}-->"]
+        elif action.tag_type is TagType.BR:
+            return ["\n\n"]
+        elif action.tag_type is TagType.HR:
+            return ["----" * 8]
+        elif action.tag_type is TagType.SYMBOL:
+            return [f"\n{action.info}\n"]
+        elif action.tag_type is TagType.TITLE:
+            num = int(action.subinfo)
+            return ["{} {}".format("#" * num, action.info)]
+        else:
+            return []
+    elif isinstance(action, Action):
         if isinstance(action.description, NoDesc):
             return []
         else:
@@ -157,7 +168,7 @@ def _desc_in_action(action: [Action, CombAction]):
                 return [str_duplicated_chopped("　" + "".join(x for x in action.description.descs) + "。")]
         return []
     elif isinstance(action, CombAction):
-        return [duplicate_bracket_chop_and_replaceed(extraspace_chopped("".join(chain.from_iterable(_desc_in_action(x) for x in action.actions))))]
+        return [duplicate_bracket_chop_and_replaceed(extraspace_chopped("".join(chain.from_iterable(_desc_in_action(x, is_comment) for x in action.actions))))]
     else:
         return []
 
@@ -180,6 +191,8 @@ def _desc_connected_in_scene(scene: Scene):
             tmp.append(_desc_connected_in_scene_combaction(a))
         elif isinstance(a.description, NoDesc):
             tmp.append(a)
+        elif isinstance(a, TagAction):
+            tmp.append(a)
         else:
             tmp.append(a.inherited(desc=str_duplicated_chopped(
                 "。".join(a.description.descs))))
@@ -189,6 +202,8 @@ def _desc_connected_in_scene_combaction(act: CombAction):
     tmp = []
     for v in act.actions:
         if isinstance(v.description, NoDesc):
+            tmp.append(v)
+        elif isinstance(v, TagAction):
             tmp.append(v)
         else:
             tmp.append(v.inherited(desc=str_duplicated_chopped(
@@ -244,12 +259,16 @@ def _story_pronoun_replaced_in_scene(scene: Scene):
         if isinstance(a, CombAction):
             tmp_c = []
             for v in a.actions:
-                if isinstance(v.subject, Who):
+                if isinstance(v, TagAction):
+                    tmp_c.append(v)
+                elif isinstance(v.subject, Who):
                     tmp_c.append(v.inherited(subject=cur_sub))
                 else:
                     cur_sub = v.subject
                     tmp_c.append(v)
             tmp.append(CombAction(*tmp_c))
+        elif isinstance(a, TagAction):
+            tmp.append(a)
         elif isinstance(a.subject, Who):
             tmp.append(a.inherited(subject=cur_sub))
         else:
@@ -284,7 +303,9 @@ def _story_tag_replaced_in_scene_combaction(act: CombAction, words: dict):
         tmp.append(_story_tag_replaced_in_action(v, words))
     return CombAction(*tmp)
 
-def _story_tag_replaced_in_action(act: Action, words: dict):
+def _story_tag_replaced_in_action(act: [Action, TagAction], words: dict):
+    if isinstance(act, TagAction):
+        return act
     is_nodesc = isinstance(act.description, NoDesc)
     outline = act.outline
     desc = NoDesc() if is_nodesc else "".join(act.description.descs)

@@ -36,6 +36,7 @@ class Build(object):
         pri_filter = options.priority # TODO: priority指定できるようにする
         formattype = options.format
         is_debug = options.debug # NOTE: 現在デバッグモードはコンソール出力のみ
+        is_comment = options.comment # NOTE: コメント付き出力
 
         ''' NOTE: converted story content
                 1) prioriy filter
@@ -65,7 +66,7 @@ class Build(object):
 
         if options.description:
             is_succeeded = self.to_description(story_converted, filename, formattype,
-                    is_debug)
+                    is_comment, is_debug)
             if not is_succeeded:
                 print("ERROR: output a description failed!!")
                 return is_succeeded
@@ -128,9 +129,9 @@ class Build(object):
         return is_succeeded
 
     def to_description(self, story: wd.Story, filename: str, formattype: str,
-            is_debug: bool):
+            is_comment: bool, is_debug: bool):
         is_succeeded = True
-        res = Build._description_formatted(descriptions_from(story), formattype)
+        res = Build._description_formatted(descriptions_from(story, is_comment), formattype)
         if is_debug:
             # out to console
             for v in res:
@@ -311,8 +312,8 @@ def _options_parsed(): # pragma: no cover
     # TODO: priority setting
     parser.add_argument('-p', '--priority', help="output filtered by the priority", type=int, default=wd.World.DEF_PRIORITY)
     parser.add_argument('--debug', help="with a debug mode", action='store_true')
-    # TODO: output format
     parser.add_argument('--format', help='output the format style', type=str)
+    parser.add_argument('--comment', help='output with comment', action='store_true')
 
     # get result
     args = parser.parse_args()

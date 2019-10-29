@@ -39,6 +39,7 @@ def sc_washing(w: wd.World):
     s.setCamera(w.granma)
     s.setStage(w.stage.river).setDay(w.day.getpeach).setTime(w.time.morning)
     s.add(
+        w.comment("桃太郎誕生の話"),
         w.be(None, "昔あるところに子どものない老夫婦がいた").d("昔々あるところに子どものない老夫婦がいたそうだ"),
         w.move(w.granpa, "山へ芝刈りに行った").d("じいさんは山に芝刈りに出かけ、"),
         w.move(w.granma, "川に洗濯にくる").d("ばあさんは洗濯に川にやってきた"),

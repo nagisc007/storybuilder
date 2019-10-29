@@ -25,6 +25,17 @@ class ActType(Enum):
     HAVE = "have" # 所有変更
     HEAR = "hear" # 効果音などの音声
     TALK = "talk" # 台詞
+    TAG = "tag" # for tag
+
+
+class TagType(Enum):
+    """Tag type
+    """
+    BR = "breakline" # BR
+    COMMENT = "comment" # コメント
+    HR = "horizontalline" # HR
+    SYMBOL = "symbol" # シンボル
+    TITLE = "title" # タイトル
 
 
 class Action(BaseData):
@@ -146,3 +157,22 @@ class Action(BaseData):
                     desc_type=desc_type)
         return self
 
+
+class TagAction(Action):
+
+    def __init__(self, info: str, subinfo: str="", tag_type: TagType=TagType.COMMENT):
+        super().__init__(None, info, ActType.TAG)
+        self._subinfo = assertion.is_str(subinfo)
+        self._tag_type = assertion.is_instance(tag_type, TagType)
+
+    @property
+    def info(self): return self._outline
+
+    @property
+    def subinfo(self): return self._subinfo
+
+    @property
+    def tag_type(self): return self._tag_type
+
+    def inherited(self):
+        return TagAction(self, self.info, self.subinfo, self.tag_type)

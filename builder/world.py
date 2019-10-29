@@ -45,16 +45,6 @@ class World(UtilityDict):
         # TODO: priorityを先か後で調整できるようにする
         self._priority = World.DEF_PRIORITY
 
-    # tag
-    def br(self):
-        return self
-
-    def comment(self):
-        return self
-
-    def hr(self):
-        return self
-
     # creations
     def chapter(self, *args, **kwargs):
         '''To create a chapter.
@@ -206,6 +196,22 @@ class World(UtilityDict):
     def think(self, subject: [Person, Chara, None],
             outline: str=""):
         return ac.Action(subject, outline, act_type=ac.ActType.THINK)
+
+    # tags
+    def comment(self, info: str):
+        return ac.TagAction(info, tag_type=ac.TagType.COMMENT)
+
+    def br(self):
+        return ac.TagAction("", tag_type=ac.TagType.BR)
+
+    def hr(self):
+        return ac.TagAction("", tag_type=ac.TagType.HR)
+
+    def symbol(self, info: str):
+        return ac.TagAction(info, tag_type=ac.TagType.SYMBOL)
+
+    def title(self, info: str, subinfo: str="1"):
+        return ac.TagAction(info, subinfo, ac.TagType.TITLE)
 
     # build
     def build(self, val: Story):
