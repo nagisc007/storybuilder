@@ -10,11 +10,12 @@ class Story(BaseContainer):
     """The container for chapters.
     """
     def __init__(self, title: str, *args):
-        super().__init__(title)
+        from .action import Action
+        super().__init__(title, Action.DEF_PRIORITY)
         self._chapters = Story._validatedChapters(*args)
 
     def inherited(self, *chaps):
-        return Story(self.title, *chaps)
+        return Story(self.title, *chaps).setPriority(self.priority)
 
     @property
     def chapters(self): return self._chapters

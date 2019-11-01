@@ -27,14 +27,13 @@ class Scene(BaseContainer):
     """The container for actions.
     """
     def __init__(self, title: str, outline: str):
-        super().__init__(title)
+        super().__init__(title, Action.DEF_PRIORITY)
         self._outline = assertion.is_str(outline)
         self._actions = ()
         self._camera = NoData()
         self._stage = NoData()
         self._day = NoData()
         self._time = NoData()
-        self._priority = Action.DEF_PRIORITY
 
     def inherited(self, *acts):
         return Scene(self.title, self.outline) \
@@ -62,18 +61,6 @@ class Scene(BaseContainer):
 
     @property
     def title(self): return self._title
-
-    @property
-    def priority(self): return self._priority
-
-    def setPriority(self, pri: int):
-        # TODO: min < x < max check
-        self._priority = pri
-        return self
-
-    def omit(self):
-        self._priority = Action.MIN_PRIORITY
-        return self
 
     def setCamera(self, camera: [Person, NoData]):
         """

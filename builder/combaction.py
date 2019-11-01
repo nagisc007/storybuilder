@@ -10,11 +10,14 @@ class CombAction(BaseContainer):
     """The container for actions.
     """
     def __init__(self, *args):
-        super().__init__("__comb__")
+        super().__init__("__comb__", Action.DEF_PRIORITY)
         self._actions = CombAction._validatedActions(*args)
 
     @property
     def actions(self): return self._actions
+
+    def inherited(self, *args):
+        return CombAction(*args).setPriority(self.priority)
 
     # privates
     def _validatedActions(*args):

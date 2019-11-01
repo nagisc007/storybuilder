@@ -180,31 +180,21 @@ class Analyzer(object):
 
 # privates (detail)
 def _descs_count_in_chapter(chapter: Chapter):
-    tmp = []
-    for v in chapter.episodes:
-        tmp.append(_descs_count_in_episode(v))
-    return sum(tmp)
+    return sum(_descs_count_in_episode(v) for v in chapter.episodes)
 
 def _descs_count_in_episode(episode: Episode):
-    tmp = []
-    for v in episode.scenes:
-        tmp.append(_descs_count_in_scene(v))
-    return sum(tmp)
+    return sum(_descs_count_in_scene(v) for v in episode.scenes)
 
 def _descs_count_in_scene(scene: Scene):
-    tmp = []
-    for v in scene.actions:
-        if isinstance(v, CombAction):
-            for c in v.actions:
-                if isinstance(c.description, NoDesc):
-                    tmp.append(0)
-                else:
-                    tmp.append(len("".join(c.description.descs)))
-        elif isinstance(v.description, NoDesc):
-            tmp.append(0)
-        else:
-            tmp.append(len("".join(v.description.descs)))
-    return sum(tmp)
+    def _as_combaction(combact: CombAction):
+        return sum(_descs_count_in_action(v) for v in combact.actions)
+    return sum(_as_combaction(v) if isinstance(v, CombAction) else _descs_count_in_action(v) for v in scene.actions)
+
+def _descs_count_in_action(action: Action):
+    if isinstance(action.description, NoDesc):
+        return 0
+    else:
+        return len("".join(action.description.descs))
 
 def _flags_in_chapter(chapter: Chapter):
     return chain.from_iterable(_flags_in_episode(v) for v in chapter.episodes)
@@ -216,20 +206,12 @@ def _flags_in_scene(scene: Scene):
     return chain.from_iterable(_flags_in_action(v) for v in scene.actions)
 
 def _flags_in_action(action: [Action, CombAction]):
+    def _is_flag_or_deflag(flag: [Flag, NoFlag, NoDeflag]):
+        return not isinstance(flag, (NoFlag, NoDeflag)) or not isinstance(flag, (NoFlag, NoDeflag))
     if isinstance(action, Action):
-        tmp = []
-        if not isinstance(action.getFlag(), (NoFlag, NoDeflag)):
-            tmp.append(action.getFlag())
-        if not isinstance(action.getDeflag(), (NoFlag, NoDeflag)):
-            tmp.append(action.getDeflag())
-        return tmp
+        return [v for v in (action.getFlag(), action.getDeflag()) if _is_flag_or_deflag(v)]
     elif isinstance(action, CombAction):
-        tmp = []
-        for v in action.actions:
-            res = _flags_in_action(v)
-            if res:
-                tmp.append(res[0])
-        return tmp
+        return chain.from_iterable(_flags_in_action(v) for v in action.actions)
     else:
         return []
 
@@ -240,14 +222,9 @@ def _outline_count_in_episode(episode: Episode):
     return sum(_outline_count_in_scene(x) for x in episode.scenes)
 
 def _outline_count_in_scene(scene: Scene):
-    tmp = []
-    for v in scene.actions:
-        if isinstance(v, CombAction):
-            for c in v.actions:
-                tmp.append(len(c.outline))
-        else:
-            tmp.append(len(v.outline))
-    return sum(tmp)
+    def _as_combaction(act: CombAction):
+        return sum(len(v.outline) for v in act.actions)
+    return sum(_as_combaction(v) if isinstance(v, CombAction) else len(v.outline) for v in scene.actions)
 
 def _outline_manupapers_count(story: wd.Story, rows: int, columns: int):
     _rows = sum(_outline_manupaper_count_in_chapter(x, columns) for x in story.chapters)
@@ -261,42 +238,26 @@ def _outline_manupaper_count_in_episode(episode: Episode, columns: int):
     return sum(_outline_manupaper_count_in_scene(x, columns) for x in episode.scenes)
 
 def _outline_manupaper_count_in_scene(scene: Scene, columns: int):
-    tmp = []
-    tmp.append(2) # NOTE: title pillar
-    for v in scene.actions:
-        if isinstance(v, CombAction):
-            for c in v.actions:
-                tmp.append(int_ceiled(len(c.outline), columns))
-        else:
-            tmp.append(int_ceiled(len(v.outline), columns))
-    return sum(tmp)
+    def _as_combaction(act: CombAction):
+        return sum(int_ceiled(len(v.outline), columns) for v in act.actions)
+    # NOTE: +2 is title pillar
+    return sum(_as_combaction(v) if isinstance(v, CombAction) else int_ceiled(len(v.outline), columns) for v in scene.actions) + 2
 
 def _acttype_counts_in_story(story: wd.Story, act_type: ActType):
-    tmp = []
-    for v in story.chapters:
-        tmp.append(_acttype_counts_in_chapter(v, act_type))
-    return sum(tmp)
+    return sum(_acttype_counts_in_chapter(v, act_type) for v in story.chapters)
 
 def _acttype_counts_in_chapter(chapter: Chapter, act_type: ActType):
-    tmp = []
-    for v in chapter.episodes:
-        tmp.append(_acttype_counts_in_episode(v, act_type))
-    return sum(tmp)
+    return sum(_acttype_counts_in_episode(v, act_type) for v in chapter.episodes)
 
 def _acttype_counts_in_episode(episode: Episode, act_type: ActType):
-    tmp = []
-    for v in episode.scenes:
-        tmp.append(_acttype_counts_in_scene(v, act_type))
-    return sum(tmp)
+    return sum(_acttype_counts_in_scene(v, act_type) for v in episode.scenes)
 
 def _acttype_counts_in_scene(scene: Scene, act_type: ActType):
-    tmp = []
-    for v in scene.actions:
-        if isinstance(v, CombAction):
-            tmp.append(1)
-        else:
-            tmp.append(v.act_type is act_type)
-    return sum(tmp)
+    def _as_combaction(act: CombAction, act_type: ActType):
+        return sum(1 for v in act.actions if v.act_type is act_type)
+    def _as_single_action(act: Action, act_type: ActType):
+        return act.act_type is act_type
+    return sum(_as_combaction(v, act_type) if isinstance(v, CombAction) else _as_single_action(v, act_type) for v in scene.actions)
 
 def _manupapers_count(story: wd.Story, rows: int, columns: int):
     _rows = _manupaper_count_rows_in_story(story, columns)
@@ -304,38 +265,20 @@ def _manupapers_count(story: wd.Story, rows: int, columns: int):
     return f"{_papers:0.3f} ({_rows:0.2f}/{rows} x {columns})"
 
 def _manupaper_count_rows_in_story(story: wd.Story, columns):
-    tmp = []
-    for v in story.chapters:
-        tmp.append(_manupaper_count_rows_in_chapter(v, columns))
-    return sum(tmp)
+    return sum(_manupaper_count_rows_in_chapter(v, columns) for v in story.chapters)
 
 def _manupaper_count_rows_in_chapter(chapter: Chapter, columns: int):
-    tmp = []
-    for v in chapter.episodes:
-        tmp.append(_manupaper_count_rows_in_episode(v, columns))
-    return sum(tmp)
+    return sum(_manupaper_count_rows_in_episode(v, columns) for v in chapter.episodes)
 
 def _manupaper_count_rows_in_episode(episode: Episode, columns: int):
-    tmp = []
-    for v in episode.scenes:
-        tmp.append(_manupaper_count_rows_in_scene(v, columns))
-    return sum(tmp)
+    return sum(_manupaper_count_rows_in_scene(v, columns) for v in episode.scenes)
 
 def _manupaper_count_rows_in_scene(scene: Scene, columns: int):
-    tmp = []
-    for v in scene.actions:
-        if isinstance(v, CombAction):
-            for c in v.actions:
-                if isinstance(c.description, NoDesc):
-                    continue
-                else:
-                    tmp.append(int_ceiled(
-                        len("".join(c.description.descs)), columns))
-        elif isinstance(v.description, NoDesc):
-            continue
-        else:
-            tmp.append(int_ceiled(len("".join(v.description.descs)), columns))
-    return sum(tmp)
+    def _desc_count(act: Action, columns: int):
+        return int_ceiled(len("".join(act.description.descs)), columns)
+    def _as_combaction(act: CombAction, columns: int):
+        return sum(_desc_count(v, columns) for v in act.actions)
+    return sum(_as_combaction(v, columns) if isinstance(v, CombAction) else _desc_count(v, columns) for v in scene.actions)
 
 
 # math utility
