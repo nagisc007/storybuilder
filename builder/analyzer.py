@@ -140,12 +140,21 @@ class Analyzer(object):
         adject_counter = Counter(adjectives)
         adverb_counter = Counter(adverbs)
         conjuct_counter = Counter(conjuctions)
+        def _as_one_counts(counter: Counter):
+            return ["others: " + ",".join([word for word, count in counter.most_common() if count == 1])]
+        def _wordslist(counter: Counter):
+            return [f"{word}: {count}" for word, count in counter.most_common() if count > 1]
         return ["## Frequency words"] \
-                + ["\n### 名詞\n"] + [f"{word}: {count}" for word, count in noun_counter.most_common() if not "#" in word and not "*" in word] \
-                + ["\n### 動詞\n"] + [f"{word}: {count}" for word, count in verb_counter.most_common()] \
-                + ["\n### 形容詞\n"] + [f"{word}: {count}" for word, count in adject_counter.most_common()] \
-                + ["\n### 副詞\n"] + [f"{word}: {count}" for word, count in adverb_counter.most_common()] \
-                + ["\n### 接続詞\n"] + [f"{word}: {count}" for word, count in conjuct_counter.most_common()] \
+                + ["\n### 名詞\n"] + [f"{word}: {count}" for word, count in noun_counter.most_common() if not "#" in word and not "*" in word and count > 1] \
+                + _as_one_counts(noun_counter) \
+                + ["\n### 動詞\n"] + _wordslist(verb_counter) \
+                + _as_one_counts(verb_counter) \
+                + ["\n### 形容詞\n"] + _wordslist(adject_counter) \
+                + _as_one_counts(adject_counter) \
+                + ["\n### 副詞\n"] + _wordslist(adverb_counter) \
+                + _as_one_counts(adverb_counter) \
+                + ["\n### 接続詞\n"] + _wordslist(conjuct_counter) \
+                + _as_one_counts(conjuct_counter)
 
     # privates (hook)
     def _descs_count(self, story: wd.Story):
