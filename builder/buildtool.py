@@ -95,6 +95,13 @@ class Build(object):
             # TODO: show character infos
             pass
 
+        if options.dialogue:
+            is_succeeded = self.to_dialogue_info(story_converted, analyzer, filename,
+                    is_debug)
+            if not is_succeeded:
+                print("ERROR: output a dialogue info failed!!")
+                return is_succeeded
+
         if options.version:
             # TODO: show version
             pass
@@ -183,6 +190,21 @@ class Build(object):
                 print(v)
         else:
             is_succeeded = Build._out_to_file(res, filename, "_anal", self._extension,
+                    self._builddir)
+        return is_succeeded
+
+    def to_dialogue_info(self, story: wd.Story, analyzer: Analyzer, filename: str,
+            is_debug: bool):
+        is_succeeded = True
+        # NOTE: dialogue count and list
+        info = analyzer.dialogue_infos(story)
+        res = info
+        if is_debug:
+            # out to console
+            for v in res:
+                print(v)
+        else:
+            is_succeeded = Build._out_to_file(res, filename, "_dial", self._extension,
                     self._builddir)
         return is_succeeded
 
@@ -304,6 +326,7 @@ def _options_parsed(): # pragma: no cover
     parser.add_argument('-z', '--analyze', help="output the analyzed info", action='store_true')
     # TODO: character info
     parser.add_argument('-c', '--chara', help="output characters info", action='store_true')
+    parser.add_argument('-l', '--dialogue', help="output character dialogues", action='store_true')
     # TODO: help
     # TODO: version info
     parser.add_argument('-v', '--version', help="display this version", action='store_true')

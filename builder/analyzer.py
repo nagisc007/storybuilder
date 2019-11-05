@@ -11,9 +11,12 @@ from .scene import Scene
 from .episode import Episode
 from .chapter import Chapter
 from .combaction import CombAction
-from .action import Action, ActType
+from .action import Action, ActType, TagAction, TagType
 from .description import Description, DescType, NoDesc
 from .flag import Flag, NoFlag, NoDeflag
+from .person import Person
+from .chara import Chara
+from .basesubject import NoSubject
 
 
 class Analyzer(object):
@@ -156,6 +159,15 @@ class Analyzer(object):
                 + ["\n### 接続詞\n"] + _wordslist(conjuct_counter) \
                 + _as_one_counts(conjuct_counter)
 
+    def dialogue_infos(self, story: wd.Story):
+        charalist = list(set(list(chain.from_iterable(_characters_in_chapter(v) for v in story.chapters))))
+        dial_counts = self._dialogues_counts(story, charalist)
+        each_charas = self._dialogues_by_char(story, charalist)
+        return ["## Dialogue counts\n"] \
+                + dial_counts \
+                + ["\n## Dialogue each persons\n"] \
+                + each_charas
+
     # privates (hook)
     def _descs_count(self, story: wd.Story):
         tmp = []
@@ -187,7 +199,35 @@ class Analyzer(object):
     def _outline_manupaper_count(self, story: wd.Story, rows: int, columns: int):
         return _outline_manupapers_count(story, rows, columns)
 
+    def _dialogues_counts(self, story: wd.Story, charalist: list):
+        return [f"{v.name}: {_dialogue_count_in_story(story, v)}" for v in charalist]
+
+    def _dialogues_by_char(self, story: wd.Story, charalist):
+        def _conv_list(chara: [Person, Chara, NoSubject], dialogues: list):
+            return [f"{chara.name}:"] + [f"- {v}" for v in dialogues if v]
+        return list(chain.from_iterable(_conv_list(v, _dialogues_bychara_in_story(story, v)) for v in charalist))
+
 # privates (detail)
+def _characters_in_chapter(chapter: Chapter):
+    # TODO: need to collect none subject chara
+    return chain.from_iterable(_characters_in_episode(v) for v in chapter.episodes)
+
+def _characters_in_episode(episode: Episode):
+    return chain.from_iterable(_characters_in_scene(v) for v in episode.scenes)
+
+def _characters_in_scene(scene: Scene):
+    return chain.from_iterable(_characters_in_action(v) for v in scene.actions)
+
+def _characters_in_action(action: [Action, CombAction, TagAction]):
+    def _as_combaction(act: CombAction):
+        return list(chain.from_iterable(_characters_in_action(v) for v in act.actions))
+    if isinstance(action, CombAction):
+        return _as_combaction(action)
+    elif isinstance(action, TagAction):
+        return []
+    else:
+        return [action.subject]
+
 def _descs_count_in_chapter(chapter: Chapter):
     return sum(_descs_count_in_episode(v) for v in chapter.episodes)
 
@@ -204,6 +244,50 @@ def _descs_count_in_action(action: Action):
         return 0
     else:
         return len("".join(action.description.descs))
+
+def _dialogue_count_in_story(story: wd.Story, target: [Person, Chara, NoSubject]):
+    return sum(_dialogue_count_in_chapter(v, target) for v in story.chapters)
+
+def _dialogue_count_in_chapter(chapter: Chapter, target: [Person, Chara, NoSubject]):
+    return sum(_dialogue_count_in_episode(v, target) for v in chapter.episodes)
+
+def _dialogue_count_in_episode(episode: Episode, target: [Person, Chara, NoSubject]):
+    return sum(_dialogue_count_in_scene(v, target) for v in episode.scenes)
+
+def _dialogue_count_in_scene(scene: Scene, target: [Person, Chara, NoSubject]):
+    return sum(_dialogue_count_in_action(v, target) for v in scene.actions)
+
+def _dialogue_count_in_action(action: [Action, CombAction, TagAction], target: [Person, Chara, NoSubject]):
+    def _as_combaction(act: CombAction, target):
+        return sum(_dialogue_count_in_action(v, target) for v in act.actions)
+    if isinstance(action, CombAction):
+        return _as_combaction(action, target)
+    elif isinstance(action, TagAction):
+        return 0
+    else:
+        return action.act_type is ActType.TALK and action.subject is target
+
+def _dialogues_bychara_in_story(story: wd.Story, target: [Person, Chara, NoSubject]):
+    return list(chain.from_iterable(_dialogues_bychara_in_chapter(v, target) for v in story.chapters))
+
+def _dialogues_bychara_in_chapter(chapter: Chapter, target: [Person, Chara, NoSubject]):
+    return chain.from_iterable(_dialogues_bychara_in_episode(v, target) for v in chapter.episodes)
+
+def _dialogues_bychara_in_episode(episode: Episode, target: [Person, Chara, NoSubject]):
+    return chain.from_iterable(_dialogues_bychara_in_scene(v, target) for v in episode.scenes)
+
+def _dialogues_bychara_in_scene(scene: Scene, target: [Person, Chara, NoSubject]):
+    return chain.from_iterable(_dialogues_bychara_in_action(v, target) for v in scene.actions)
+
+def _dialogues_bychara_in_action(action: [Action, CombAction, TagAction], target: [Person, Chara, NoSubject]):
+    def _as_combaction(act: CombAction, target):
+        return chain.from_iterable(_dialogues_bychara_in_action(v, target) for v in act.actions)
+    if isinstance(action, CombAction):
+        return _as_combaction(action, target)
+    elif isinstance(action, TagAction):
+        return []
+    else:
+        return ["".join(action.description.descs)] if action.act_type is ActType.TALK and action.subject is target else []
 
 def _flags_in_chapter(chapter: Chapter):
     return chain.from_iterable(_flags_in_episode(v) for v in chapter.episodes)
