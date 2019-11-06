@@ -22,7 +22,7 @@ def outlines_from(story: Story):
             + list(chain.from_iterable(_outlines_in_chapter(v) for v in story.chapters))
 
 def scenarios_from(story: Story):
-    return [("# " + story.title, "\n")] \
+    return [(ScenarioType.TITLE, "# " + story.title + "\n")] \
             + list(chain.from_iterable(_scenario_in_chapter(v) for v in story.chapters))
 
 def descriptions_from(story: Story, is_comment: bool):
