@@ -33,6 +33,7 @@ def description_connected(story: Story):
     return story.inherited(*[_desc_connected_in_chapter(v) for v in story.chapters])
 
 def story_filtered_by_priority(story: Story, pri_filter: int):
+    # TODO: chapter prioirty
     return story.inherited(*[_story_chapter_filtered(v, pri_filter) for v in story.chapters])
 
 def story_pronoun_replaced(story: Story):
@@ -91,22 +92,9 @@ def _desc_in_scene(scene: Scene, is_comment: bool):
     return ["\n**" + scene.title + "**\n"] \
             + list(chain.from_iterable(_desc_in_action(v, is_comment) for v in scene.actions))
 
-def _desc_in_action(action: [Action, CombAction], is_comment: bool):
+def _desc_in_action(action: [Action, CombAction, TagAction], is_comment: bool):
     if isinstance(action, TagAction):
-        # TODO: 処理を切り離す
-        if action.tag_type is TagType.COMMENT and is_comment:
-            return [f"<!--{action.info}-->"]
-        elif action.tag_type is TagType.BR:
-            return ["\n\n"]
-        elif action.tag_type is TagType.HR:
-            return ["----" * 8]
-        elif action.tag_type is TagType.SYMBOL:
-            return [f"\n{action.info}\n"]
-        elif action.tag_type is TagType.TITLE:
-            num = int(action.subinfo)
-            return ["{} {}".format("#" * num, action.info)]
-        else:
-            return []
+        return _desc_in_tagaction(action, is_comment)
     elif isinstance(action, Action):
         if isinstance(action.description, NoDesc):
             return []
@@ -119,7 +107,24 @@ def _desc_in_action(action: [Action, CombAction], is_comment: bool):
                 return [str_duplicated_chopped("　" + "".join(x for x in action.description.descs) + "。")]
         return []
     elif isinstance(action, CombAction):
-        return [duplicate_bracket_chop_and_replaceed(extraspace_chopped("".join(chain.from_iterable(_desc_in_action(x, is_comment) for x in action.actions))))]
+        return [str_duplicated_chopped(
+            duplicate_bracket_chop_and_replaceed(
+            extraspace_chopped("".join(chain.from_iterable(_desc_in_action(x, is_comment) for x in action.actions)))))]
+    else:
+        return []
+
+def _desc_in_tagaction(action: TagAction, is_comment: bool) -> list:
+    if action.tag_type is TagType.COMMENT and is_comment:
+        return [f"<!--{action.info}-->"]
+    elif action.tag_type is TagType.BR:
+        return ["\n\n"]
+    elif action.tag_type is TagType.HR:
+        return ["----" * 8]
+    elif action.tag_type is TagType.SYMBOL:
+        return [f"\n{action.info}\n"]
+    elif action.tag_type is TagType.TITLE:
+        num = int(action.subinfo)
+        return ["{} {}".format("#" * num, action.info)]
     else:
         return []
 
@@ -145,11 +150,11 @@ def _desc_connected_in_action(action: [Action, CombAction, TagAction]):
         return action.inherited(desc=str_duplicated_chopped("。".join(action.description.descs)))
 
 def _story_chapter_filtered(chapter: Chapter, pri_filter: int):
-    # TODO: chapter priority
+    # TODO: episode priority
     return chapter.inherited(*[_story_episode_filtered(v, pri_filter) for v in chapter.episodes])
 
 def _story_episode_filtered(episode: Episode, pri_filter: int):
-    # TODO: episode priority
+    # TODO: scene priority
     return episode.inherited(*[_story_scene_filtered(v, pri_filter) for v in episode.scenes])
 
 def _story_scene_filtered(scene: Scene, pri_filter: int):

@@ -93,8 +93,8 @@ def sc_talk_buster(w: wd.World):
         w.be(w.taro, "両親を前にじっと座っている").d("$Sはぎゅっと拳を握り締めて、両親を前にしていた"),
         w.act(w.taro, "鬼のことを相談する").deflag("鬼の噂"),
         w.combine(
-        w.talk(w.taro, "実はずっと考えていたんだ").same(),
-        w.talk(w.taro, "何か村の役に立ちたいって思ってた").same(),
+        w.talk(w.taro, "実はずっと考えていたんだ").t("実はさ、"),
+        w.talk(w.taro, "何か村の役に立ちたいって思ってた").t("$me、ずっと何か村の役に立ちたいって考えてたんだ"),
         ),
         w.think(w.granma, "返答に困る"),
         w.act(w.taro, "どうしても鬼が許せないと説得する"),
