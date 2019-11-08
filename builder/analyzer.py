@@ -70,11 +70,14 @@ class Analyzer(object):
         tmp = []
         rows = Analyzer.DEF_BASEROWS
         columns = Analyzer.DEF_BASECOLUMNS
+        ch_num = 1
         epi_num = 1
         scene_num = 1
         def _shorttitle(title: str):
             return title[:8] + '..' if len(title) >= 8 else title
         for c in story.chapters:
+            tmp.append(f"### CH-{ch_num}: {c.title}")
+            ch_num += 1
             for e in c.episodes:
                 tmp.append(f"* Ep-{epi_num}: {e.title}")
                 epi_num += 1

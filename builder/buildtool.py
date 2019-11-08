@@ -167,7 +167,10 @@ class Build(object):
         act_percents = analyzer.action_percent(story)
         flaginfo = analyzer.flag_infos(story)
         scene_num = ["## Scene info",
-                "- scenes: {}\n".format(len(scenes_characters))]
+                "- chapters: {}".format(len([v for v in scenes_characters if 'CH-' in v])),
+                "- episodes: {}".format(len([v for v in scenes_characters if 'Ep-' in v])),
+                "- scenes: {}".format(len([v for v in scenes_characters if 'Outline' in v])),
+                ]
         res = charcounts + [""] \
                 + scene_num + [""] \
                 + scenes_characters + [""] \
