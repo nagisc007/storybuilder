@@ -168,7 +168,10 @@ class Build(object):
         flaginfo = analyzer.flag_infos(story)
         scene_num = ["## Scene info",
                 "- scenes: {}\n".format(len(scenes_characters))]
-        res = charcounts + [""] + scene_num + scenes_characters + act_percents \
+        res = charcounts + [""] \
+                + scene_num + [""] \
+                + scenes_characters + [""] \
+                + act_percents + [""] \
                 + flaginfo
         if is_debug: # out to console
             for v in res:

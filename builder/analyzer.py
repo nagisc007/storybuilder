@@ -70,9 +70,14 @@ class Analyzer(object):
         tmp = []
         rows = Analyzer.DEF_BASEROWS
         columns = Analyzer.DEF_BASECOLUMNS
-        scene_num = 0
+        epi_num = 1
+        scene_num = 1
+        def _shorttitle(title: str):
+            return title[:8] + '..' if len(title) >= 8 else title
         for c in story.chapters:
             for e in c.episodes:
+                tmp.append(f"* Ep-{epi_num}: {e.title}")
+                epi_num += 1
                 for s in e.scenes:
                     total = _descs_count_in_scene(s)
                     _rows = _manupaper_count_rows_in_scene(s, columns)
@@ -80,7 +85,7 @@ class Analyzer(object):
                     outline = _outline_count_in_scene(s)
                     _outrows = _outline_manupaper_count_in_scene(s, columns)
                     _outpapers = _outrows / rows
-                    tmp.append(f"**{scene_num}. {s.title}**\n+ {total} [{_papers:0.3f}({_rows:0.2f}/{rows} x {columns})] / Outline {outline} [{_outpapers:0.3f}({_outrows:0.2f})]")
+                    tmp.append(f"    - {scene_num}. {_shorttitle(s.title)}: {total} [{_papers:0.3f}({_rows:0.2f}/{rows} x {columns})] / Outline {outline} [{_outpapers:0.3f}({_outrows:0.2f})]")
                     scene_num += 1
         return tmp
 
