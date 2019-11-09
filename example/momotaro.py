@@ -104,13 +104,14 @@ def sc_talk_buster(w: wd.World):
 
 def sc_dummyscene(w: wd.World):
     s = w.scene("ダミーシーン", "テスト用です")
-    return s
+    return s.omit()
 
 def sc_depature(w: wd.World):
     s = w.scene("旅立ち", "鬼退治の旅に出る")
     s.setCamera(w.taro)
     s.setStage(w.stage.home).setDay(w.day.voyage).setTime(w.time.morning)
     s.add(
+        w.be(w.taro, "ダミー冒頭").omit(),
         w.look(w.taro, "準備を終えて家の前にいる"),
         w.talk(w.granma, "これを").same(),
         w.have(w.taro, "$t_dangoを貰う").same(),
@@ -233,6 +234,10 @@ def ch_main(w: wd.World):
             ep_bustered(w),
             )
 
+def ch_sub(w: wd.World):
+    return w.chapter("sub story",
+            ).omit()
+
 ## setting
 def set_stages(w: wd.World):
     """Set stages.
@@ -255,6 +260,7 @@ def world():
 def story(w: wd.World):
     return w.story("桃太郎",
             ch_main(w),
+            ch_sub(w),
             )
 
 def main(): # pragma: no cover

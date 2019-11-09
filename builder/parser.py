@@ -33,8 +33,7 @@ def description_connected(story: Story):
     return story.inherited(*[_desc_connected_in_chapter(v) for v in story.chapters])
 
 def story_filtered_by_priority(story: Story, pri_filter: int):
-    # TODO: chapter prioirty
-    return story.inherited(*[_story_chapter_filtered(v, pri_filter) for v in story.chapters])
+    return story.inherited(*[_story_chapter_filtered(v, pri_filter) for v in story.chapters if v.priority >= pri_filter])
 
 def story_pronoun_replaced(story: Story):
     return story.inherited(*[_story_pronoun_replaced_in_chapter(v) for v in story.chapters])
@@ -63,9 +62,8 @@ def _scenario_in_episode(episode: Episode):
             + list(chain.from_iterable(_scenario_in_scene(v) for v in episode.scenes))
 
 def _scenario_in_scene(scene: Scene):
-    # TODO: 時間帯の表示
     return [(ScenarioType.TITLE, f"\n**{scene.title}**\n")] \
-            + [(ScenarioType.PILLAR, f"◯{scene.stage.name}")] \
+            + [(ScenarioType.PILLAR, f"◯{scene.stage.name}（{scene.time.name}）")] \
             + list(chain.from_iterable(_scenario_in_action(v) for v in scene.actions))
 
 def _scenario_in_action(action: [Action, CombAction, TagAction]):
@@ -150,12 +148,10 @@ def _desc_connected_in_action(action: [Action, CombAction, TagAction]):
         return action.inherited(desc=str_duplicated_chopped("。".join(action.description.descs)))
 
 def _story_chapter_filtered(chapter: Chapter, pri_filter: int):
-    # TODO: episode priority
-    return chapter.inherited(*[_story_episode_filtered(v, pri_filter) for v in chapter.episodes])
+    return chapter.inherited(*[_story_episode_filtered(v, pri_filter) for v in chapter.episodes if v.priority >= pri_filter])
 
 def _story_episode_filtered(episode: Episode, pri_filter: int):
-    # TODO: scene priority
-    return episode.inherited(*[_story_scene_filtered(v, pri_filter) for v in episode.scenes])
+    return episode.inherited(*[_story_scene_filtered(v, pri_filter) for v in episode.scenes if v.priority >= pri_filter])
 
 def _story_scene_filtered(scene: Scene, pri_filter: int):
     tmp = []
