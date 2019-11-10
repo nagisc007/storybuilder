@@ -19,13 +19,14 @@ class Build(object):
     DEF_EXTENSION = "md" # NOTE: currently markdown only
     DEF_BUILD_DIR = "build"
 
-    def __init__(self, story: wd.Story, world: wd.World):
+    def __init__(self, story: wd.Story, world: wd.World, opt_dic: str=""):
         self._story = Build._validatedStory(story)
         self._words = Build._wordsFrom(world)
         self._filename = Build.DEF_FILENAME
         self._options = _options_parsed()
         self._extension = Build.DEF_EXTENSION
         self._builddir = Build.DEF_BUILD_DIR
+        self._mecabdictdir = assertion.is_str(opt_dic)
         # TODO: build dir を指定（変更）できるように
 
     # methods
@@ -50,7 +51,7 @@ class Build(object):
                     story_filtered_by_priority(self._story, pri_filter)
                 )), self._words)
 
-        analyzer = Analyzer()
+        analyzer = Analyzer(self._mecabdictdir)
 
         if options.outline:
             is_succeeded = self.to_outline(story_converted, filename, is_debug)

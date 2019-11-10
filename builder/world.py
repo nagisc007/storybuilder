@@ -34,8 +34,10 @@ class World(UtilityDict):
     DEF_PRIORITY = ac.Action.DEF_PRIORITY
     MAX_PRIORITY = ac.Action.MAX_PRIORITY
     MIN_PRIORITY = ac.Action.MIN_PRIORITY
+    MECAB_NEWDICT1 = "-d /usr/local/lib/mecab/dic/mecab-ipadic-neologd"
+    MECAB_NEWDICT2 = "-d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd"
 
-    def __init__(self):
+    def __init__(self, mecabdict: int=0):
         super().__init__()
         self.day = UtilityDict()
         self.item = UtilityDict()
@@ -44,6 +46,10 @@ class World(UtilityDict):
         self.word = UtilityDict()
         # TODO: priorityを先か後で調整できるようにする
         self._priority = World.DEF_PRIORITY
+        self._mecabdict = "" if mecabdict <= 0 else (World.MECAB_NEWDICT1 if mecabdict ==1 else World.MECAB_NEWDICT2)
+
+    @property
+    def mecabdict(self): return self._mecabdict
 
     # creations
     def chapter(self, *args, **kwargs):
@@ -218,7 +224,7 @@ class World(UtilityDict):
         '''To build this story world.
         '''
         from .buildtool import Build
-        bd = Build(val, self)
+        bd = Build(val, self, self.mecabdict)
         return bd.output_story()
 
     # private

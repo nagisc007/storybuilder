@@ -26,8 +26,10 @@ class Analyzer(object):
     DEF_BASEROWS = 20
     DEF_BASECOLUMNS = 20
 
-    def __init__(self):
-        self.tokenizer = MeCab.Tagger()
+    def __init__(self, dic: str):
+        self.tokenizer = MeCab.Tagger(dic)
+        # NOTE: mecab hack
+        self.tokenizer.parse('')
 
     # main analyzing methods
     def action_percent(self, story):
