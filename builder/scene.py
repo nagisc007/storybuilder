@@ -26,20 +26,24 @@ class ScenarioType(Enum):
 class Scene(BaseContainer):
     """The container for actions.
     """
-    def __init__(self, title: str, outline: str):
+    def __init__(self, title: str, outline: str, *args,
+            camera: [Person, NoData]=None,
+            stage: [Stage, NoData]=None,
+            day: [Day, NoData]=None,
+            time: [Time, NoData]=None):
         super().__init__(title, Action.DEF_PRIORITY)
         self._outline = assertion.is_str(outline)
-        self._actions = ()
-        self._camera = NoData()
-        self._stage = NoData()
-        self._day = NoData()
-        self._time = NoData()
+        self._actions = Scene._validatedActions(*args)
+        self._camera = assertion.is_instance(camera, Person) if camera else NoData()
+        self._stage = assertion.is_instance(stage, Stage) if stage else NoData()
+        self._day = assertion.is_instance(day, Day) if day else NoData()
+        self._time = assertion.is_instance(time, Time) if time else NoData()
 
     def inherited(self, *acts):
-        return Scene(self.title, self.outline) \
-            .setCamera(self.camera).setStage(self.stage) \
-            .setDay(self.day).setTime(self.time).setPriority(self.priority) \
-            .add(*acts)
+        return Scene(self.title, self.outline,
+                *acts,
+                camera=self.camera, stage=self.stage, day=self.day, time=self.time) \
+                .setPriority(self.priority)
 
     @property
     def actions(self): return self._actions
