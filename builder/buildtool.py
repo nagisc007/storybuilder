@@ -60,7 +60,7 @@ class Build(object):
                 return is_succeeded
 
         if options.scenario:
-            is_succeeded = self.to_scenario(story_converted, filename, is_debug)
+            is_succeeded = self.to_scenario(story_converted, filename, is_comment, is_debug)
             if not is_succeeded:
                 print("ERROR: output a scenario failed!!")
                 return is_succeeded
@@ -124,9 +124,9 @@ class Build(object):
                     self._builddir)
         return is_succeeded
 
-    def to_scenario(self, story: wd.Story, filename: str, is_debug: bool):
+    def to_scenario(self, story: wd.Story, filename: str, is_comment: bool, is_debug: bool):
         is_succeeded = True
-        res = Build._scenario_formatted(scenarios_from(story))
+        res = Build._scenario_formatted(scenarios_from(story, is_comment))
         if is_debug:
             # out to console
             for v in res:

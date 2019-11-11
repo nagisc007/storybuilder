@@ -16,14 +16,16 @@ from .strutils import str_replaced_tag_by_dictionary, str_duplicated_chopped, ex
 from .combaction import CombAction
 
 
+# TODO: need to convert the Parser class
+
 # publics
 def outlines_from(story: Story):
     return [("# " + story.title, "\n")] \
             + list(chain.from_iterable(_outlines_in_chapter(v) for v in story.chapters))
 
-def scenarios_from(story: Story):
+def scenarios_from(story: Story, is_comment: bool):
     return [(ScenarioType.TITLE, "# " + story.title + "\n")] \
-            + list(chain.from_iterable(_scenario_in_chapter(v) for v in story.chapters))
+            + list(chain.from_iterable(_scenario_in_chapter(v, is_comment) for v in story.chapters))
 
 def descriptions_from(story: Story, is_comment: bool):
     return ["# " + story.title + "\n"] \
@@ -53,24 +55,27 @@ def _outlines_in_episode(episode: Episode):
     return [("\n### " + episode.title, episode.outline + "\n")] \
             + list(chain.from_iterable(_title_outline(v) for v in episode.scenes))
 
-def _scenario_in_chapter(chapter: Chapter):
+def _scenario_in_chapter(chapter: Chapter, is_comment: bool):
     return [(ScenarioType.TITLE, "## " + chapter.title + "\n")] \
-            + list(chain.from_iterable(_scenario_in_episode(v) for v in chapter.episodes))
+            + list(chain.from_iterable(_scenario_in_episode(v, is_comment) for v in chapter.episodes))
 
-def _scenario_in_episode(episode: Episode):
+def _scenario_in_episode(episode: Episode, is_comment: bool):
     return [(ScenarioType.TITLE, "\n### " + episode.title + "\n")] \
-            + list(chain.from_iterable(_scenario_in_scene(v) for v in episode.scenes))
+            + list(chain.from_iterable(_scenario_in_scene(v, is_comment) for v in episode.scenes))
 
-def _scenario_in_scene(scene: Scene):
+def _scenario_in_scene(scene: Scene, is_comment: bool):
     return [(ScenarioType.TITLE, f"\n**{scene.title}**\n")] \
             + [(ScenarioType.PILLAR, f"◯{scene.stage.name}（{scene.time.name}）")] \
-            + list(chain.from_iterable(_scenario_in_action(v) for v in scene.actions))
+            + list(chain.from_iterable(_scenario_in_action(v, is_comment) for v in scene.actions))
 
-def _scenario_in_action(action: [Action, CombAction, TagAction]):
-    def _as_combaction(act: CombAction):
-        return list(chain.from_iterable(_scenario_in_action(v) for v in act.actions))
+def _scenario_in_action(action: [Action, CombAction, TagAction], is_comment: bool):
+    def _as_combaction(act: CombAction, is_cmt):
+        return list(chain.from_iterable(_scenario_in_action(v, is_cmt) for v in act.actions))
     if isinstance(action, CombAction):
-        return _as_combaction(action)
+        return _as_combaction(action, is_comment)
+    elif isinstance(action, TagAction):
+        tmp = _desc_in_tagaction(action, is_comment)
+        return [(ScenarioType.TAG, tmp[0] if tmp else "")]
     elif action.act_type is ActType.TALK:
         return [(ScenarioType.DIALOGUE,
                 f"{action.subject.name}「{str_duplicated_chopped(action.outline)}」")]

@@ -111,6 +111,7 @@ def sc_depature(w: wd.World):
     s.setCamera(w.taro)
     s.setStage(w.stage.home).setDay(w.day.voyage).setTime(w.time.morning)
     s.add(
+        w.symbol("◆"),
         w.be(w.taro, "ダミー冒頭").omit(),
         w.look(w.taro, "準備を終えて家の前にいる"),
         w.talk(w.granma, "これを").same(),
