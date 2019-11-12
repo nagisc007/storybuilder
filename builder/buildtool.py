@@ -11,6 +11,7 @@ from .parser import Parser
 from .parser import outlines_from, scenarios_from, descriptions_from, story_filtered_by_priority, story_pronoun_replaced, description_connected, story_tag_replaced, story_layer_replaced, actions_layering
 from .strutils import dict_sorted
 from .analyzer import Analyzer
+from .formatter import Formatter
 
 
 class Build(object):
@@ -111,7 +112,7 @@ class Build(object):
 
     def to_outline(self, parser: Parser, filename: str, is_debug: bool):
         is_succeeded = True
-        res = Build._outline_formatted(parser.outline())
+        res = Formatter().asOutline(parser.outline())
         if is_debug:
             is_succeeded = Build._out_to_console(res)
         else:
