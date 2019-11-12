@@ -7,7 +7,7 @@ import argparse
 import re
 from . import assertion
 from . import world as wd
-from .parser import outlines_from, scenarios_from, descriptions_from, story_filtered_by_priority, story_pronoun_replaced, description_connected, story_tag_replaced
+from .parser import outlines_from, scenarios_from, descriptions_from, story_filtered_by_priority, story_pronoun_replaced, description_connected, story_tag_replaced, story_layer_replaced, actions_layering
 from .strutils import dict_sorted
 from .analyzer import Analyzer
 
@@ -34,22 +34,24 @@ class Build(object):
         is_succeeded = True
         options = self._options
         filename = self._filename # TODO: ファイル名指定できるようにする
-        pri_filter = options.priority # TODO: priority指定できるようにする
+        pri_filter = options.pri # TODO: priority指定できるようにする
         formattype = options.format
         is_debug = options.debug # NOTE: 現在デバッグモードはコンソール出力のみ
         is_comment = options.comment # NOTE: コメント付き出力
 
         ''' NOTE: converted story content
                 1) prioriy filter
-                2) pronoun replaced
-                3) description connected
-                4) tag replaced
+                2) layer replaced
+                3) pronoun replaced
+                4) description connected
+                5) tag replaced
         '''
         story_converted = story_tag_replaced(
                     description_connected(
                     story_pronoun_replaced(
+                    story_layer_replaced(
                     story_filtered_by_priority(self._story, pri_filter)
-                )), self._words)
+                ))), self._words)
 
         analyzer = Analyzer(self._mecabdictdir)
 
@@ -92,7 +94,13 @@ class Build(object):
                 print("ERROR: output an analyzed info failed!!")
                 return is_succeeded
 
-        if options.chara:
+        if options.layer:
+            is_succeeded = self.to_layer(story_converted, filename, is_debug)
+            if not is_succeeded:
+                print("ERROR: output a description failed!!")
+                return is_succeeded
+
+        if options.person:
             # TODO: show character infos
             pass
 
@@ -147,6 +155,25 @@ class Build(object):
         else:
             is_succeeded = Build._out_to_file(res, filename, "", self._extension,
                     self._builddir)
+        return is_succeeded
+
+    def to_layer(self, story: wd.Story, filename: str, is_debug: bool):
+        is_succeeded = True
+        tmp = actions_layering(story)
+        res = Build._layeracts_formatted(tmp, False)
+        res_outline = Build._layeracts_formatted(tmp, True)
+        if is_debug:
+            # out to console
+            for v in res:
+                print(v)
+            print("---- outline ----")
+            for v in res_outline:
+                print(v)
+        else:
+            is_succeeded = Build._out_to_file(res, filename, "_layer", self._extension,
+                    self._builddir)
+            is_succeeded = Build._out_to_file(res_outline, filename, "_layerout",
+                    self._extension, self._builddir)
         return is_succeeded
 
     def to_total_info(self, story: wd.Story, analyzer: Analyzer):
@@ -314,6 +341,31 @@ class Build(object):
             inDialogue = current
         return tmp
 
+    def _layeracts_formatted(data: list, is_outline: bool) -> list:
+        from .action import Action, TagAction, ActType
+        tmp = []
+        datahead = data[0]
+        layers = sorted(list(set([v[0] for v in data[1:]])))
+        def _conv_talk(act: Action, base: str):
+            return f"_「{base}」_" if act.act_type is ActType.TALK else base
+        def _conv(act: [Action, TagAction], is_outline: bool):
+            # TODO: tag
+            if isinstance(act, TagAction):
+                return ""
+            else:
+                if is_outline:
+                    return _conv_talk(act, act.outline)
+                else:
+                    return _conv_talk(act, "".join(act.description.descs)) if act.description.descs else ""
+        for l in layers:
+            tmp.append("--------" * 9)
+            tmp.append(f"## {l}")
+            for v in data[1:]:
+                if l == v[0]:
+                    tmp1 = _conv(v[2], is_outline)
+                    if tmp1:
+                        tmp.append(f"{v[1]}: {tmp1}")
+        return [datahead] + tmp
 
 # privates
 def _options_parsed(): # pragma: no cover
@@ -331,16 +383,17 @@ def _options_parsed(): # pragma: no cover
     parser.add_argument('-a', '--action', help="output the monitoring action", action='store_true')
     parser.add_argument('-i', '--info', help="output adding the detail info", action='store_true')
     parser.add_argument('-z', '--analyze', help="output the analyzed info", action='store_true')
+    parser.add_argument('-l', '--layer', help="output using the layer", action='store_true')
     # TODO: character info
-    parser.add_argument('-c', '--chara', help="output characters info", action='store_true')
-    parser.add_argument('-l', '--dialogue', help="output character dialogues", action='store_true')
+    parser.add_argument('-p', '--person', help="output characters info", action='store_true')
+    parser.add_argument('-c', '--dialogue', help="output character dialogues and conversations", action='store_true')
     # TODO: help
     # TODO: version info
     parser.add_argument('-v', '--version', help="display this version", action='store_true')
     # TODO: advanced file name
     parser.add_argument('-f', '--file', help="advanced output the file name", type=str)
     # TODO: priority setting
-    parser.add_argument('-p', '--priority', help="output filtered by the priority", type=int, default=wd.World.DEF_PRIORITY)
+    parser.add_argument('--pri', help="output filtered by the priority", type=int, default=wd.World.DEF_PRIORITY)
     parser.add_argument('--debug', help="with a debug mode", action='store_true')
     parser.add_argument('--format', help='output the format style', type=str)
     parser.add_argument('--comment', help='output with comment', action='store_true')

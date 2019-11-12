@@ -125,6 +125,7 @@ def sc_meetdog(w: wd.World):
     s.setCamera(w.taro)
     s.setStage(w.stage.onstreet).setDay(w.day.meetdog).setTime(w.time.afternoon)
     s.add(
+        w.layer("alley"),
         w.move(w.taro, "道を歩いていた"),
         w.look("犬と出会う"),
         w.talk(w.dog, "死にそうなので何か食べ物を下さい"),

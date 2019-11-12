@@ -36,6 +36,7 @@ class TagType(Enum):
     HR = "horizontalline" # HR
     SYMBOL = "symbol" # シンボル
     TITLE = "title" # タイトル
+    SET_LAYER = "layer" # レイヤー用
 
 
 class Action(BaseData):
@@ -44,12 +45,14 @@ class Action(BaseData):
     DEF_PRIORITY = 5
     MAX_PRIORITY = 10
     MIN_PRIORITY = 0
+    DEF_LAYER = "__default__"
+    MAIN_LAYER = "main"
 
     def __init__(self, subject: [Person, Chara, None],
-            outline: str="", act_type: ActType=ActType.ACT):
+            outline: str="", act_type: ActType=ActType.ACT,
+            layer: str=DEF_LAYER):
         super().__init__("__action__")
         _subject_is_str = isinstance(subject, str)
-        # TODO: subjectが文字列だったらsubjectにはWhoを入れてそのままoutlineにスライドさせる
         self._subject = Who() if _subject_is_str else Action._validatedSubject(subject)
         self._outline = assertion.is_str(subject if _subject_is_str else outline)
         self._act_type = assertion.is_instance(act_type, ActType)
@@ -57,6 +60,7 @@ class Action(BaseData):
         self._flag = NoFlag()
         self._deflag = NoDeflag()
         self._priority = Action.DEF_PRIORITY
+        self._layer = assertion.is_str(layer)
 
     def inherited(self, subject=None, outline=None, desc=None):
         return Action(subject if subject else self.subject,
@@ -65,7 +69,8 @@ class Action(BaseData):
                     .flag(self.getFlag()).deflag(self.getDeflag()) \
                     ._setDescription(desc if desc else self.description,
                             self.description.desc_type) \
-                    .setPriority(self.priority)
+                    .setPriority(self.priority) \
+                    .setLayer(self.layer)
 
     @property
     def act_type(self): return self._act_type
@@ -82,8 +87,16 @@ class Action(BaseData):
     @property
     def priority(self): return self._priority
 
+    @property
+    def layer(self): return self._layer
+
     def setPriority(self, pri: int):
-        self._priority = pri
+        self._priority = assertion.is_between(assertion.is_int(pri),
+                Action.MAX_PRIORITY, Action.MIN_PRIORITY)
+        return self
+
+    def setLayer(self, layer: str):
+        self._layer = assertion.is_str(layer)
         return self
 
     def flag(self, val: [str, NoFlag]):
