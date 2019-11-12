@@ -16,7 +16,8 @@ from .strutils import str_replaced_tag_by_dictionary, str_duplicated_chopped, ex
 from .combaction import CombAction
 
 # define type hint
-AllAction = [Action, CombAction, TagAction]
+AllActions = [Action, CombAction, TagAction]
+BaseActions = [Action, TagAction]
 
 
 class Parser(object):
@@ -33,7 +34,7 @@ class Parser(object):
         return descriptions_from(self.story, is_comment)
 
     def layer(self):
-        return actions_layering(self.story)
+        return _actionLayersFrom(self.story)
 
     def outline(self):
         return outlines_from(self.story)
@@ -58,14 +59,25 @@ class Parser(object):
                     ))), words
                 )
 
-# publics
-def actions_layering(story: Story):
-    def _as_episode(episode: Episode, head: str):
-        return chain.from_iterable(_layering_in_scene(v, f"{head}-{episode.title}") for v in episode.scenes)
-    def _as_chapter(chapter: Chapter):
-        return chain.from_iterable(_as_episode(v, f"{chapter.title}") for v in chapter.episodes)
+# privates
+def _actionLayersFrom(story: Story):
+    def _in_action(action: AllActions, head: str):
+        if isinstance(action, CombAction):
+            return [(v.layer, head, v) for v in action.actions]
+        else:
+            return [(action.layer, head, action)]
+
+    def _in_scene(scene: Scene, head: str):
+        return chain.from_iterable(_in_action(v, f"{head}-{scene.title}") for v in scene.actions)
+
+    def _in_episode(episode: Episode, head: str):
+        return chain.from_iterable(_in_scene(v, f"{head}-{episode.title}") for v in episode.scenes)
+
+    def _in_chapter(chapter: Chapter):
+        return chain.from_iterable(_in_episode(v, f"{chapter.title}") for v in chapter.episodes)
+
     return [(f"# {story.title}\n")] \
-            + list(chain.from_iterable(_as_chapter(v) for v in story.chapters))
+            + list(chain.from_iterable(_in_chapter(v) for v in story.chapters))
 
 def outlines_from(story: Story):
     return [("# " + story.title, "\n")] \
@@ -99,22 +111,6 @@ def story_layer_replaced(story: Story):
     return story.inherited(*[_as_chapter(v) for v in story.chapters])
 
 # privates
-def _layering_in_scene(scene: Scene, head: str):
-    tmp = []
-    scenehead = f"{head}-{scene.title}"
-    def _conv(act: [Action, TagAction], head: str):
-        return (act.layer, head, act)
-    def _as_combaction(act: CombAction, head: str):
-        return [_conv(v, head) for v in act.actions]
-    for v in scene.actions:
-        if isinstance(v, CombAction):
-            tmp.append(list(chain.from_iterable(_as_combaction(v, scenehead))))
-        elif isinstance(v, TagAction):
-            tmp.append(_conv(v, scenehead))
-        else:
-            tmp.append(_conv(v, scenehead))
-    return tmp
-
 def _outlines_in_chapter(chapter: Chapter):
     return [("## " + chapter.title, "\n")] \
             + list(chain.from_iterable(_outlines_in_episode(v) for v in chapter.episodes))
