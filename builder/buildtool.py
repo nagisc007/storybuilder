@@ -122,11 +122,9 @@ class Build(object):
 
     def to_scenario(self, story: wd.Story, filename: str, is_comment: bool, is_debug: bool):
         is_succeeded = True
-        res = Build._scenario_formatted(scenarios_from(story, is_comment))
+        res = Formatter().asScenario(scenarios_from(story, is_comment))
         if is_debug:
-            # out to console
-            for v in res:
-                print(v)
+            is_succeeded = Build._out_to_console(res)
         else:
             is_succeeded = Build._out_to_file(res, filename, "_sc", self._extension,
                     self._builddir)
@@ -135,11 +133,9 @@ class Build(object):
     def to_description(self, story: wd.Story, filename: str, formattype: str,
             is_comment: bool, is_debug: bool):
         is_succeeded = True
-        res = Build._description_formatted(descriptions_from(story, is_comment), formattype)
+        res = Formatter().asDescription(descriptions_from(story, is_comment), formattype)
         if is_debug:
-            # out to console
-            for v in res:
-                print(v)
+            is_succeeded = Build._out_to_console(res)
         else:
             is_succeeded = Build._out_to_file(res, filename, "", self._extension,
                     self._builddir)
@@ -261,28 +257,6 @@ class Build(object):
         for k, v in world.word.items():
             tmp['w_' + k] = v.name
         return dict_sorted(tmp)
-
-    # TODO: need formatter class
-    def _outline_formatted(outlines: list):
-        tmp = []
-        for v in outlines:
-            if "###" in v[0]:
-                tmp.append(f"{v[0]}\n\n\t{v[1]}")
-            elif "#" in v[0]:
-                tmp.append(f"{v[0]}")
-            else:
-                tmp.append(f"- 「{v[0]}」: {v[1]}")
-        return tmp
-
-    def _scenario_formatted(scenarios: list):
-        from .scene import ScenarioType
-        tmp = []
-        for v in scenarios:
-            if v[0] is ScenarioType.DIRECTION:
-                tmp.append("　　" + v[1])
-            else:
-                tmp.append(v[1])
-        return tmp
 
     def _description_formatted(descs: list, formattype: str):
         # TODO: format を選んで変更
