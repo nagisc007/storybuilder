@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- action layer
+- using MeCab for analyzer
+- priority filter
+- collect word class
+### Changed
+- scene set at first time
+### Fixed
+- scene and episode title
+- scenario symbole without maru
 
 ## [0.2.9] - 2019-10-18
 ### TODO
