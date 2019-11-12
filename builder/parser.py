@@ -37,7 +37,7 @@ class Parser(object):
         return _actionLayersFrom(self.story)
 
     def outline(self):
-        return outlines_from(self.story)
+        return _outlinesFrom(self.story)
 
     def scenario(self, is_comment: bool):
         return scenarios_from(self.story, is_comment)
@@ -79,9 +79,20 @@ def _actionLayersFrom(story: Story):
     return [(f"# {story.title}\n")] \
             + list(chain.from_iterable(_in_chapter(v) for v in story.chapters))
 
-def outlines_from(story: Story):
-    return [("# " + story.title, "\n")] \
-            + list(chain.from_iterable(_outlines_in_chapter(v) for v in story.chapters))
+def _outlinesFrom(story: Story):
+    def _in_scene(scene: Scene):
+        return [(f"- {scene.title}", f"{scene.outline}")]
+
+    def _in_episode(episode: Episode):
+        return [(f"\n### {episode.title}", f"{episode.outline}\n")] \
+                + list(chain.from_iterable(_in_scene(v) for v in episode.scenes))
+
+    def _in_chapter(chapter: Chapter):
+        return [(f"## {chapter.title}", "\n")] \
+                + list(chain.from_iterable(_in_episode(v) for v in chapter.episodes))
+
+    return [(f"# {story.title}", "\n")] \
+            + list(chain.from_iterable(_in_chapter(v) for v in story.chapters))
 
 def scenarios_from(story: Story, is_comment: bool):
     return [(ScenarioType.TITLE, "# " + story.title + "\n")] \
@@ -111,16 +122,6 @@ def story_layer_replaced(story: Story):
     return story.inherited(*[_as_chapter(v) for v in story.chapters])
 
 # privates
-def _outlines_in_chapter(chapter: Chapter):
-    return [("## " + chapter.title, "\n")] \
-            + list(chain.from_iterable(_outlines_in_episode(v) for v in chapter.episodes))
-
-def _outlines_in_episode(episode: Episode):
-    def _title_outline(scene: Scene):
-        return [(scene.title, scene.outline)]
-    return [("\n### " + episode.title, episode.outline + "\n")] \
-            + list(chain.from_iterable(_title_outline(v) for v in episode.scenes))
-
 def _scenario_in_chapter(chapter: Chapter, is_comment: bool):
     return [(ScenarioType.TITLE, "## " + chapter.title + "\n")] \
             + list(chain.from_iterable(_scenario_in_episode(v, is_comment) for v in chapter.episodes))
