@@ -52,13 +52,13 @@ class Build(object):
                 return is_succeeded
 
         if options.scenario:
-            is_succeeded = self.to_scenario(story_converted, filename, is_comment, is_debug)
+            is_succeeded = self.to_scenario(parser, filename, is_comment, is_debug)
             if not is_succeeded:
                 print("ERROR: output a scenario failed!!")
                 return is_succeeded
 
         if options.description:
-            is_succeeded = self.to_description(story_converted, filename, formattype,
+            is_succeeded = self.to_description(parser, filename, formattype,
                     is_comment, is_debug)
             if not is_succeeded:
                 print("ERROR: output a description failed!!")
@@ -120,9 +120,9 @@ class Build(object):
                     self._builddir)
         return is_succeeded
 
-    def to_scenario(self, story: wd.Story, filename: str, is_comment: bool, is_debug: bool):
+    def to_scenario(self, parser: Parser, filename: str, is_comment: bool, is_debug: bool):
         is_succeeded = True
-        res = Formatter().asScenario(scenarios_from(story, is_comment))
+        res = Formatter().asScenario(parser.scenario(is_comment))
         if is_debug:
             is_succeeded = Build._out_to_console(res)
         else:
@@ -130,10 +130,10 @@ class Build(object):
                     self._builddir)
         return is_succeeded
 
-    def to_description(self, story: wd.Story, filename: str, formattype: str,
+    def to_description(self, parser: Parser, filename: str, formattype: str,
             is_comment: bool, is_debug: bool):
         is_succeeded = True
-        res = Formatter().asDescription(descriptions_from(story, is_comment), formattype)
+        res = Formatter().asDescription(parser.description(is_comment), formattype)
         if is_debug:
             is_succeeded = Build._out_to_console(res)
         else:

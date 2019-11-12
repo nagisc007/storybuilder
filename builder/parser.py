@@ -29,8 +29,14 @@ class Parser(object):
     def story(self): return self._story
 
     # methods
+    def description(self, is_comment: bool):
+        return descriptions_from(self.story, is_comment)
+
     def outline(self):
         return outlines_from(self.story)
+
+    def scenario(self, is_comment: bool):
+        return scenarios_from(self.story, is_comment)
 
     # privates
     def _storyConverted(self, story: Story, words: dict, pri_filter: int):
