@@ -19,7 +19,35 @@ from .combaction import CombAction
 AllAction = [Action, CombAction, TagAction]
 
 
-# TODO: need to convert the Parser class
+class Parser(object):
+    """Parser class.
+    """
+    def __init__(self, story: Story, words: dict, priority: int):
+        self._story = self._storyConverted(story, words, priority)
+
+    @property
+    def story(self): return self._story
+
+    # methods
+    def outline(self):
+        return outlines_from(self.story)
+
+    # privates
+    def _storyConverted(self, story: Story, words: dict, pri_filter: int):
+        ''' NOTE: converted story content
+                1) prioriy filter
+                2) layer replaced
+                3) pronoun replaced
+                4) description connected
+                5) tag replaced
+        '''
+        return story_tag_replaced(
+                description_connected(
+                    story_pronoun_replaced(
+                        story_layer_replaced(
+                            story_filtered_by_priority(story, pri_filter)
+                    ))), words
+                )
 
 # publics
 def actions_layering(story: Story):
@@ -84,7 +112,7 @@ def _outlines_in_chapter(chapter: Chapter):
 
 def _outlines_in_episode(episode: Episode):
     def _title_outline(scene: Scene):
-        return [("- " + scene.title, scene.outline)]
+        return [(scene.title, scene.outline)]
     return [("\n### " + episode.title, episode.outline + "\n")] \
             + list(chain.from_iterable(_title_outline(v) for v in episode.scenes))
 
