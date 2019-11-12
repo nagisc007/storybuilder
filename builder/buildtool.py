@@ -160,8 +160,7 @@ class Build(object):
     def to_total_info(self, story: wd.Story, analyzer: Analyzer):
         is_succeeded = True
         charcounts = analyzer.characters_count(story)
-        for v in charcounts:
-            print(v)
+        is_succeeded = Build._out_to_console(charcounts)
         return is_succeeded
 
     def to_detail_info(self, story: wd.Story, analyzer: Analyzer, filename: str,
@@ -186,8 +185,7 @@ class Build(object):
                 + act_percents + [""] \
                 + flaginfo
         if is_debug: # out to console
-            for v in res:
-                print(v)
+            is_succeeded = Build._out_to_console(res)
         else:
             is_succeeded = Build._out_to_file(res, filename, "_info", self._extension,
                     self._builddir)
@@ -200,9 +198,7 @@ class Build(object):
         freq = analyzer.frequency_words(story)
         res = freq
         if is_debug:
-            # out to console
-            for v in res:
-                print(v)
+            is_succeeded = Build._out_to_console(res)
         else:
             is_succeeded = Build._out_to_file(res, filename, "_anal", self._extension,
                     self._builddir)
@@ -215,9 +211,7 @@ class Build(object):
         info = analyzer.dialogue_infos(story)
         res = info
         if is_debug:
-            # out to console
-            for v in res:
-                print(v)
+            is_succeeded = Build._out_to_console(res)
         else:
             is_succeeded = Build._out_to_file(res, filename, "_dial", self._extension,
                     self._builddir)
