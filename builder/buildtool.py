@@ -7,6 +7,7 @@ import argparse
 import re
 from . import assertion
 from . import world as wd
+from .parser import Parser
 from .parser import outlines_from, scenarios_from, descriptions_from, story_filtered_by_priority, story_pronoun_replaced, description_connected, story_tag_replaced, story_layer_replaced, actions_layering
 from .strutils import dict_sorted
 from .analyzer import Analyzer
@@ -39,24 +40,12 @@ class Build(object):
         is_debug = options.debug # NOTE: 現在デバッグモードはコンソール出力のみ
         is_comment = options.comment # NOTE: コメント付き出力
 
-        ''' NOTE: converted story content
-                1) prioriy filter
-                2) layer replaced
-                3) pronoun replaced
-                4) description connected
-                5) tag replaced
-        '''
-        story_converted = story_tag_replaced(
-                    description_connected(
-                    story_pronoun_replaced(
-                    story_layer_replaced(
-                    story_filtered_by_priority(self._story, pri_filter)
-                ))), self._words)
-
+        parser = Parser(self._story, self._words, pri_filter)
+        story_converted = parser.story
         analyzer = Analyzer(self._mecabdictdir)
 
         if options.outline:
-            is_succeeded = self.to_outline(story_converted, filename, is_debug)
+            is_succeeded = self.to_outline(parser, filename, is_debug)
             if not is_succeeded:
                 print("ERROR: output a outline failed!!")
                 return is_succeeded
@@ -120,13 +109,11 @@ class Build(object):
 
         return is_succeeded
 
-    def to_outline(self, story: wd.Story, filename: str, is_debug: bool):
+    def to_outline(self, parser: Parser, filename: str, is_debug: bool):
         is_succeeded = True
-        res = Build._outline_formatted(outlines_from(story))
+        res = Build._outline_formatted(parser.outline())
         if is_debug:
-            # out to console
-            for v in res:
-                print(v)
+            is_succeeded = Build._out_to_console(res)
         else:
             is_succeeded = Build._out_to_file(res, filename, "_out", self._extension,
                     self._builddir)
@@ -274,10 +261,16 @@ class Build(object):
             tmp['w_' + k] = v.name
         return dict_sorted(tmp)
 
+    # TODO: need formatter class
     def _outline_formatted(outlines: list):
         tmp = []
         for v in outlines:
-            tmp.append(v[0] + ": " + v[1])
+            if "###" in v[0]:
+                tmp.append(f"{v[0]}\n\n\t{v[1]}")
+            elif "#" in v[0]:
+                tmp.append(f"{v[0]}")
+            else:
+                tmp.append(f"- 「{v[0]}」: {v[1]}")
         return tmp
 
     def _scenario_formatted(scenarios: list):
@@ -300,6 +293,12 @@ class Build(object):
             return Build._descs_formatted_webnovel_style(descs)
         else:
             return descs
+
+    def _out_to_console(data: list):
+        is_succeeded = True
+        for v in data:
+            print(v)
+        return is_succeeded
 
     def _out_to_file(data: list, filename: str, suffix: str, extention: str,
             builddir: str):
