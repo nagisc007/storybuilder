@@ -144,15 +144,12 @@ class Build(object):
     def to_layer(self, story: wd.Story, filename: str, is_debug: bool):
         is_succeeded = True
         tmp = actions_layering(story)
-        res = Build._layeracts_formatted(tmp, False)
-        res_outline = Build._layeracts_formatted(tmp, True)
+        res = Formatter().asLayer(tmp, False)
+        res_outline = Formatter().asLayer(tmp, True)
         if is_debug:
-            # out to console
-            for v in res:
-                print(v)
+            is_succeeded = Build._out_to_console(res)
             print("---- outline ----")
-            for v in res_outline:
-                print(v)
+            is_succeeded = Build._out_to_console(res_outline)
         else:
             is_succeeded = Build._out_to_file(res, filename, "_layer", self._extension,
                     self._builddir)
@@ -234,40 +231,35 @@ class Build(object):
             raise AssertionError("Must be data type of 'Story'!")
         return False
 
-    def _wordsFrom(world: wd.Word):
+    def _wordsFrom(world: wd.World):
         '''To create the world dictionary.
         '''
         tmp = {}
         # persons and charas
+        tmp_persons = []
         for k, v in assertion.is_instance(world, wd.World).items():
             if k in ('stage', 'day', 'time', 'item', 'word'):
                 continue
             if isinstance(v, wd.Chara):
-                tmp[k] = v.name
+                tmp_persons.append((k, v.name))
             elif isinstance(v, wd.Person):
-                tmp['n_' + k] = v.name
-                tmp['fn_' + k] = v.firstname
-                tmp['ln_' + k] = v.lastname
-                tmp['full_' + k] = v.fullname
-                tmp['efull_' + k] = v.exfullname
+                tmp_persons.append((f"n_{k}", v.name))
+                tmp_persons.append((f"fn_{k}", v.firstname))
+                tmp_persons.append((f"ln_{k}", v.lastname))
+                tmp_persons.append((f"full_{k}", v.fullname))
+                tmp_persons.append((f"efull_{k}", v.exfullname))
+        """
         for k, v in world.stage.items():
             tmp['st_' + k] = v.name
         for k, v in world.item.items():
             tmp['t_' + k] = v.name
         for k, v in world.word.items():
             tmp['w_' + k] = v.name
-        return dict_sorted(tmp)
-
-    def _description_formatted(descs: list, formattype: str):
-        # TODO: format を選んで変更
-        if formattype in ("estar",):
-            return Build._descs_formatted_estar_style(descs)
-        elif formattype in ("smartphone", "phone", "smart"):
-            return Build._descs_formatted_smartphone_style(descs)
-        elif formattype in ("web",):
-            return Build._descs_formatted_webnovel_style(descs)
-        else:
-            return descs
+        """
+        tmp_stages = [(f"st_{k}", v.name) for k,v in world.stage.items()]
+        tmp_items = [(f"t_{k}", v.name) for k,v in world.item.items()]
+        tmp_words = [(f"w_{k}", v.name) for k,v in world.word.items()]
+        return dict_sorted(dict(tmp_persons + tmp_stages + tmp_items + tmp_words))
 
     def _out_to_console(data: list):
         is_succeeded = True
@@ -288,58 +280,6 @@ class Build(object):
             for v in data:
                 f.write(f"{v}\n")
         return is_succeeded
-
-    def _descs_formatted_estar_style(data: list):
-        tmp = []
-        inDialogue = False
-        for v in assertion.is_list(data):
-            current = v.startswith(('「', '『'))
-            pre = "" if inDialogue == current else "\n"
-            tmp.append(pre + v + "\n")
-            inDialogue = current
-        return tmp
-
-    def _descs_formatted_smartphone_style(data: list):
-        tmp = []
-        for v in assertion.is_list(data):
-            tmp.append(v + "\n")
-        return tmp
-
-    def _descs_formatted_webnovel_style(data: list) -> list:
-        tmp = []
-        inDialogue = False
-        for v in assertion.is_list(data):
-            current = v.startswith(('「', '『'))
-            pre = "" if inDialogue == current else "\n"
-            tmp.append(pre + v)
-            inDialogue = current
-        return tmp
-
-    def _layeracts_formatted(data: list, is_outline: bool) -> list:
-        from .action import Action, TagAction, ActType
-        tmp = []
-        datahead = data[0]
-        layers = sorted(list(set([v[0] for v in data[1:]])))
-        def _conv_talk(act: Action, base: str):
-            return f"_「{base}」_" if act.act_type is ActType.TALK else base
-        def _conv(act: [Action, TagAction], is_outline: bool):
-            # TODO: tag
-            if isinstance(act, TagAction):
-                return ""
-            else:
-                if is_outline:
-                    return _conv_talk(act, act.outline)
-                else:
-                    return _conv_talk(act, "".join(act.description.descs)) if act.description.descs else ""
-        for l in layers:
-            tmp.append("--------" * 9)
-            tmp.append(f"## {l}")
-            for v in data[1:]:
-                if l == v[0]:
-                    tmp1 = _conv(v[2], is_outline)
-                    if tmp1:
-                        tmp.append(f"{v[1]}: {tmp1}")
-        return [datahead] + tmp
 
 # privates
 def _options_parsed(): # pragma: no cover

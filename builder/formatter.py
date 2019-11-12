@@ -10,14 +10,42 @@ class Formatter(object):
 
     # methods
     def asDescription(self, data: list, format_type: str):
-        if format_type in ("estar"):
+        if format_type in ("estar",):
             return _descriptionsAsEstar(data)
         elif format_type in ("smartphone", "phone", "smart"):
             return _descriptionsAsSmartphone(data)
-        elif format_type in ("web"):
+        elif format_type in ("web",):
             return _descriptionsAsWebnovel(data)
         else:
             return data
+
+    def asLayer(self, data: list, is_outline: bool):
+        from .action import Action, TagAction, ActType
+        tmp = []
+        datahead = data[0]
+        layers = sorted(list(set([v[0] for v in data[1:]])))
+        def _conv_talk(act: Action, base: str):
+            return f"_「{base}」_" if act.act_type is ActType.TALK else base
+        def _conv(act: [Action, TagAction], is_outline: bool):
+            # TODO: tag
+            if isinstance(act, TagAction):
+                return ""
+            else:
+                if is_outline:
+                    return _conv_talk(act, act.outline)
+                else:
+                    return _conv_talk(act, "".join(act.description.descs)) if act.description.descs else ""
+        def _convert(data: tuple, layer: str, is_outline: bool):
+            if layer == data[0]:
+                tmp1 = _conv(v[2], is_outline)
+                return f"{data[1]}: {tmp1}" if tmp1 else ""
+            else:
+                return ""
+        for l in layers:
+            tmp.append("--------" * 9 + f"\n## {l}\n")
+            for v in data[1:]:
+                tmp.append(_convert(v, l, is_outline))
+        return [datahead] + [v for v in tmp if v]
 
     def asOutline(self, data: list):
         tmp = []
