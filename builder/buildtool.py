@@ -8,7 +8,6 @@ import re
 from . import assertion
 from . import world as wd
 from .parser import Parser
-from .parser import outlines_from, scenarios_from, descriptions_from, story_filtered_by_priority, story_pronoun_replaced, description_connected, story_tag_replaced, story_layer_replaced, actions_layering
 from .strutils import dict_sorted
 from .analyzer import Analyzer
 from .formatter import Formatter
