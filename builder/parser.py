@@ -53,7 +53,7 @@ class Parser(object):
                 5) tag replaced
         '''
         return story_tag_replaced(
-                description_connected(
+                _descriptionConnectedFrom(
                     story_pronoun_replaced(
                         story_layer_replaced(
                             story_filtered_by_priority(story, pri_filter)
@@ -79,6 +79,28 @@ def _actionLayersFrom(story: Story):
 
     return [(f"# {story.title}\n")] \
             + list(chain.from_iterable(_in_chapter(v) for v in story.chapters))
+
+def _descriptionConnectedFrom(story: Story):
+    def _in_action(action: AllActions):
+        if isinstance(action, CombAction):
+            return action.inherited(*[_in_action(v) for v in action.actions])
+        elif isinstance(action, TagAction):
+            return action
+        elif isinstance(action.description, NoDesc):
+            return action
+        else:
+            return action.inherited(desc=str_duplicated_chopped("。".join(action.description.descs)))
+
+    def _in_scene(scene: Scene):
+        return scene.inherited(*[_in_action(v) for v in scene.actions])
+
+    def _in_episode(episode: Episode):
+        return episode.inherited(*[_in_scene(v) for v in episode.scenes])
+
+    def _in_chapter(chapter: Chapter):
+        return chapter.inherited(*[_in_episode(v) for v in chapter.episodes])
+
+    return story.inherited(*[_in_chapter(v) for v in story.chapters])
 
 def _descriptionsFrom(story: Story, is_comment: bool):
     def _in_action(action: AllActions, is_comment: bool):
@@ -177,8 +199,6 @@ def _tagActionConverted(action: TagAction, is_comment: bool) -> str:
         return ""
 
 
-def description_connected(story: Story):
-    return story.inherited(*[_desc_connected_in_chapter(v) for v in story.chapters])
 
 def story_filtered_by_priority(story: Story, pri_filter: int):
     return story.inherited(*[_story_chapter_filtered(v, pri_filter) for v in story.chapters if v.priority >= pri_filter])
@@ -211,27 +231,6 @@ def _desc_in_tagaction(action: TagAction, is_comment: bool) -> list:
         return ["{} {}".format("#" * num, action.info)]
     else:
         return []
-
-def _desc_connected_in_chapter(chapter: Chapter):
-    return chapter.inherited(*[_desc_connected_in_episode(v) for v in chapter.episodes])
-
-def _desc_connected_in_episode(episode: Episode):
-    return episode.inherited(*[_desc_connected_in_scene(v) for v in episode.scenes])
-
-def _desc_connected_in_scene(scene: Scene):
-    return scene.inherited(*[_desc_connected_in_action(v) for v in scene.actions])
-
-def _desc_connected_in_action(action: [Action, CombAction, TagAction]):
-    def _as_combaction(act: CombAction):
-        return act.inherited(*[_desc_connected_in_action(v) for v in act.actions])
-    if isinstance(action, CombAction):
-        return _as_combaction(action)
-    elif isinstance(action, TagAction):
-        return action
-    elif isinstance(action.description, NoDesc):
-        return action
-    else:
-        return action.inherited(desc=str_duplicated_chopped("。".join(action.description.descs)))
 
 def _layer_replaced_in_scene(scene: Scene):
     tmp = []
