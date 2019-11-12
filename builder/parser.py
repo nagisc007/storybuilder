@@ -14,6 +14,7 @@ from .description import Description, DescType, NoDesc
 from .basesubject import NoSubject
 from .strutils import str_replaced_tag_by_dictionary, str_duplicated_chopped, extraspace_chopped, duplicate_bracket_chop_and_replaceed
 from .combaction import CombAction
+from .utils import strOfDescription
 
 # define type hint
 AllActions = [Action, CombAction, TagAction]
@@ -31,7 +32,7 @@ class Parser(object):
 
     # methods
     def description(self, is_comment: bool):
-        return descriptions_from(self.story, is_comment)
+        return _descriptionsFrom(self.story, is_comment)
 
     def layer(self):
         return _actionLayersFrom(self.story)
@@ -78,6 +79,39 @@ def _actionLayersFrom(story: Story):
 
     return [(f"# {story.title}\n")] \
             + list(chain.from_iterable(_in_chapter(v) for v in story.chapters))
+
+def _descriptionsFrom(story: Story, is_comment: bool):
+    def _in_action(action: AllActions, is_comment: bool):
+        if isinstance(action, CombAction):
+            return [str_duplicated_chopped(
+                duplicate_bracket_chop_and_replaceed(
+                extraspace_chopped("".join(chain.from_iterable(_in_action(v, is_comment) for v in action.actions)))))]
+        elif isinstance(action, TagAction):
+            return [_tagActionConverted(action, is_comment)]
+        else:
+            if isinstance(action.description, NoDesc):
+                return []
+            if action.description.desc_type is DescType.DIALOGUE:
+                return [str_duplicated_chopped(f"「{strOfDescription(action)}」")]
+            elif action.description.desc_type is DescType.COMPLEX:
+                return [strOfDescription(action)]
+            else:
+                return [str_duplicated_chopped(f"　{strOfDescription(action)}。")]
+
+    def _in_scene(scene: Scene, is_comment: bool):
+        return [f"\n**{scene.title}**\n"] \
+                + list(chain.from_iterable(_in_action(v, is_comment) for v in scene.actions))
+
+    def _in_episode(episode: Episode, is_comment: bool):
+        return [f"\n### {episode.title}\n"] \
+                + list(chain.from_iterable(_in_scene(v, is_comment) for v in episode.scenes))
+
+    def _in_chapter(chapter: Chapter, is_comment: bool):
+        return [f"## {chapter.title}\n"] \
+                + list(chain.from_iterable(_in_episode(v, is_comment) for v in chapter.episodes))
+
+    return [f"# {story.title}\n"] \
+            + list(chain.from_iterable(_in_chapter(v, is_comment) for v in story.chapters))
 
 def _outlinesFrom(story: Story):
     def _in_scene(scene: Scene):
@@ -142,9 +176,6 @@ def _tagActionConverted(action: TagAction, is_comment: bool) -> str:
     else:
         return ""
 
-def descriptions_from(story: Story, is_comment: bool):
-    return ["# " + story.title + "\n"] \
-            + list(chain.from_iterable(_desc_in_chapter(v, is_comment) for v in story.chapters))
 
 def description_connected(story: Story):
     return story.inherited(*[_desc_connected_in_chapter(v) for v in story.chapters])
@@ -166,39 +197,6 @@ def story_layer_replaced(story: Story):
     return story.inherited(*[_as_chapter(v) for v in story.chapters])
 
 # privates
-def _desc_in_chapter(chapter: Chapter, is_comment: bool):
-    return ["##" + chapter.title + "\n"] \
-            + list(chain.from_iterable(_desc_in_episode(v, is_comment) for v in chapter.episodes))
-
-def _desc_in_episode(episode: Episode, is_comment: bool):
-    return ["\n### " + episode.title + "\n"] \
-            + list(chain.from_iterable(_desc_in_scene(v, is_comment) for v in episode.scenes))
-
-def _desc_in_scene(scene: Scene, is_comment: bool):
-    return ["\n**" + scene.title + "**\n"] \
-            + list(chain.from_iterable(_desc_in_action(v, is_comment) for v in scene.actions))
-
-def _desc_in_action(action: [Action, CombAction, TagAction], is_comment: bool):
-    if isinstance(action, TagAction):
-        return _desc_in_tagaction(action, is_comment)
-    elif isinstance(action, Action):
-        if isinstance(action.description, NoDesc):
-            return []
-        else:
-            if action.description.desc_type is DescType.DIALOGUE:
-                return [str_duplicated_chopped("「" + "".join(x for x in action.description.descs) + "」")]
-            elif action.description.desc_type is DescType.COMPLEX:
-                return ["".join(x for x in action.description.descs)]
-            else:
-                return [str_duplicated_chopped("　" + "".join(x for x in action.description.descs) + "。")]
-        return []
-    elif isinstance(action, CombAction):
-        return [str_duplicated_chopped(
-            duplicate_bracket_chop_and_replaceed(
-            extraspace_chopped("".join(chain.from_iterable(_desc_in_action(x, is_comment) for x in action.actions)))))]
-    else:
-        return []
-
 def _desc_in_tagaction(action: TagAction, is_comment: bool) -> list:
     if action.tag_type is TagType.COMMENT and is_comment:
         return [f"<!--{action.info}-->"]
