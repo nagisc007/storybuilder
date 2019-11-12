@@ -70,7 +70,7 @@ class Build(object):
 
         if options.info:
             # TODO: detail info output
-            is_succeeded = self.to_detail_info(story_converted, analyzer, filename,
+            is_succeeded = self.to_detail_info(parser, analyzer, filename,
                     is_debug)
             if not is_succeeded:
                 print("ERROR: output a detail info failed!!")
@@ -78,14 +78,14 @@ class Build(object):
 
         if options.analyze:
             # TODO: analyze documents
-            is_succeeded = self.to_analyzed_info(story_converted, analyzer, filename,
+            is_succeeded = self.to_analyzed_info(parser, analyzer, filename,
                     is_debug)
             if not is_succeeded:
                 print("ERROR: output an analyzed info failed!!")
                 return is_succeeded
 
         if options.layer:
-            is_succeeded = self.to_layer(story_converted, filename, is_debug)
+            is_succeeded = self.to_layer(parser, filename, is_debug)
             if not is_succeeded:
                 print("ERROR: output a description failed!!")
                 return is_succeeded
@@ -95,7 +95,7 @@ class Build(object):
             pass
 
         if options.dialogue:
-            is_succeeded = self.to_dialogue_info(story_converted, analyzer, filename,
+            is_succeeded = self.to_dialogue_info(parser, analyzer, filename,
                     is_debug)
             if not is_succeeded:
                 print("ERROR: output a dialogue info failed!!")
@@ -106,8 +106,89 @@ class Build(object):
             pass
 
         # total info (always display)
-        is_succeeded = self.to_total_info(story_converted, analyzer)
+        is_succeeded = self.to_total_info(parser, analyzer)
 
+        return is_succeeded
+
+    def to_analyzed_info(self, parser: Parser, analyzer: Analyzer, filename: str,
+            is_debug: bool):
+        is_succeeded = True
+        # NOTE: 解析結果
+        freq = analyzer.frequency_words(parser.story)
+        res = freq
+        if is_debug:
+            is_succeeded = Build._out_to_console(res)
+        else:
+            is_succeeded = Build._out_to_file(res, filename, "_anal", self._extension,
+                    self._builddir)
+        return is_succeeded
+
+    def to_description(self, parser: Parser, filename: str, formattype: str,
+            is_comment: bool, is_debug: bool):
+        is_succeeded = True
+        res = Formatter().asDescription(parser.description(is_comment), formattype)
+        if is_debug:
+            is_succeeded = Build._out_to_console(res)
+        else:
+            is_succeeded = Build._out_to_file(res, filename, "", self._extension,
+                    self._builddir)
+        return is_succeeded
+
+    def to_detail_info(self, parser: Parser, analyzer: Analyzer, filename: str,
+            is_debug: bool):
+        is_succeeded = True
+        # TODO: 最初にタイトルから章やシーンリスト
+        # TODO: 文字数に続いて各シーンの簡易情報
+        # TODO: 各分析情報
+        # TODO: flag情報
+        charcounts = analyzer.characters_count(parser.story)
+        scenes_characters = analyzer.characters_count_each_scenes(parser.story)
+        act_percents = analyzer.action_percent(parser.story)
+        flaginfo = analyzer.flag_infos(parser.story)
+        scene_num = ["## Scene info",
+                "- chapters: {}".format(len([v for v in scenes_characters if 'CH-' in v])),
+                "- episodes: {}".format(len([v for v in scenes_characters if 'Ep-' in v])),
+                "- scenes: {}".format(len([v for v in scenes_characters if 'Outline' in v])),
+                ]
+        res = charcounts + [""] \
+                + scene_num + [""] \
+                + scenes_characters + [""] \
+                + act_percents + [""] \
+                + flaginfo
+        if is_debug: # out to console
+            is_succeeded = Build._out_to_console(res)
+        else:
+            is_succeeded = Build._out_to_file(res, filename, "_info", self._extension,
+                    self._builddir)
+        return is_succeeded
+
+    def to_dialogue_info(self, parser: Parser, analyzer: Analyzer, filename: str,
+            is_debug: bool):
+        is_succeeded = True
+        # NOTE: dialogue count and list
+        info = analyzer.dialogue_infos(parser.story)
+        res = info
+        if is_debug:
+            is_succeeded = Build._out_to_console(res)
+        else:
+            is_succeeded = Build._out_to_file(res, filename, "_dial", self._extension,
+                    self._builddir)
+        return is_succeeded
+
+    def to_layer(self, parser:Parser, filename: str, is_debug: bool):
+        is_succeeded = True
+        tmp = parser.layer()
+        res = Formatter().asLayer(tmp, False)
+        res_outline = Formatter().asLayer(tmp, True)
+        if is_debug:
+            is_succeeded = Build._out_to_console(res)
+            print("---- outline ----")
+            is_succeeded = Build._out_to_console(res_outline)
+        else:
+            is_succeeded = Build._out_to_file(res, filename, "_layer", self._extension,
+                    self._builddir)
+            is_succeeded = Build._out_to_file(res_outline, filename, "_layerout",
+                    self._extension, self._builddir)
         return is_succeeded
 
     def to_outline(self, parser: Parser, filename: str, is_debug: bool):
@@ -130,91 +211,10 @@ class Build(object):
                     self._builddir)
         return is_succeeded
 
-    def to_description(self, parser: Parser, filename: str, formattype: str,
-            is_comment: bool, is_debug: bool):
+    def to_total_info(self, parser: Parser, analyzer: Analyzer):
         is_succeeded = True
-        res = Formatter().asDescription(parser.description(is_comment), formattype)
-        if is_debug:
-            is_succeeded = Build._out_to_console(res)
-        else:
-            is_succeeded = Build._out_to_file(res, filename, "", self._extension,
-                    self._builddir)
-        return is_succeeded
-
-    def to_layer(self, story: wd.Story, filename: str, is_debug: bool):
-        is_succeeded = True
-        tmp = actions_layering(story)
-        res = Formatter().asLayer(tmp, False)
-        res_outline = Formatter().asLayer(tmp, True)
-        if is_debug:
-            is_succeeded = Build._out_to_console(res)
-            print("---- outline ----")
-            is_succeeded = Build._out_to_console(res_outline)
-        else:
-            is_succeeded = Build._out_to_file(res, filename, "_layer", self._extension,
-                    self._builddir)
-            is_succeeded = Build._out_to_file(res_outline, filename, "_layerout",
-                    self._extension, self._builddir)
-        return is_succeeded
-
-    def to_total_info(self, story: wd.Story, analyzer: Analyzer):
-        is_succeeded = True
-        charcounts = analyzer.characters_count(story)
+        charcounts = analyzer.characters_count(parser.story)
         is_succeeded = Build._out_to_console(charcounts)
-        return is_succeeded
-
-    def to_detail_info(self, story: wd.Story, analyzer: Analyzer, filename: str,
-            is_debug: bool):
-        is_succeeded = True
-        # TODO: 最初にタイトルから章やシーンリスト
-        # TODO: 文字数に続いて各シーンの簡易情報
-        # TODO: 各分析情報
-        # TODO: flag情報
-        charcounts = analyzer.characters_count(story)
-        scenes_characters = analyzer.characters_count_each_scenes(story)
-        act_percents = analyzer.action_percent(story)
-        flaginfo = analyzer.flag_infos(story)
-        scene_num = ["## Scene info",
-                "- chapters: {}".format(len([v for v in scenes_characters if 'CH-' in v])),
-                "- episodes: {}".format(len([v for v in scenes_characters if 'Ep-' in v])),
-                "- scenes: {}".format(len([v for v in scenes_characters if 'Outline' in v])),
-                ]
-        res = charcounts + [""] \
-                + scene_num + [""] \
-                + scenes_characters + [""] \
-                + act_percents + [""] \
-                + flaginfo
-        if is_debug: # out to console
-            is_succeeded = Build._out_to_console(res)
-        else:
-            is_succeeded = Build._out_to_file(res, filename, "_info", self._extension,
-                    self._builddir)
-        return is_succeeded
-
-    def to_analyzed_info(self, story: wd.Story, analyzer: Analyzer, filename: str,
-            is_debug: bool):
-        is_succeeded = True
-        # NOTE: 解析結果
-        freq = analyzer.frequency_words(story)
-        res = freq
-        if is_debug:
-            is_succeeded = Build._out_to_console(res)
-        else:
-            is_succeeded = Build._out_to_file(res, filename, "_anal", self._extension,
-                    self._builddir)
-        return is_succeeded
-
-    def to_dialogue_info(self, story: wd.Story, analyzer: Analyzer, filename: str,
-            is_debug: bool):
-        is_succeeded = True
-        # NOTE: dialogue count and list
-        info = analyzer.dialogue_infos(story)
-        res = info
-        if is_debug:
-            is_succeeded = Build._out_to_console(res)
-        else:
-            is_succeeded = Build._out_to_file(res, filename, "_dial", self._extension,
-                    self._builddir)
         return is_succeeded
 
     # private
@@ -242,14 +242,6 @@ class Build(object):
                 tmp_persons.append((f"ln_{k}", v.lastname))
                 tmp_persons.append((f"full_{k}", v.fullname))
                 tmp_persons.append((f"efull_{k}", v.exfullname))
-        """
-        for k, v in world.stage.items():
-            tmp['st_' + k] = v.name
-        for k, v in world.item.items():
-            tmp['t_' + k] = v.name
-        for k, v in world.word.items():
-            tmp['w_' + k] = v.name
-        """
         tmp_stages = [(f"st_{k}", v.name) for k,v in world.stage.items()]
         tmp_items = [(f"t_{k}", v.name) for k,v in world.item.items()]
         tmp_words = [(f"w_{k}", v.name) for k,v in world.word.items()]

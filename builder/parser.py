@@ -32,6 +32,9 @@ class Parser(object):
     def description(self, is_comment: bool):
         return descriptions_from(self.story, is_comment)
 
+    def layer(self):
+        return actions_layering(self.story)
+
     def outline(self):
         return outlines_from(self.story)
 
