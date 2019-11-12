@@ -2,7 +2,7 @@
 """Test: time.py
 """
 import unittest
-from utils import print_test_title
+from testutils import print_test_title
 from builder import time as tm
 
 

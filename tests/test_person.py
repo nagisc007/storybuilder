@@ -2,7 +2,7 @@
 """Test: prson.py
 """
 import unittest
-from utils import print_test_title
+from testutils import print_test_title
 from builder import person as psn
 
 
